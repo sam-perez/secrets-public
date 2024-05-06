@@ -12,6 +12,7 @@ export default function AppLayout() {
                             Send
                         </li>
                         <li>Receive</li>
+                        <li>Developers</li>
                     </ul>
                 </div>
             </aside>
