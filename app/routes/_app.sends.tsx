@@ -10,7 +10,6 @@ import {
     DropdownMenu,
     DropdownMenuContent,
     DropdownMenuItem,
-    DropdownMenuLabel,
     DropdownMenuSeparator,
     DropdownMenuTrigger,
 } from "~/components/ui/dropdown-menu";
@@ -109,9 +108,22 @@ export default function Sends() {
                             <Button variant={"outline"} size={"icon"}>
                                 <Pencil1Icon className="h-4 w-4" />
                             </Button>
-                            <Button variant={"outline"} size={"icon"}>
-                                <DotsHorizontalIcon className="h-4 w-4" />
-                            </Button>
+                            <DropdownMenu>
+                                <DropdownMenuTrigger>
+                                    <Button variant={"outline"} size={"icon"}>
+                                        <DotsHorizontalIcon className="h-4 w-4" />
+                                    </Button>
+                                </DropdownMenuTrigger>
+                                <DropdownMenuContent>
+                                    <DropdownMenuItem>View</DropdownMenuItem>
+                                    <DropdownMenuItem>Edit</DropdownMenuItem>
+                                    <DropdownMenuItem>
+                                        Make a copy
+                                    </DropdownMenuItem>
+                                    <DropdownMenuSeparator />
+                                    <DropdownMenuItem>Delete</DropdownMenuItem>
+                                </DropdownMenuContent>
+                            </DropdownMenu>
                         </div>
                     </div>
                 ))}
@@ -165,21 +177,18 @@ export default function Sends() {
                                         </Button>
                                     </DropdownMenuTrigger>
                                     <DropdownMenuContent>
-                                        <DropdownMenuLabel>
-                                            My Account
-                                        </DropdownMenuLabel>
+                                        <DropdownMenuItem>
+                                            View
+                                        </DropdownMenuItem>
+                                        <DropdownMenuItem>
+                                            Make a copy
+                                        </DropdownMenuItem>
+                                        <DropdownMenuItem>
+                                            Add a tag
+                                        </DropdownMenuItem>
                                         <DropdownMenuSeparator />
                                         <DropdownMenuItem>
-                                            Profile
-                                        </DropdownMenuItem>
-                                        <DropdownMenuItem>
-                                            Billing
-                                        </DropdownMenuItem>
-                                        <DropdownMenuItem>
-                                            Team
-                                        </DropdownMenuItem>
-                                        <DropdownMenuItem>
-                                            Subscription
+                                            Delete
                                         </DropdownMenuItem>
                                     </DropdownMenuContent>
                                 </DropdownMenu>

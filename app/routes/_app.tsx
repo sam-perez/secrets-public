@@ -16,7 +16,7 @@ export default function AppLayout() {
                     </ul>
                 </div>
             </aside>
-            <main className="p-4 md:ml-64 h-auto pt-20">
+            <main className="p-4 md:ml-64 h-auto pt-8">
                 <div className="container mx-auto ">
                     <Outlet />
                 </div>
