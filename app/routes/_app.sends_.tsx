@@ -107,7 +107,7 @@ export default function Sends() {
                     >
                         <div className="flex-1">
                             <p className="font-medium">{template.name}</p>
-                            <p className="muted">
+                            <p className="muted pb-0">
                                 {template.uses_number} uses ·{" "}
                                 {template.security} · {template.last_updated}
                             </p>
