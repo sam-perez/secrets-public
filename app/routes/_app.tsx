@@ -1,5 +1,5 @@
 import { ArrowRightIcon, CodeIcon, PaperPlaneIcon } from "@radix-ui/react-icons";
-import { Link, Outlet } from "@remix-run/react";
+import { Link, NavLink, Outlet, useLocation } from "@remix-run/react";
 
 const nav_links = [
   {
@@ -20,6 +20,9 @@ const nav_links = [
 ];
 
 export default function AppLayout() {
+  const location = useLocation();
+  console.log(location.pathname);
+
   return (
     <>
       <aside
@@ -45,12 +48,19 @@ export default function AppLayout() {
           <div className="large mb-4">S2EE</div>
           <ul className="flex flex-col overflow-hidden">
             {nav_links.map((item, index) => (
-              <li key={index} className="hover:bg-slate-100 py-3 px-2 rounded text-sm font-medium leading-none">
-                <Link to={item.href} className="flex items-center">
+              <Link
+                key={index}
+                to={item.href}
+                className={`flex items-center ${location.pathname === item.href ? "bg-slate-100" : ""}`}
+              >
+                <li
+                  className="hover:bg-slate-100 py-3 
+                  px-2 rounded text-sm leading-none font-medium w-full flex items-center"
+                >
                   <item.icon className="h-4 w-4 mr-2" />
                   {item.text}
-                </Link>
-              </li>
+                </li>
+              </Link>
             ))}
           </ul>
         </div>

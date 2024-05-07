@@ -123,9 +123,9 @@ export default function Sends() {
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent>
-                  <DropdownMenuItem>
-                    <Link to={"/templates/" + template.id}>View</Link>
-                  </DropdownMenuItem>
+                  <Link to={"/templates/" + template.id} className="">
+                    <DropdownMenuItem>View</DropdownMenuItem>
+                  </Link>
                   <DropdownMenuItem>Edit</DropdownMenuItem>
                   <DropdownMenuItem>Make a copy</DropdownMenuItem>
                   <DropdownMenuSeparator />
@@ -177,9 +177,9 @@ export default function Sends() {
                     </Button>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent>
-                    <DropdownMenuItem>
-                      <Link to={"/sends/" + send.id}>View</Link>
-                    </DropdownMenuItem>
+                    <Link to={"/sends/" + send.id}>
+                      <DropdownMenuItem>View</DropdownMenuItem>
+                    </Link>
                     <DropdownMenuItem>Make a copy</DropdownMenuItem>
                     <DropdownMenuItem>Add a tag</DropdownMenuItem>
                     <DropdownMenuSeparator />
