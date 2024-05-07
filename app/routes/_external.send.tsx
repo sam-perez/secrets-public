@@ -60,7 +60,7 @@ export default function Send() {
 
     return (
         <>
-            <div className="container max-w-5xl">
+            <div className="px-4 container max-w-5xl">
                 <h3>{send.name}</h3>
                 <p className="muted mb-4">
                     {send.email} has securely shared this data with you via
