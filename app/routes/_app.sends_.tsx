@@ -1,8 +1,12 @@
+//Sometimes you want the URL to be nested, but you don't want the automatic layout nesting. You can opt out of nesting with a trailing underscore on the parent segment:
+
 import {
     DotsHorizontalIcon,
     PaperPlaneIcon,
     Pencil1Icon,
 } from "@radix-ui/react-icons";
+import { Link } from "@remix-run/react";
+
 import { Badge } from "~/components/ui/badge";
 import { Button } from "~/components/ui/button";
 
@@ -28,18 +32,21 @@ const templates = [
         uses_number: 3,
         security: "email confirmation required, expires after 10d",
         last_updated: "2 days ago",
+        id: 1,
     },
     {
         name: "Sending API Key Copy",
         uses_number: 0,
         security: "email confirmation required, expires after 10d",
         last_updated: "2 days ago",
+        id: 2,
     },
     {
         name: "Another Send Template",
         uses_number: 1,
         security: "email confirmation required, expires after 10d",
         last_updated: "2 days ago",
+        id: 3,
     },
 ];
 
@@ -51,6 +58,7 @@ const sends = [
         views: 2,
         expires: "3d / 4 views",
         status: "Shared",
+        id: 1,
     },
     {
         created: "2h ago",
@@ -58,6 +66,7 @@ const sends = [
         views: 4,
         expires: "3d / 4 views",
         status: "Expired",
+        id: 2,
     },
     {
         created: "2h ago",
@@ -66,6 +75,7 @@ const sends = [
         expires: "3d / 4 views",
         status: "Expired",
         tags: ["testing tags"],
+        id: 3,
     },
     {
         created: "1w ago",
@@ -73,6 +83,7 @@ const sends = [
         views: 1,
         expires: "3d / 4 views",
         status: "Expired",
+        id: 4,
     },
     {
         created: "3m ago",
@@ -80,6 +91,7 @@ const sends = [
         views: 1,
         expires: "3d / 4 views",
         status: "Expired",
+        id: 5,
     },
 ];
 
@@ -178,7 +190,9 @@ export default function Sends() {
                                     </DropdownMenuTrigger>
                                     <DropdownMenuContent>
                                         <DropdownMenuItem>
-                                            View
+                                            <Link to={"/sends/" + send.id}>
+                                                View
+                                            </Link>
                                         </DropdownMenuItem>
                                         <DropdownMenuItem>
                                             Make a copy
