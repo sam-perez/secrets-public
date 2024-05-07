@@ -19,10 +19,9 @@ export default function Index() {
                         encryption
                     </h1>
                     <p className="lead">
-                        Stop sharing passwords, api creds, banking info and
-                        other scary info over email. Access a simple yet
-                        powerful to send and receive data securely via web or
-                        cli.
+                        Stop risking sharing passwords, API keys, banking info
+                        and other scary information over email. Access a simple
+                        yet powerful way to send and receive data securely.
                     </p>
                     <div className="space-x-2">
                         <Link to="/sends">
