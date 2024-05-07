@@ -127,7 +127,11 @@ export default function Sends() {
                                     </Button>
                                 </DropdownMenuTrigger>
                                 <DropdownMenuContent>
-                                    <DropdownMenuItem>View</DropdownMenuItem>
+                                    <DropdownMenuItem>
+                                        <Link to={"/templates/" + template.id}>
+                                            View
+                                        </Link>
+                                    </DropdownMenuItem>
                                     <DropdownMenuItem>Edit</DropdownMenuItem>
                                     <DropdownMenuItem>
                                         Make a copy
