@@ -93,6 +93,14 @@ const sends = [
         status: "Expired",
         id: 5,
     },
+    {
+        created: "<1m ago",
+        title: "Another Secure Send",
+        views: 0,
+        expires: "4d",
+        status: "Open",
+        id: 5,
+    },
 ];
 
 export default function Sends() {
