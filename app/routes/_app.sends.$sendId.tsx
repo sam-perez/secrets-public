@@ -1,3 +1,3 @@
 export default function SendDetails() {
-    return <>Send Details</>;
+  return <>Send Details</>;
 }

@@ -97,7 +97,7 @@
   .muted {
     @apply text-sm text-muted-foreground;
   }
-  .lead{
+  .lead {
     @apply text-xl text-muted-foreground;
   }
 }

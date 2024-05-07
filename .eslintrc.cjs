@@ -7,6 +7,9 @@
 /** @type {import('eslint').Linter.Config} */
 module.exports = {
   root: true,
+  rules: {
+    "max-len": ["error", { code: 119 }],
+  },
   parserOptions: {
     ecmaVersion: "latest",
     sourceType: "module",
@@ -28,6 +31,9 @@ module.exports = {
     // React
     {
       files: ["**/*.{js,jsx,ts,tsx}"],
+      rules: {
+        "react/prop-types": "off",
+      },
       plugins: ["react", "jsx-a11y"],
       extends: [
         "plugin:react/recommended",
@@ -66,11 +72,7 @@ module.exports = {
           },
         },
       },
-      extends: [
-        "plugin:@typescript-eslint/recommended",
-        "plugin:import/recommended",
-        "plugin:import/typescript",
-      ],
+      extends: ["plugin:@typescript-eslint/recommended", "plugin:import/recommended", "plugin:import/typescript"],
     },
 
     // Node
