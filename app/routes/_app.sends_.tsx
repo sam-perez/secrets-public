@@ -98,11 +98,6 @@ const sends = [
 ];
 
 export default function Sends() {
-  const navigate = useNavigate();
-  const handleClose = () => {
-    navigate(-1);
-  };
-
   return (
     <>
       <section className="space-y-2 mb-8">
@@ -143,20 +138,6 @@ export default function Sends() {
           </div>
         ))}
       </section>
-
-      <Dialog
-        open={true}
-        onOpenChange={(open: boolean) => {
-          open ? () => {} : handleClose();
-        }}
-      >
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Widget</DialogTitle>
-            some content
-          </DialogHeader>
-        </DialogContent>
-      </Dialog>
 
       <div className="large mb-4">All Sends</div>
 
