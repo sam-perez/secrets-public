@@ -155,14 +155,14 @@ export default function Builder() {
                       <div>
                         <small>{field.display_label}</small>
                         <div className="flex items-center space-x-2 mb-4">
-                          <Input type="text" placeholder="Address 1" autoComplete="off" />
-                          <Input type="text" placeholder="Address 2" autoComplete="off" className="w-[150px]" />
+                          <Input type="text" placeholder="Address 1" autoComplete="off" className="w-3/4" />
+                          <Input type="text" placeholder="Address 2" autoComplete="off" className="w-1/4" />
                         </div>
                         <div className="flex items-center space-x-2">
-                          <Input type="text" placeholder="City" autoComplete="off" />
-                          <Input type="text" placeholder="State" autoComplete="off" className="w-[150px]" />
-                          <Input type="text" placeholder="Zipcode" autoComplete="off" className="w-[150px]" />
-                          <Input type="text" placeholder="Country" autoComplete="off" className="w-[150px]" />
+                          <Input type="text" placeholder="City" autoComplete="off" className="w-1/4" />
+                          <Input type="text" placeholder="State" autoComplete="off" className="w-1/4" />
+                          <Input type="text" placeholder="Zipcode" autoComplete="off" className="w-1/4" />
+                          <Input type="text" placeholder="Country" autoComplete="off" className="w-1/4" />
                         </div>
                       </div>
                     )}
