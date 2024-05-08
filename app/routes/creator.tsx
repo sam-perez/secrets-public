@@ -6,7 +6,7 @@ import { Button } from "~/components/ui/button";
 import { Badge } from "~/components/ui/badge";
 import { Popover, PopoverContent, PopoverTrigger } from "~/components/ui/popover";
 import { Input } from "~/components/ui/input";
-import { Link } from "@remix-run/react";
+
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -22,7 +22,7 @@ import {
   DropdownMenuTrigger,
 } from "~/components/ui/dropdown-menu";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "~/components/ui/select";
-import { CalendarIcon, ClockIcon, EnvelopeClosedIcon, LockClosedIcon } from "@radix-ui/react-icons";
+import { ClockIcon, EnvelopeClosedIcon, LockClosedIcon } from "@radix-ui/react-icons";
 
 export default function Creator() {
   // It's important that mount is stored as state,
