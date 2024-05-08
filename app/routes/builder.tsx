@@ -24,7 +24,7 @@ import {
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "~/components/ui/select";
 import { ClockIcon, EnvelopeClosedIcon, LockClosedIcon } from "@radix-ui/react-icons";
 
-export default function Creator() {
+export default function Builder() {
   // It's important that mount is stored as state,
   // rather than a ref, so that the ProseMirror component
   // is re-rendered when it's set
