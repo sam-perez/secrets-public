@@ -1,5 +1,5 @@
 import { ArrowRightIcon, CodeIcon, PaperPlaneIcon } from "@radix-ui/react-icons";
-import { Link, NavLink, Outlet, useLocation } from "@remix-run/react";
+import { Link, Outlet, useLocation } from "@remix-run/react";
 
 const nav_links = [
   {
@@ -51,7 +51,7 @@ export default function AppLayout() {
               <Link
                 key={index}
                 to={item.href}
-                className={`flex items-center ${location.pathname === item.href ? "bg-slate-100" : ""}`}
+                className={`flex mb-1 items-center ${location.pathname === item.href ? "bg-slate-100 rounded" : ""}`}
               >
                 <li
                   className="hover:bg-slate-100 py-3 

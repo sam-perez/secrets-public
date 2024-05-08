@@ -3,11 +3,13 @@
  * You can opt out of nesting with a trailing underscore on the parent segment:
  */
 
+import { DialogContent } from "@radix-ui/react-dialog";
 import { DotsHorizontalIcon, PaperPlaneIcon, Pencil1Icon } from "@radix-ui/react-icons";
-import { Link } from "@remix-run/react";
+import { Link, useNavigate } from "@remix-run/react";
 
 import { Badge } from "~/components/ui/badge";
 import { Button } from "~/components/ui/button";
+import { Dialog, DialogHeader, DialogTitle } from "~/components/ui/dialog";
 
 import {
   DropdownMenu,
@@ -96,6 +98,11 @@ const sends = [
 ];
 
 export default function Sends() {
+  const navigate = useNavigate();
+  const handleClose = () => {
+    navigate(-1);
+  };
+
   return (
     <>
       <section className="space-y-2 mb-8">
@@ -136,6 +143,20 @@ export default function Sends() {
           </div>
         ))}
       </section>
+
+      <Dialog
+        open={true}
+        onOpenChange={(open: boolean) => {
+          open ? () => {} : handleClose();
+        }}
+      >
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Widget</DialogTitle>
+            some content
+          </DialogHeader>
+        </DialogContent>
+      </Dialog>
 
       <div className="large mb-4">All Sends</div>
 
@@ -183,7 +204,7 @@ export default function Sends() {
                     <DropdownMenuItem>Make a copy</DropdownMenuItem>
                     <DropdownMenuItem>Add a tag</DropdownMenuItem>
                     <DropdownMenuSeparator />
-                    <DropdownMenuItem>Delete</DropdownMenuItem>
+                    <DropdownMenuItem>Archive</DropdownMenuItem>
                   </DropdownMenuContent>
                 </DropdownMenu>
               </TableCell>
