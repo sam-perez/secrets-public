@@ -59,8 +59,10 @@ export default function Creator() {
               </PopoverContent>
             </Popover>
 
+            <p className="muted my-4">Start typing or add fields, and set rules encrypted data.</p>
+
             {/* builder */}
-            {AddFieldDropdown()}
+            <div className="my-4">{AddFieldDropdown()}</div>
           </div>
 
           {/* footer */}
