@@ -105,7 +105,7 @@ export default function Builder() {
             </div>
 
             {/* pass form definition, fix height it and scroll */}
-            <div className="h-96 overflow-y-auto px-2">
+            <div className="h-64 overflow-y-auto px-2">
               {/* empty state; if no fields */}
               <p className="muted my-4 hidden">Add fields to your encrypted link by clicking the Add Field button</p>
               {/* end empty state */}
