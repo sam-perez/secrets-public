@@ -1,0 +1,48 @@
+
+{
+        type: "text",
+        display_label: "API Key",
+        text_value: "", 
+        valid: true, //limit 10000 characters
+      },
+      {
+        type: "file",
+        display_label: "Upload",
+        file_value: "",
+        valid: true, //limit 50mb
+      },
+      {
+        type: "password",
+        display_label: "Password",
+        password_value: "",
+        valid: //limit 1000 characters
+      },
+      {
+        type: "phone",
+        display_label: "Phone Number",
+        phone_country: "",
+        phone_number: "",
+        valid: true //make sure is valid: https://github.com/google/libphonenumber
+      },
+      {
+        type: "address",
+        display_label: "Address",
+        address1_value: "",
+        address2_value: "",
+        city: "",
+        state: "",
+        zipcode: "",
+        country: "",
+      },
+      {
+        type: "routing_number",
+        display_label: "Routing Number",
+        routing_number_value: "",
+        valid: false, //routing number is 9 digits
+      },
+      {
+        type: "bank_account_number",
+        display_label: "Bank Account Number",
+        routing_number_value: "",
+        valid: true, //bank account has no special characters, only numbers and letters
+      },

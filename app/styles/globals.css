@@ -100,4 +100,7 @@
   .lead {
     @apply text-xl text-muted-foreground;
   }
+  input.error{
+    @apply border-red-500 bg-red-50 border focus:ring-red-500 placeholder:text-red-400;
+  }
 }

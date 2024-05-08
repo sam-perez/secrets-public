@@ -61,7 +61,7 @@ const marketing = [
   },
 ];
 
-export default function Send() {
+export default function Revealer() {
   const send = sends[0];
 
   return (
@@ -89,6 +89,9 @@ export default function Send() {
                           <Button variant={"outline"} size={"icon"}>
                             <CopyIcon className="h-4 w-4" />
                           </Button>
+                          <Button variant={"outline"} size={"icon"}>
+                            <DownloadIcon className="h-4 w-4" />
+                          </Button>
                         </>
                       )}
 
@@ -106,8 +109,10 @@ export default function Send() {
                   </div>
                 </div>
               ))}
-
-              <Button>Close</Button>
+              <div className="flex justify-between">
+                <Button>Close</Button>
+                <Button variant={"outline"}>Download All</Button>
+              </div>
             </div>
           </div>
           <div>
