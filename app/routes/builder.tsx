@@ -18,7 +18,7 @@ import {
   DropdownMenuTrigger,
 } from "~/components/ui/dropdown-menu";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "~/components/ui/select";
-import { ClockIcon, EnvelopeClosedIcon, LockClosedIcon } from "@radix-ui/react-icons";
+import { ClockIcon, DotsVerticalIcon, EnvelopeClosedIcon, LockClosedIcon } from "@radix-ui/react-icons";
 import { Textarea } from "~/components/ui/textarea";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "~/components/ui/tooltip";
 
@@ -88,8 +88,16 @@ export default function Builder() {
           <div className="px-2 py-2">
             {/* header */}
             <div className="px-2 pb-2">
-              <div className="mb-2">
+              <div className="mb-2 flex items-center space-between">
                 <Input placeholder="Untitled Secure Send" autoComplete="off" />
+                <DropdownMenu>
+                  <DropdownMenuTrigger>
+                    <DotsVerticalIcon className="h-4 w-4 flex-none ml-4" />
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent>
+                    <DropdownMenuItem>Save as template</DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
               </div>
 
               {/* tags */}
