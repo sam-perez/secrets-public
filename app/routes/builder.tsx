@@ -20,6 +20,7 @@ import {
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "~/components/ui/select";
 import { ClockIcon, EnvelopeClosedIcon, LockClosedIcon } from "@radix-ui/react-icons";
 import { Textarea } from "~/components/ui/textarea";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "~/components/ui/tooltip";
 
 const form_definitions = [
   {
@@ -92,6 +93,7 @@ export default function Builder() {
               </div>
 
               {/* tags */}
+
               <Popover>
                 <PopoverTrigger>
                   <Badge variant="outline">
@@ -305,8 +307,17 @@ export function AddPasswordPopover() {
 export function AddFieldDropdown() {
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger asChild>
-        <Button variant="outline">+ Add Field</Button>
+      <DropdownMenuTrigger>
+        <TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger>
+              <Button variant="link">+ Add Field</Button>
+            </TooltipTrigger>
+            <TooltipContent>
+              <p>Add new encrypted field to this form</p>
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
       </DropdownMenuTrigger>
       <DropdownMenuContent className="w-56">
         <DropdownMenuLabel>Add Field</DropdownMenuLabel>
