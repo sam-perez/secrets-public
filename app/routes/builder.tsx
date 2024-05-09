@@ -359,11 +359,11 @@ export function AddFieldDropdown() {
             Password
             <DropdownMenuShortcut>⌘S</DropdownMenuShortcut>
           </DropdownMenuItem>
-          <DropdownMenuItem>
+          <DropdownMenuItem onClick={() => addNewField("address")}>
             Address
             <DropdownMenuShortcut>⌘K</DropdownMenuShortcut>
           </DropdownMenuItem>
-          <DropdownMenuItem>
+          <DropdownMenuItem onClick={() => addNewField("phone")}>
             Phone Number
             <DropdownMenuShortcut>⌘K</DropdownMenuShortcut>
           </DropdownMenuItem>
@@ -374,8 +374,10 @@ export function AddFieldDropdown() {
             <DropdownMenuSubTrigger>Banking</DropdownMenuSubTrigger>
             <DropdownMenuPortal>
               <DropdownMenuSubContent>
-                <DropdownMenuItem>Routing Number</DropdownMenuItem>
-                <DropdownMenuItem>Bank Account Number</DropdownMenuItem>
+                <DropdownMenuItem onClick={() => addNewField("routing_number")}>Routing Number</DropdownMenuItem>
+                <DropdownMenuItem onClick={() => addNewField("bank_account_number")}>
+                  Bank Account Number
+                </DropdownMenuItem>
               </DropdownMenuSubContent>
             </DropdownMenuPortal>
           </DropdownMenuSub>
@@ -385,16 +387,14 @@ export function AddFieldDropdown() {
   );
 }
 
-function addNewField(type: FieldType) {
-  if (type === "text") {
-    return (
-      <div>
-        <label htmlFor={type}>{type.toUpperCase()}</label>
-        <input type="text" id={type} />
-      </div>
-    );
-  } else if (type === "password") {
-    return <input type="password" />;
-  }
-  throw new Error(`Unsupported field type: ${type}`);
+function addNewField(type: FieldType): void {
+  const newField: FieldDefinition = {
+    type,
+    display_label: type === "text" ? "Text Field" : "TODO", //TODO
+    value: "",
+    valid: true,
+    file_value: type === "file" ? null : undefined,
+  };
+  form_definitions[0].field_definition.push(newField);
+  console.log(form_definitions[0]);
 }

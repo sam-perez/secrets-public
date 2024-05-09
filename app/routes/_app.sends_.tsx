@@ -3,13 +3,11 @@
  * You can opt out of nesting with a trailing underscore on the parent segment:
  */
 
-import { DialogContent } from "@radix-ui/react-dialog";
 import { DotsHorizontalIcon, PaperPlaneIcon, Pencil1Icon } from "@radix-ui/react-icons";
-import { Link, useNavigate } from "@remix-run/react";
+import { Link } from "@remix-run/react";
 
 import { Badge } from "~/components/ui/badge";
 import { Button } from "~/components/ui/button";
-import { Dialog, DialogHeader, DialogTitle } from "~/components/ui/dialog";
 
 import {
   DropdownMenu,
