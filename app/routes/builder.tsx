@@ -22,57 +22,72 @@ import { ClockIcon, DotsVerticalIcon, EnvelopeClosedIcon, LockClosedIcon } from 
 import { Textarea } from "~/components/ui/textarea";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "~/components/ui/tooltip";
 
-const form_definitions = [
+type FieldType = "text" | "file" | "password" | "phone" | "routing_number" | "bank_account_number" | "address";
+
+type FieldDefinition = {
+  type: FieldType;
+  display_label: string;
+  value: string;
+  file_value?: File | null; //im not sure if this is correct for a file
+  valid: boolean; //this means the value is valid using validation (like a routing # has to be 9 )
+};
+
+type FormDefinition = {
+  id: number;
+  field_definition: FieldDefinition[];
+};
+
+const form_definitions: FormDefinition[] = [
   {
     id: 1,
     field_definition: [
       {
         type: "text",
         display_label: "API Key",
-        text_value: "",
+        value: "",
+        valid: true,
       },
       {
         type: "file",
         display_label: "Upload",
-        file_value: "",
+        value: "",
+        valid: true,
       },
       {
         type: "password",
         display_label: "Password",
-        password_value: "",
+        value: "",
+        valid: true,
       },
       {
         type: "phone",
         display_label: "Phone Number",
-        phone_country: "",
-        phone_number: "",
+        value: "",
+        valid: true,
       },
       {
         type: "address",
         display_label: "Address",
-        address1_value: "",
-        address2_value: "",
-        city: "",
-        state: "",
-        zipcode: "",
-        country: "",
+        value: "",
+        valid: true,
       },
       {
         type: "routing_number",
         display_label: "Routing Number",
-        routing_number_value: "",
+        value: "",
         valid: false,
       },
       {
         type: "bank_account_number",
         display_label: "Bank Account Number",
-        routing_number_value: "",
+        value: "",
         valid: true,
       },
       {
         type: "text",
         display_label: "API Secret",
-        text_value: "",
+        value: "",
+        valid: true,
       },
     ],
   },
@@ -80,6 +95,7 @@ const form_definitions = [
 
 export default function Builder() {
   const form_definition = form_definitions[0];
+
   return (
     <>
       <div className="max-w-2xl mx-auto mt-10">
@@ -331,15 +347,15 @@ export function AddFieldDropdown() {
         <DropdownMenuLabel>Add Field</DropdownMenuLabel>
         <DropdownMenuSeparator />
         <DropdownMenuGroup>
-          <DropdownMenuItem>
+          <DropdownMenuItem onClick={() => addNewField("text")}>
             Text Field
             <DropdownMenuShortcut>⇧⌘P</DropdownMenuShortcut>
           </DropdownMenuItem>
-          <DropdownMenuItem>
+          <DropdownMenuItem onClick={() => addNewField("file")}>
             File Upload
             <DropdownMenuShortcut>⌘B</DropdownMenuShortcut>
           </DropdownMenuItem>
-          <DropdownMenuItem>
+          <DropdownMenuItem onClick={() => addNewField("password")}>
             Password
             <DropdownMenuShortcut>⌘S</DropdownMenuShortcut>
           </DropdownMenuItem>
@@ -367,4 +383,18 @@ export function AddFieldDropdown() {
       </DropdownMenuContent>
     </DropdownMenu>
   );
+}
+
+function addNewField(type: FieldType) {
+  if (type === "text") {
+    return (
+      <div>
+        <label htmlFor={type}>{type.toUpperCase()}</label>
+        <input type="text" id={type} />
+      </div>
+    );
+  } else if (type === "password") {
+    return <input type="password" />;
+  }
+  throw new Error(`Unsupported field type: ${type}`);
 }
