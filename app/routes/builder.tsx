@@ -82,7 +82,7 @@ export default function Builder() {
   return (
     <>
       <div className="max-w-2xl mx-auto mt-10">
-        <div className="border rounded-xl">
+        <div className="border rounded-xl shadow-xl">
           {/* wrapper */}
           <div className="px-2 py-2">
             {/* header */}
@@ -224,7 +224,7 @@ export function LinkExpirationPopover() {
     <Popover>
       <PopoverTrigger>
         <small className="flex items-center muted hover:text-slate-400">
-          <ClockIcon className="h-4 w-4 mr-1" /> Link Expiration
+          <ClockIcon className="h-4 w-4 mr-1" /> <span className="hidden sm:block">Link Expiration</span>
         </small>
       </PopoverTrigger>
       <PopoverContent>
@@ -261,7 +261,7 @@ export function RestrictEmailPopover() {
     <Popover>
       <PopoverTrigger>
         <small className="flex items-center muted hover:text-slate-400">
-          <EnvelopeClosedIcon className="h-4 w-4 mr-1" /> Restrict Email
+          <EnvelopeClosedIcon className="h-4 w-4 mr-1" /> <span className="hidden sm:block">Restrict Email</span>
         </small>
       </PopoverTrigger>
       <PopoverContent>
@@ -285,7 +285,7 @@ export function AddPasswordPopover() {
     <Popover>
       <PopoverTrigger>
         <small className="flex items-center muted hover:text-slate-400">
-          <LockClosedIcon className="h-4 w-4 mr-1" /> Add Password
+          <LockClosedIcon className="h-4 w-4 mr-1" /> <span className="hidden sm:block">Add Password</span>
         </small>
       </PopoverTrigger>
       <PopoverContent>
