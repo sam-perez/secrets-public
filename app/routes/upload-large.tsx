@@ -2,6 +2,7 @@ import { json, ActionFunction } from "@remix-run/node";
 import { useState } from "react";
 import { PassThrough } from "stream";
 import { Readable } from "node:stream";
+import { stringToUint8Array, uint8ArrayToString, computeSHA256HashOfUint8Array } from "../lib/encryption";
 
 import { uploadToS3 } from "../lib/s3";
 
@@ -82,15 +83,6 @@ export const action: ActionFunction = async ({ request }) => {
   }
 };
 
-async function computeSHA256Hash(data: Uint8Array) {
-  // data should be a Uint8Array
-  const hashBuffer = await crypto.subtle.digest("SHA-256", data);
-  const hashArray = new Uint8Array(hashBuffer); // Convert buffer to byte array
-  const hashHex = hashArray.reduce((str, byte) => str + byte.toString(16).padStart(2, "0"), "");
-
-  return hashHex;
-}
-
 // Client-side component for file upload
 export default function UploadLarge() {
   const [progress, setProgress] = useState<number>(0);
@@ -131,7 +123,26 @@ export default function UploadLarge() {
     xhr.setRequestHeader("Content-Type", "application/octet-stream");
     xhr.send(new Blob([binaryArray]));
 
-    setUploadHash(await computeSHA256Hash(binaryArray));
+    setUploadHash(await computeSHA256HashOfUint8Array(binaryArray));
+
+    // let's test out some stuff
+    const { stringRepresentation, originalLength } = uint8ArrayToString(binaryArray);
+    const reconstituted = stringToUint8Array({ stringRepresentation, originalLength });
+
+    console.log("Data integrity check:", binaryArray.toString() === reconstituted.toString() ? "PASSED" : "FAILED");
+
+    console.log("Converted string (gobbledygook):", stringRepresentation);
+
+    const originalHash = await computeSHA256HashOfUint8Array(binaryArray);
+    const reconstitutedHash = await computeSHA256HashOfUint8Array(reconstituted);
+
+    const sizeOfBinaryArray = binaryArray.length;
+    const sizeOfStr = stringRepresentation.length;
+    console.log("Size of binary array:", sizeOfBinaryArray);
+    console.log("Size of string:", sizeOfStr);
+
+    console.log("Hashes:", { originalHash, reconstitutedHash });
+    console.log("Hash integrity check:", originalHash === reconstitutedHash ? "PASSED" : "FAILED");
   }
 
   function handleFileChange(event: React.ChangeEvent<HTMLInputElement>) {
@@ -162,7 +173,7 @@ export default function UploadLarge() {
             const blob = await response.blob();
             const buffer = await blob.arrayBuffer();
 
-            setDownloadHash(await computeSHA256Hash(new Uint8Array(buffer)));
+            setDownloadHash(await computeSHA256HashOfUint8Array(new Uint8Array(buffer)));
           }}
         >
           Now Download
