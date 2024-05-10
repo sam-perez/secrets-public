@@ -3,6 +3,8 @@ import { useState } from "react";
 import { PassThrough } from "stream";
 import { Readable } from "node:stream";
 
+import { uploadToS3 } from "../lib/s3";
+
 const MAX_FILE_SIZE = 1024 * 1024 * 10; // 10 MB
 
 // Server-side action function to handle the file upload
@@ -15,30 +17,25 @@ export const action: ActionFunction = async ({ request }) => {
     return json({ error: "No stream uploaded." }, { status: 400 });
   }
 
-  console.log("Request headers:");
-  console.log(request.headers);
-
   // Get the Content-Length header
-  const contentLength = request.headers.get("Content-Length");
+  const contentLength = request.headers.get("content-length");
 
   if (contentLength && parseInt(contentLength, 10) > MAX_FILE_SIZE) {
     // If Content-Length exceeds the maximum, return a 413 Payload Too Large error
     console.log("Payload too large");
 
-    return json({ error: "Payload too large." }, { status: 413 });
+    throw new Response("Payload too large", { status: 413 });
   }
 
   let totalBytes = 0;
   const counterStream = new PassThrough();
+  const chunks: Buffer[] = [];
 
   counterStream.on("data", (chunk: Buffer) => {
     totalBytes += chunk.length; // Increment the total bytes counter
     console.log(`Received ${chunk.length} bytes`);
     console.log(`Total bytes received: ${totalBytes}`);
-
-    if (totalBytes > MAX_FILE_SIZE) {
-      counterStream.emit("error", new Error("File size exceeds the maximum limit"));
-    }
+    chunks.push(chunk);
   });
 
   try {
@@ -68,8 +65,16 @@ export const action: ActionFunction = async ({ request }) => {
 
     console.log(`Total bytes received: ${totalBytes}`);
 
-    // After all data has been received
-    return json({ success: true, totalBytes });
+    if (totalBytes > MAX_FILE_SIZE) {
+      throw new Response("Payload too large", { status: 413 });
+    } else {
+      // Upload the file to S3
+      const buffer = Buffer.concat(chunks);
+      await uploadToS3({ bucket: "MARKETING_BUCKET", key: "large-file.bin", body: buffer });
+
+      // After all data has been received
+      return json({ success: true, totalBytes });
+    }
   } catch (error) {
     const errorMessage = error instanceof Error ? error.message : "An error occurred";
 
@@ -77,12 +82,23 @@ export const action: ActionFunction = async ({ request }) => {
   }
 };
 
+async function computeSHA256Hash(data: Uint8Array) {
+  // data should be a Uint8Array
+  const hashBuffer = await crypto.subtle.digest("SHA-256", data);
+  const hashArray = new Uint8Array(hashBuffer); // Convert buffer to byte array
+  const hashHex = hashArray.reduce((str, byte) => str + byte.toString(16).padStart(2, "0"), "");
+
+  return hashHex;
+}
+
 // Client-side component for file upload
 export default function UploadLarge() {
   const [progress, setProgress] = useState<number>(0);
   const [message, setMessage] = useState<string>("");
+  const [uploadHash, setUploadHash] = useState<string>("");
+  const [downloadHash, setDownloadHash] = useState<string>("");
 
-  function uploadLargeBinaryData(binaryArray: Uint8Array) {
+  async function uploadLargeBinaryData(binaryArray: Uint8Array) {
     const xhr = new XMLHttpRequest();
     xhr.open("POST", "/upload-large");
 
@@ -114,6 +130,8 @@ export default function UploadLarge() {
 
     xhr.setRequestHeader("Content-Type", "application/octet-stream");
     xhr.send(new Blob([binaryArray]));
+
+    setUploadHash(await computeSHA256Hash(binaryArray));
   }
 
   function handleFileChange(event: React.ChangeEvent<HTMLInputElement>) {
@@ -135,6 +153,21 @@ export default function UploadLarge() {
       <input type="file" onChange={handleFileChange} />
       <p>Progress: {progress.toFixed(2)}%</p>
       <p>{message}</p>
+      <p>Upload hash: {uploadHash || "Unavailable"}</p>
+      <p>Download hash: {downloadHash || "Unavailable"}</p>
+      {uploadHash !== "" ? (
+        <button
+          onClick={async () => {
+            const response = await fetch(`/fetch-blob?key=${encodeURIComponent("large-file.bin")}`);
+            const blob = await response.blob();
+            const buffer = await blob.arrayBuffer();
+
+            setDownloadHash(await computeSHA256Hash(new Uint8Array(buffer)));
+          }}
+        >
+          Now Download
+        </button>
+      ) : null}
     </div>
   );
 }
