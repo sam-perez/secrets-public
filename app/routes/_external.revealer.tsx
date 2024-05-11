@@ -1,11 +1,5 @@
-import {
-  CopyIcon,
-  DownloadIcon,
-  EyeOpenIcon,
-  GlobeIcon,
-  LockClosedIcon,
-  QuestionMarkCircledIcon,
-} from "@radix-ui/react-icons";
+import { CopyIcon, DownloadIcon, EyeOpenIcon } from "@radix-ui/react-icons";
+import AboutSidenav from "~/components/about-sidenav";
 import { Button } from "~/components/ui/button";
 
 const sends = [
@@ -46,28 +40,13 @@ const sends = [
   },
 ];
 
-const marketing = [
-  {
-    icon: LockClosedIcon,
-    text: "All of your information is end-to-end encrypted; only you have the decryption token. Learn more.",
-  },
-  {
-    icon: GlobeIcon,
-    text: "PCI DSS bank-level security",
-  },
-  {
-    icon: QuestionMarkCircledIcon,
-    text: "Have more questions?",
-  },
-];
-
 export default function Revealer() {
   const send = sends[0];
 
   return (
     <>
       <div className="px-4 container max-w-5xl">
-        <h3>{send.name}</h3>
+        <h2>{send.name}</h2>
         <p className="muted mb-4">{send.email} has securely shared this data with you via s2ee.</p>
         <div className="mx-auto lg:grid lg:max-w-7xl grid-cols-3 gap-8">
           <div className="lg:col-span-2">
@@ -133,12 +112,7 @@ export default function Revealer() {
               </div>
               {/* marketing    */}
               <div>
-                {marketing.map((item, index) => (
-                  <div key={index} className="flex items-top muted space-x-4 mb-4">
-                    <item.icon className="h-5 w-5 flex-none" />
-                    <span>{item.text}</span>
-                  </div>
-                ))}
+                <AboutSidenav showAbout={false} />
               </div>
             </aside>
           </div>
