@@ -1,5 +1,7 @@
 import AboutSidenav from "~/components/about-sidenav";
 import BuilderFooter from "~/components/builder/footer";
+import BuilderWrapper from "~/components/builder/wrapper";
+import { Badge } from "~/components/ui/badge";
 
 import { Input } from "~/components/ui/input";
 import { Label } from "~/components/ui/label";
@@ -68,12 +70,15 @@ export default function TemplateDetails() {
   return (
     <>
       <div className="px-4 container max-w-5xl">
+        <Badge variant={"secondary"} className="mb-2">
+          Send
+        </Badge>
         <h2>{template.name}</h2>
         <p className="muted mb-4">{template.description}</p>
         <div className="mx-auto lg:grid lg:max-w-7xl grid-cols-3 gap-8">
           <div className="lg:col-span-2">
             {/* share content  */}
-            <div className="border rounded mb-4">
+            <BuilderWrapper>
               {/* form definition fields TODO refactor */}
               <div className="space-y-3 mb-4 p-4">
                 {template.form_definition.field_definition.map((field, index) => (
@@ -162,7 +167,7 @@ export default function TemplateDetails() {
               {/* end fields */}
               {/* builder footer */}
               <BuilderFooter />
-            </div>
+            </BuilderWrapper>
           </div>
           <div>
             <aside className="sticky top-6">

@@ -25,20 +25,22 @@ export default function AboutSidenav({ showAbout }: AboutSidenavProps) {
   return (
     <>
       {showAbout && (
-        <Link to={"/"}>
-          <Alert className="bg-slate-50 hover:bg-slate-100">
-            <InfoCircledIcon className="h-4 w-4" />
-            <AlertTitle>About 2Secure</AlertTitle>
-            <AlertDescription>
-              2Secure is a free, secure way to send or request sensitive information securely using end-to-end
-              encryption.
-            </AlertDescription>
-          </Alert>
-        </Link>
+        <div className="mb-8">
+          <Link to={"/"}>
+            <Alert className="bg-slate-50 hover:bg-slate-100">
+              <InfoCircledIcon className="h-4 w-4" />
+              <AlertTitle>About 2Secure</AlertTitle>
+              <AlertDescription>
+                2Secure is a free, secure way to send or request sensitive information securely using end-to-end
+                encryption.
+              </AlertDescription>
+            </Alert>
+          </Link>
+        </div>
       )}
 
       {marketing.map((item, index) => (
-        <div key={index} className="flex items-top text-sm text-slate-600 space-x-4 mb-4">
+        <div key={index} className="flex items-top text-sm text-slate-600 space-x-4 mb-4 mt-4">
           <item.icon className="h-5 w-5 flex-none" />
           <span>{item.text}</span>
         </div>

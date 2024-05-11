@@ -7,7 +7,7 @@ import { Button } from "../ui/button";
 export default function BuilderFooter() {
   return (
     <>
-      <div className="border-t">
+      <div className="border-t bg-slate-50 rounded-b-xl">
         <div className="px-4 py-2 flex justify-between items-center">
           {/* actions  */}
           <div className="flex text-sm space-x-4">
@@ -29,9 +29,13 @@ export function LinkExpirationPopover() {
   return (
     <Popover>
       <PopoverTrigger>
-        <small className="flex items-center muted hover:text-slate-400">
+        <Button variant="link" className="px-0">
+          <ClockIcon className="h-4 w-4 mr-1" />
+          <span className="hidden sm:block">Link Expiration</span>
+        </Button>
+        {/* <small className="flex items-center hover:text-slate-500 hover:underline">
           <ClockIcon className="h-4 w-4 mr-1" /> <span className="hidden sm:block">Link Expiration</span>
-        </small>
+        </small> */}
       </PopoverTrigger>
       <PopoverContent>
         <div className="space-y-1 mb-2">
@@ -66,9 +70,9 @@ export function RestrictEmailPopover() {
   return (
     <Popover>
       <PopoverTrigger>
-        <small className="flex items-center muted hover:text-slate-400">
+        <Button variant="link" className="px-0">
           <EnvelopeClosedIcon className="h-4 w-4 mr-1" /> <span className="hidden sm:block">Restrict Email</span>
-        </small>
+        </Button>
       </PopoverTrigger>
       <PopoverContent>
         <div className="space-y-1 mb-2">
@@ -90,9 +94,9 @@ export function AddPasswordPopover() {
   return (
     <Popover>
       <PopoverTrigger>
-        <small className="flex items-center muted hover:text-slate-400">
+        <Button variant="link" className="px-0">
           <LockClosedIcon className="h-4 w-4 mr-1" /> <span className="hidden sm:block">Add Password</span>
-        </small>
+        </Button>
       </PopoverTrigger>
       <PopoverContent>
         <div className="space-y-1 mb-2">
