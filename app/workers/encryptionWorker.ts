@@ -25,6 +25,7 @@ if (typeof window !== "undefined" || typeof self !== "undefined") {
     console.log("DATA:", event.data);
     if (typeof data === "number") {
       const result = fibonacci(data);
+      console.log("From worker result:", result);
       // Send the result back to the main thread
       self.postMessage(result);
     } else {
