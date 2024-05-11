@@ -24,12 +24,15 @@ const getEncryptionWorker = (() => {
       encryptionWorker = new EncryptionWorker();
 
       workerInitialized = new Promise<void>((resolve) => {
-        encryptionWorker.onmessage = (event: MessageEvent) => {
+        const initializedEventListner = (event: MessageEvent) => {
           console.log("Received from worker:", event.data);
           if (event.data.code === "initialized") {
+            encryptionWorker.removeEventListener("message", initializedEventListner);
             resolve();
           }
         };
+
+        encryptionWorker.addEventListener("message", initializedEventListner);
       });
     }
 
