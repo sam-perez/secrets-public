@@ -10,7 +10,7 @@
     "start": "remix-serve ./build/server/index.js",
     "typecheck": "tsc",
     "build:workers": "esbuild ./workers/*.ts --bundle --outdir=./workers",
-    "build:workers:prod": "esbuild ./workers/*.ts --bundle --outdir=./assets/workers"
+    "build:workers:prod": "esbuild ./workers/*.ts --bundle --outdir=./build/client/assets/"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.572.0",
