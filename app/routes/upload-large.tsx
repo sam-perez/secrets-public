@@ -102,7 +102,7 @@ export default function UploadLarge() {
     console.log("Calculating fibonacci numbers...");
     console.log(process.env);
 
-    const worker = new Worker("./workers/encryption_worker.js");
+    const worker = new Worker("./assets/workers/encryption_worker.js");
     console.log("Worker created!!!");
     worker.onmessage = (event) => {
       console.log("Fibonacci result:", event.data);
