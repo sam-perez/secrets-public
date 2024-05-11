@@ -1,6 +1,5 @@
 import { computeSHA256HashOfUint8Array } from "../lib/encryption";
 
-// this should never run in the server, but will hopefully run in the worker in the browser
 if (typeof window !== "undefined" || typeof self !== "undefined") {
   // This function calculates the nth Fibonacci number
   const fibonacci = (n: number): number => {
@@ -14,7 +13,7 @@ if (typeof window !== "undefined" || typeof self !== "undefined") {
   console.log("Worker started, in VITE BEAUTY ME PLZ!!!");
 
   (async () => {
-    console.log("HERE IS A HASH", await computeSHA256HashOfUint8Array(new Uint8Array([1, 2, 43])));
+    console.log("HERE IS A HASH", await computeSHA256HashOfUint8Array(new Uint8Array([1, 2, 13])));
   })();
 
   // Listen for messages from the main thread
@@ -32,4 +31,9 @@ if (typeof window !== "undefined" || typeof self !== "undefined") {
       self.postMessage("Please provide a number");
     }
   };
+
+  // Send a message to the main thread that the worker is initialized
+  self.postMessage({
+    code: "initialized",
+  });
 }

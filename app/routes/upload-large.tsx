@@ -4,7 +4,10 @@ import { PassThrough } from "stream";
 import { Readable } from "node:stream";
 import { stringToUint8Array, uint8ArrayToString, computeSHA256HashOfUint8Array } from "../lib/encryption";
 import { uploadToS3, BUCKET_OPTIONS } from "../lib/s3";
-import EncryptionWorker from "../workers/encryption_worker.js?worker";
+import {
+  useEncryptionWorker,
+  EncryptionWorkerProvider,
+} from "../components/context-providers/EncryptionWorkerContextProvider";
 
 const MAX_FILE_SIZE = 1024 * 1024 * 10; // 10 MB
 
@@ -90,30 +93,30 @@ export const action: ActionFunction = async ({ request }) => {
   }
 };
 
-// Client-side component for file upload
 export default function UploadLarge() {
+  return (
+    <EncryptionWorkerProvider>
+      <UploadLargeInner />
+    </EncryptionWorkerProvider>
+  );
+}
+
+function UploadLargeInner() {
   const [progress, setProgress] = useState<number>(0);
   const [message, setMessage] = useState<string>("");
   const [uploadHash, setUploadHash] = useState<string>("");
   const [downloadHash, setDownloadHash] = useState<string>("");
 
+  const encryptionWorker = useEncryptionWorker();
+
   // side effect on load to calculate some fibonacci numbers
   useEffect(() => {
-    console.log("Calculating fibonacci numbers...");
-    const worker = new EncryptionWorker();
+    if (encryptionWorker !== null) {
+      console.log("Calculating fibonacci numbers...");
 
-    console.log("Worker created!!!");
-    worker.onmessage = (event) => {
-      console.log("Fibonacci result:", event.data);
-    };
-
-    worker.postMessage({ data: 40 });
-
-    // terminate the worker when the component unmounts
-    return () => {
-      worker.terminate();
-    };
-  });
+      encryptionWorker.sendMessage({ data: 40 });
+    }
+  }, [encryptionWorker]);
 
   async function uploadLargeBinaryData(binaryArray: Uint8Array) {
     const xhr = new XMLHttpRequest();
