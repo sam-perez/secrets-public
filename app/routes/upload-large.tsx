@@ -4,6 +4,7 @@ import { PassThrough } from "stream";
 import { Readable } from "node:stream";
 import { stringToUint8Array, uint8ArrayToString, computeSHA256HashOfUint8Array } from "../lib/encryption";
 import { uploadToS3, BUCKET_OPTIONS } from "../lib/s3";
+import EncryptionWorker from "../workers/encryption_worker.js?worker";
 
 const MAX_FILE_SIZE = 1024 * 1024 * 10; // 10 MB
 
@@ -99,12 +100,7 @@ export default function UploadLarge() {
   // side effect on load to calculate some fibonacci numbers
   useEffect(() => {
     console.log("Calculating fibonacci numbers...");
-    const nodeEnv = import.meta.env.VITE_PUBLIC_NODE_ENV;
-
-    const worker = new Worker(
-      // TODO: this cannot be the best way to do this
-      nodeEnv === "development" ? "./workers/encryption_worker.js" : "./assets/workers/encryption_worker.js"
-    );
+    const worker = new EncryptionWorker();
 
     console.log("Worker created!!!");
     worker.onmessage = (event) => {
@@ -112,6 +108,11 @@ export default function UploadLarge() {
     };
 
     worker.postMessage({ data: 40 });
+
+    // terminate the worker when the component unmounts
+    return () => {
+      worker.terminate();
+    };
   });
 
   async function uploadLargeBinaryData(binaryArray: Uint8Array) {

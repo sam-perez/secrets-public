@@ -9,7 +9,7 @@ if (typeof window !== "undefined" || typeof self !== "undefined") {
     return fibonacci(n - 1) + fibonacci(n - 2);
   };
 
-  console.log("Worker started");
+  console.log("Worker started, in VITE BEAUTY ME PLZ!!!");
 
   // Listen for messages from the main thread
   self.onmessage = (event) => {

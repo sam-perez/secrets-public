@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["encryption_worker.ts"],
+  "sourcesContent": ["// this should never run in the server, but will hopefully run in the worker in the browser\nif (typeof window !== \"undefined\" || typeof self !== \"undefined\") {\n  // This function calculates the nth Fibonacci number\n  const fibonacci = (n: number): number => {\n    if (n <= 1) {\n      return n;\n    }\n\n    return fibonacci(n - 1) + fibonacci(n - 2);\n  };\n\n  console.log(\"Worker started, in VITE BEAUTY ME PLZ!!!\");\n\n  // Listen for messages from the main thread\n  self.onmessage = (event) => {\n    const {\n      data: { data },\n    } = event;\n\n    console.log(\"DATA:\", event.data);\n    if (typeof data === \"number\") {\n      const result = fibonacci(data);\n      // Send the result back to the main thread\n      self.postMessage(result);\n    } else {\n      self.postMessage(\"Please provide a number\");\n    }\n  };\n}\n"],
+  "mappings": "mBACA,GAAI,OAAO,OAAW,KAAe,OAAO,KAAS,IAAa,CAEhE,IAAMA,EAAaC,GACbA,GAAK,EACAA,EAGFD,EAAUC,EAAI,CAAC,EAAID,EAAUC,EAAI,CAAC,EAG3C,QAAQ,IAAI,0CAA0C,EAGtD,KAAK,UAAaC,GAAU,CAC1B,GAAM,CACJ,KAAM,CAAE,KAAAC,CAAK,CACf,EAAID,EAGJ,GADA,QAAQ,IAAI,QAASA,EAAM,IAAI,EAC3B,OAAOC,GAAS,SAAU,CAC5B,IAAMC,EAASJ,EAAUG,CAAI,EAE7B,KAAK,YAAYC,CAAM,CACzB,MACE,KAAK,YAAY,yBAAyB,CAE9C,CACF",
+  "names": ["fibonacci", "n", "event", "data", "result"]
+}
