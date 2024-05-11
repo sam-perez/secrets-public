@@ -100,6 +100,7 @@ export default function UploadLarge() {
   // side effect on load to calculate some fibonacci numbers
   useEffect(() => {
     console.log("Calculating fibonacci numbers...");
+    console.log(process.env);
 
     const worker = new Worker("./workers/encryption_worker.js");
     console.log("Worker created!!!");
