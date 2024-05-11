@@ -3,7 +3,6 @@ import { useState, useEffect } from "react";
 import { PassThrough } from "stream";
 import { Readable } from "node:stream";
 import { stringToUint8Array, uint8ArrayToString, computeSHA256HashOfUint8Array } from "../lib/encryption";
-
 import { uploadToS3, BUCKET_OPTIONS } from "../lib/s3";
 
 const MAX_FILE_SIZE = 1024 * 1024 * 10; // 10 MB
@@ -100,9 +99,13 @@ export default function UploadLarge() {
   // side effect on load to calculate some fibonacci numbers
   useEffect(() => {
     console.log("Calculating fibonacci numbers...");
-    console.log(process.env);
+    const nodeEnv = import.meta.env.VITE_PUBLIC_NODE_ENV;
 
-    const worker = new Worker("./assets/workers/encryption_worker.js");
+    const worker = new Worker(
+      // TODO: this cannot be the best way to do this
+      nodeEnv === "development" ? "./workers/encryption_worker.js" : "./assets/workers/encryption_worker.js"
+    );
+
     console.log("Worker created!!!");
     worker.onmessage = (event) => {
       console.log("Fibonacci result:", event.data);
