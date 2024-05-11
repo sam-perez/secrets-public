@@ -12,7 +12,7 @@ const BUCKETS = {
   MARKETING_BUCKET: "secret-sausage-marketing",
 } as const;
 
-type BUCKET_OPTIONS = keyof typeof BUCKETS;
+export type BUCKET_OPTIONS = keyof typeof BUCKETS;
 
 /**
  * Uploads a file to S3.
