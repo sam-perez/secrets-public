@@ -40,7 +40,7 @@ export default function AboutSidenav({ showAbout }: AboutSidenavProps) {
       )}
 
       {marketing.map((item, index) => (
-        <div key={index} className="flex items-top text-sm text-slate-600 space-x-4 mb-4 mt-4">
+        <div key={index} className="flex items-top text-sm text-slate-600 space-x-4 mb-4 mt-4 px-4">
           <item.icon className="h-5 w-5 flex-none" />
           <span>{item.text}</span>
         </div>

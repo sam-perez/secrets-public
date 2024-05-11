@@ -4,7 +4,7 @@ export default function MarketingLayout() {
   return (
     <>
       marketing nav
-      <div className="container">
+      <div className="sm:container">
         <Outlet />
       </div>
     </>
