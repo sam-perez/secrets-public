@@ -1,6 +1,4 @@
 import { Button } from "~/components/ui/button";
-import { Badge } from "~/components/ui/badge";
-import { Popover, PopoverContent, PopoverTrigger } from "~/components/ui/popover";
 import { Input } from "~/components/ui/input";
 
 import {
@@ -18,10 +16,11 @@ import {
   DropdownMenuTrigger,
 } from "~/components/ui/dropdown-menu";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "~/components/ui/select";
-import { DotsVerticalIcon } from "@radix-ui/react-icons";
+
 import { Textarea } from "~/components/ui/textarea";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "~/components/ui/tooltip";
 import BuilderFooter from "~/components/builder/footer";
+import BuilderHeader from "~/components/builder/header";
 
 type FieldType = "text" | "file" | "password" | "phone" | "routing_number" | "bank_account_number" | "address";
 
@@ -104,31 +103,8 @@ export default function Builder() {
           {/* wrapper */}
           <div className="px-2 py-2">
             {/* header */}
-            <div className="px-2 pb-2">
-              <div className="mb-2 flex items-center space-between">
-                <Input placeholder="Untitled Secure Send" autoComplete="off" />
-                <DropdownMenu>
-                  <DropdownMenuTrigger>
-                    <DotsVerticalIcon className="h-4 w-4 flex-none ml-4" />
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent>
-                    <DropdownMenuItem>Save as template</DropdownMenuItem>
-                  </DropdownMenuContent>
-                </DropdownMenu>
-              </div>
-
-              {/* tags */}
-
-              <Popover>
-                <PopoverTrigger>
-                  <Badge variant="outline">
-                    <span className="text-xs muted">Add Tag</span>
-                  </Badge>
-                </PopoverTrigger>
-                <PopoverContent>
-                  <Input placeholder="Add Tag" />
-                </PopoverContent>
-              </Popover>
+            <div className="px-2">
+              <BuilderHeader />
             </div>
 
             {/* pass form definition, fix height it and scroll */}
