@@ -39,6 +39,5 @@ describe("when we pack some secrets and then unpack some secrets", async () => {
     const unpackedSecrets = await unpackSecrets(packedSecrets);
 
     expect(unpackedSecrets).toEqual(secretResponse);
-    console.log(JSON.stringify(packedSecrets));
   });
 });

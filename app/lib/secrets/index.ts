@@ -1,11 +1,12 @@
 import {
   computeSHA256HashOfUint8Array,
-  decryptString,
-  encryptString,
+  decryptData,
+  encryptData,
   uint8ArrayToString,
   StringifiedUint8Array,
   stringToUint8Array,
 } from "../encryption";
+import pako from "pako";
 
 // TODO: not sure what these names should be yet, just a placeholder for now
 
@@ -69,7 +70,7 @@ export const packSecrets = async (secretResponse: SecretResponses): Promise<Pack
 
   const jsonSecretValues = JSON.stringify(jsonSerializableSecretValues);
 
-  // TODO: we should compress the JSON string before encrypting it.
+  const compressedJsonSecretValues = pako.deflate(jsonSecretValues);
 
   // generate a random password using the character set [A-Za-z0-9]
   // we are going with 20 characters for now, which is a good balance between security and usability.
@@ -78,7 +79,7 @@ export const packSecrets = async (secretResponse: SecretResponses): Promise<Pack
   const getRandomChar = () => alphabet.charAt(Math.floor(Math.random() * alphabet.length));
   const password = Array.from({ length: 20 }, getRandomChar).join("");
 
-  const { iv, ciphertext, salt } = await encryptString(jsonSecretValues, password);
+  const { iv, ciphertext, salt } = await encryptData(compressedJsonSecretValues, password);
 
   // one more layer of conferting the arrays to strings "efficiently"
   return {
@@ -101,7 +102,8 @@ export const unpackSecrets = async (packedSecrets: PackedSecrets) => {
   const salt = stringToUint8Array(packedSecrets.salt);
   const password = packedSecrets.password;
 
-  const jsonSecretValues = await decryptString(iv, ciphertext, salt, password);
+  const compressedJsonSecretValues = await decryptData(iv, ciphertext, salt, password);
+  const jsonSecretValues = pako.inflate(compressedJsonSecretValues, { to: "string" });
 
   const jsonSerializableSecretValues = JSON.parse(jsonSecretValues) as Array<{
     textValues: string[];

@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { encryptString, decryptString } from "./index";
+import { encryptData, decryptData } from "./index";
 
 describe("when we encrypt and decrypt a string", async () => {
   const randomString = (length: number) => {
@@ -12,9 +12,12 @@ describe("when we encrypt and decrypt a string", async () => {
     const password = randomString(Math.floor(Math.random() * 100) + 100);
     // some plain text between 100 and 200 characters
     const plainText = randomString(Math.floor(Math.random() * 100) + 100);
-    const { iv, ciphertext, salt } = await encryptString(plainText, password);
-    const decrypted = await decryptString(iv, ciphertext, salt, password);
+    const uint8ArrayPlainText = new TextEncoder().encode(plainText);
 
-    expect(decrypted).toEqual(plainText);
+    const { iv, ciphertext, salt } = await encryptData(uint8ArrayPlainText, password);
+
+    const decrypted = await decryptData(iv, ciphertext, salt, password);
+
+    expect(new TextDecoder().decode(decrypted)).toEqual(plainText);
   });
 });
