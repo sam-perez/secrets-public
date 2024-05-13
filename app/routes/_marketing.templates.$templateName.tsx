@@ -1,6 +1,5 @@
 import AboutSidenav from "~/components/about-sidenav";
 import BuilderFooter from "~/components/builder/footer";
-import BuilderHeader from "~/components/builder/header";
 import BuilderWrapper from "~/components/builder/wrapper";
 import { Badge } from "~/components/ui/badge";
 
@@ -79,96 +78,93 @@ export default function TemplateDetails() {
         <div className="lg:col-span-2">
           {/* share content  */}
           <BuilderWrapper>
-            <div className="mb-4 p-4">
-              <BuilderHeader title={template.name} />
-              {/* form definition fields TODO refactor */}
-              <div className="space-y-3 ">
-                {template.form_definition.field_definition.map((field, index) => (
-                  <div key={index}>
-                    {/* text */}
-                    {field.type == "text" && (
-                      <div>
-                        <Label>{field.display_label}</Label>
-                        <Textarea autoComplete="off" placeholder="Enter text" />
+            {/* form definition fields TODO refactor */}
+            <div className="space-y-3 mb-4 p-4">
+              {template.form_definition.field_definition.map((field, index) => (
+                <div key={index}>
+                  {/* text */}
+                  {field.type == "text" && (
+                    <div>
+                      <Label>{field.display_label}</Label>
+                      <Textarea autoComplete="off" placeholder="Enter text" />
+                    </div>
+                  )}
+                  {/* file upload */}
+                  {field.type == "file" && (
+                    <div>
+                      <Label>{field.display_label}</Label>
+                      <Input type="file" />
+                    </div>
+                  )}
+                  {/* password */}
+                  {field.type == "password" && (
+                    <div>
+                      <Label>{field.display_label}</Label>
+                      <Input type="text" placeholder="Enter Password" autoComplete="off" />
+                    </div>
+                  )}
+                  {/* phone number */}
+                  {field.type == "phone" && (
+                    <div>
+                      <Label>{field.display_label}</Label>
+                      <div className="flex items-center space-x-2">
+                        <Select>
+                          <SelectTrigger className="w-[100px]">
+                            <SelectValue placeholder="Country" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="1">US</SelectItem>
+                          </SelectContent>
+                        </Select>
+                        <Input type="text" placeholder="555-555-5555" autoComplete="off" />
                       </div>
-                    )}
-                    {/* file upload */}
-                    {field.type == "file" && (
-                      <div>
-                        <Label>{field.display_label}</Label>
-                        <Input type="file" />
+                    </div>
+                  )}
+                  {/* address */}
+                  {field.type == "address" && (
+                    <div>
+                      <Label>{field.display_label}</Label>
+                      <div className="flex items-center space-x-2 mb-4">
+                        <Input type="text" placeholder="Address 1" autoComplete="off" className="w-3/4" />
+                        <Input type="text" placeholder="Address 2" autoComplete="off" className="w-1/4" />
                       </div>
-                    )}
-                    {/* password */}
-                    {field.type == "password" && (
-                      <div>
-                        <Label>{field.display_label}</Label>
-                        <Input type="text" placeholder="Enter Password" autoComplete="off" />
+                      <div className="flex items-center space-x-2">
+                        <Input type="text" placeholder="City" autoComplete="off" className="w-1/4" />
+                        <Input type="text" placeholder="State" autoComplete="off" className="w-1/4" />
+                        <Input type="text" placeholder="Zipcode" autoComplete="off" className="w-1/4" />
+                        <Input type="text" placeholder="Country" autoComplete="off" className="w-1/4" />
                       </div>
-                    )}
-                    {/* phone number */}
-                    {field.type == "phone" && (
-                      <div>
-                        <Label>{field.display_label}</Label>
-                        <div className="flex items-center space-x-2">
-                          <Select>
-                            <SelectTrigger className="w-[100px]">
-                              <SelectValue placeholder="Country" />
-                            </SelectTrigger>
-                            <SelectContent>
-                              <SelectItem value="1">US</SelectItem>
-                            </SelectContent>
-                          </Select>
-                          <Input type="text" placeholder="555-555-5555" autoComplete="off" />
-                        </div>
-                      </div>
-                    )}
-                    {/* address */}
-                    {field.type == "address" && (
-                      <div>
-                        <Label>{field.display_label}</Label>
-                        <div className="flex items-center space-x-2 mb-4">
-                          <Input type="text" placeholder="Address 1" autoComplete="off" className="w-3/4" />
-                          <Input type="text" placeholder="Address 2" autoComplete="off" className="w-1/4" />
-                        </div>
-                        <div className="flex items-center space-x-2">
-                          <Input type="text" placeholder="City" autoComplete="off" className="w-1/4" />
-                          <Input type="text" placeholder="State" autoComplete="off" className="w-1/4" />
-                          <Input type="text" placeholder="Zipcode" autoComplete="off" className="w-1/4" />
-                          <Input type="text" placeholder="Country" autoComplete="off" className="w-1/4" />
-                        </div>
-                      </div>
-                    )}
-                    {/* routing */}
-                    {field.type == "routing_number" && (
-                      <div>
-                        <Label>{field.display_label}</Label>
-                        <Input
-                          type="text"
-                          placeholder="Routing Number"
-                          autoComplete="off"
-                          className={field.valid ? "" : "error"}
-                        />
-                      </div>
-                    )}
-                    {/* bank account */}
-                    {field.type == "bank_account_number" && (
-                      <div>
-                        <Label>{field.display_label}</Label>
-                        <Input
-                          type="text"
-                          placeholder="Bank Account"
-                          autoComplete="off"
-                          className={field.valid ? "" : "error"}
-                        />
-                      </div>
-                    )}
-                  </div>
-                ))}
-              </div>
-              {/* end fields */}
-              {/* builder footer */}
+                    </div>
+                  )}
+                  {/* routing */}
+                  {field.type == "routing_number" && (
+                    <div>
+                      <Label>{field.display_label}</Label>
+                      <Input
+                        type="text"
+                        placeholder="Routing Number"
+                        autoComplete="off"
+                        className={field.valid ? "" : "error"}
+                      />
+                    </div>
+                  )}
+                  {/* bank account */}
+                  {field.type == "bank_account_number" && (
+                    <div>
+                      <Label>{field.display_label}</Label>
+                      <Input
+                        type="text"
+                        placeholder="Bank Account"
+                        autoComplete="off"
+                        className={field.valid ? "" : "error"}
+                      />
+                    </div>
+                  )}
+                </div>
+              ))}
             </div>
+            {/* end fields */}
+            {/* builder footer */}
             <BuilderFooter />
           </BuilderWrapper>
         </div>
