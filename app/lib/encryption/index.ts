@@ -21,6 +21,8 @@ export function uint8ArrayToString(uint8Array: Uint8Array) {
   return { stringRepresentation: chars.join(""), originalLength: uint8Array.length };
 }
 
+export type StringifiedUint8Array = ReturnType<typeof uint8ArrayToString>;
+
 /**
  * Unpack a string into a uint8Array.
  *
@@ -28,13 +30,7 @@ export function uint8ArrayToString(uint8Array: Uint8Array) {
  *
  * Returns the unpacked uint8Array.
  */
-export function stringToUint8Array({
-  stringRepresentation,
-  originalLength,
-}: {
-  stringRepresentation: string;
-  originalLength: number;
-}) {
+export function stringToUint8Array({ stringRepresentation, originalLength }: StringifiedUint8Array) {
   const uint8Array = new Uint8Array(originalLength);
   for (let i = 0, j = 0; i < stringRepresentation.length; i++, j += 2) {
     const num = stringRepresentation.charCodeAt(i);
@@ -63,4 +59,66 @@ export async function computeSHA256HashOfUint8Array(data: Uint8Array) {
   hashArray.forEach((byte) => hashHexParts.push(byte.toString(16).padStart(2, "0")));
 
   return hashHexParts.join("");
+}
+
+/**
+ * Derive an AES-GCM key from a password.
+ */
+const deriveAesGcmKeyFromPassword = async (password: string, salt?: Uint8Array) => {
+  const encoder = new TextEncoder();
+  const keyMaterial = await window.crypto.subtle.importKey("raw", encoder.encode(password), "PBKDF2", false, [
+    "deriveKey",
+  ]);
+
+  if (salt === undefined) {
+    // a secure random salt that should be stored alongside the encrypted data
+    salt = window.crypto.getRandomValues(new Uint8Array(32));
+  }
+
+  const key = await window.crypto.subtle.deriveKey(
+    {
+      name: "PBKDF2",
+      salt,
+      iterations: 100000,
+      hash: "SHA-256",
+    },
+    keyMaterial,
+    { name: "AES-GCM", length: 256 },
+    false,
+    ["encrypt", "decrypt"]
+  );
+
+  return {
+    key,
+    salt,
+  };
+};
+
+/**
+ * Encrypt a string using AES-GCM.
+ */
+export async function encryptString(plainText: string, password: string) {
+  const encoder = new TextEncoder();
+  const iv = window.crypto.getRandomValues(new Uint8Array(12)); // AES-GCM 12-byte IV
+
+  const { key, salt } = await deriveAesGcmKeyFromPassword(password);
+
+  const ciphertext = await window.crypto.subtle.encrypt({ name: "AES-GCM", iv }, key, encoder.encode(plainText));
+
+  return {
+    iv,
+    ciphertext: new Uint8Array(ciphertext),
+    salt,
+  };
+}
+
+/**
+ * Decrypt a string using AES-GCM. Requires the IV, ciphertext, salt, and password. Returns the decrypted string.
+ */
+export async function decryptString(iv: Uint8Array, ciphertext: Uint8Array, salt: Uint8Array, password: string) {
+  const decoder = new TextDecoder();
+  const { key } = await deriveAesGcmKeyFromPassword(password, salt);
+  const decrypted = await window.crypto.subtle.decrypt({ name: "AES-GCM", iv }, key, ciphertext);
+
+  return decoder.decode(decrypted);
 }
