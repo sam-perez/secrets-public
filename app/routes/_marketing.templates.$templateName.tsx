@@ -1,7 +1,15 @@
 import AboutSidenav from "~/components/about-sidenav";
 import BuilderFooter from "~/components/builder/footer";
+import BuilderHeader from "~/components/builder/header";
 import BuilderWrapper from "~/components/builder/wrapper";
 import { Badge } from "~/components/ui/badge";
+import {
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbList,
+  BreadcrumbSeparator,
+} from "~/components/ui/breadcrumb";
 
 import { Input } from "~/components/ui/input";
 import { Label } from "~/components/ui/label";
@@ -69,17 +77,33 @@ export default function TemplateDetails() {
   const template = templates[0];
   return (
     <div className="mx-auto px-4 max-w-5xl">
-      <Badge variant={"secondary"} className="mb-2">
-        Send
-      </Badge>
+      <div>
+        <Breadcrumb className="flex items-center mb-2">
+          <BreadcrumbList>
+            <BreadcrumbItem>
+              <BreadcrumbLink href="/templates">Templates</BreadcrumbLink>
+            </BreadcrumbItem>
+            <BreadcrumbSeparator />
+            <BreadcrumbItem>
+              <Badge variant={"secondary"} className="">
+                Send
+              </Badge>
+            </BreadcrumbItem>
+            <BreadcrumbSeparator />
+          </BreadcrumbList>
+        </Breadcrumb>
+      </div>
       <h2>{template.name}</h2>
       <p className="muted mb-4">{template.description}</p>
       <div className="mx-auto lg:grid lg:max-w-7xl grid-cols-3 gap-8">
         <div className="lg:col-span-2">
           {/* share content  */}
           <BuilderWrapper>
+            <div className="px-4 pt-4">
+              <BuilderHeader title={template.name} />
+            </div>
             {/* form definition fields TODO refactor */}
-            <div className="space-y-3 mb-4 p-4">
+            <div className="space-y-3 mb-4 px-4 pt-2 pb-2">
               {template.form_definition.field_definition.map((field, index) => (
                 <div key={index}>
                   {/* text */}

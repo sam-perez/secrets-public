@@ -1,10 +1,11 @@
 import { Outlet } from "@remix-run/react";
+import MarketingNav from "~/components/ui/marketing-nav";
 
 export default function MarketingLayout() {
   return (
     <>
-      marketing nav
-      <div className="sm:container">
+      <MarketingNav />
+      <div className="sm:container mt-4">
         <Outlet />
       </div>
     </>
