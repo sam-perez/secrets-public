@@ -9,6 +9,6 @@ export default defineConfig({
   plugins: [remix(), tsconfigPaths()],
   test: {
     // encryption uses window.crypto. need to figure how if this should be selectively applied.
-    environment: "jsdom",
+    environment: "happy-dom",
   },
 });

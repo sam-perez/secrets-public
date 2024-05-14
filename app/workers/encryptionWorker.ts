@@ -1,4 +1,4 @@
-import { computeSHA256HashOfUint8Array } from "../lib/encryption";
+import { packSecrets, unpackSecrets } from "../lib/secrets";
 
 if (typeof window !== "undefined" || typeof self !== "undefined") {
   // This function calculates the nth Fibonacci number
@@ -11,10 +11,6 @@ if (typeof window !== "undefined" || typeof self !== "undefined") {
   };
 
   console.log("Worker started, in VITE BEAUTY ME PLZ!!!");
-
-  (async () => {
-    console.log("HERE IS A HASH", await computeSHA256HashOfUint8Array(new Uint8Array([1, 2, 13])));
-  })();
 
   // Listen for messages from the main thread
   self.onmessage = (event) => {
@@ -37,4 +33,28 @@ if (typeof window !== "undefined" || typeof self !== "undefined") {
   self.postMessage({
     code: "initialized",
   });
+
+  (async () => {
+    const largeDataSizeInMB = 50;
+    const largeData = new Uint8Array(largeDataSizeInMB * 1024 * 1024).map(() => Math.floor(Math.random() * 256));
+
+    const secretResponse = [
+      {
+        textValues: ["some text"],
+        files: [
+          {
+            name: "file1",
+            data: largeData,
+          },
+        ],
+      },
+    ];
+
+    console.log(`${new Date().toISOString()} - Packing secrets...`);
+    const packedSecrets = await packSecrets(secretResponse);
+
+    console.log(`${new Date().toISOString()} - Done packing secrets, now unpacking...`);
+    await unpackSecrets(packedSecrets);
+    console.log(`${new Date().toISOString()} - Done unpacking secrets...`);
+  })();
 }

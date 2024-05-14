@@ -1,8 +1,15 @@
 import { describe, it, expect } from "vitest";
 import { packSecrets, unpackSecrets } from "./index";
-import { computeSHA256HashOfUint8Array } from "../encryption";
 
 describe("when we pack some secrets and then unpack some secrets", async () => {
+  const randomData = () => {
+    // do something between 1kb and 10kb
+    const length = Math.floor(Math.random() * 1024 * 10) + 1024;
+    const data = new Uint8Array(length).map(() => Math.floor(Math.random() * 256));
+
+    return { data };
+  };
+
   it("should return the original secrets", async () => {
     const secretResponse = [
       {
@@ -10,8 +17,7 @@ describe("when we pack some secrets and then unpack some secrets", async () => {
         files: [
           {
             name: "file1",
-            sha256Hash: await computeSHA256HashOfUint8Array(new Uint8Array([1, 2, 3])),
-            data: new Uint8Array([1, 2, 3]),
+            ...randomData(),
           },
         ],
       },
@@ -20,8 +26,15 @@ describe("when we pack some secrets and then unpack some secrets", async () => {
         files: [
           {
             name: "file2",
-            sha256Hash: await computeSHA256HashOfUint8Array(new Uint8Array([4, 5, 6])),
-            data: new Uint8Array([4, 5, 6]),
+            ...randomData(),
+          },
+          {
+            name: "file3",
+            ...randomData(),
+          },
+          {
+            name: "file2",
+            ...randomData(),
           },
         ],
       },
@@ -39,5 +52,33 @@ describe("when we pack some secrets and then unpack some secrets", async () => {
     const unpackedSecrets = await unpackSecrets(packedSecrets);
 
     expect(unpackedSecrets).toEqual(secretResponse);
+  });
+
+  // Load tests do not seem to be working in the backend.
+  describe.skip("Timing tests", async () => {
+    describe("when we work with large data", async () => {
+      it("should work", async () => {
+        const largeDataSizeInMB = 30;
+        const largeData = new Uint8Array(largeDataSizeInMB * 1024 * 1024).map(() => Math.floor(Math.random() * 256));
+
+        const secretResponse = [
+          {
+            textValues: ["some text"],
+            files: [
+              {
+                name: "file1",
+                data: largeData,
+              },
+            ],
+          },
+        ];
+
+        const packedSecrets = await packSecrets(secretResponse);
+
+        const unpackedSecrets = await unpackSecrets(packedSecrets);
+
+        expect(unpackedSecrets).toEqual(secretResponse);
+      }, 100000000);
+    });
   });
 });

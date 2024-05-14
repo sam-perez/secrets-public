@@ -66,16 +66,14 @@ export async function computeSHA256HashOfUint8Array(data: Uint8Array) {
  */
 const deriveAesGcmKeyFromPassword = async (password: string, salt?: Uint8Array) => {
   const encoder = new TextEncoder();
-  const keyMaterial = await window.crypto.subtle.importKey("raw", encoder.encode(password), "PBKDF2", false, [
-    "deriveKey",
-  ]);
+  const keyMaterial = await crypto.subtle.importKey("raw", encoder.encode(password), "PBKDF2", false, ["deriveKey"]);
 
   if (salt === undefined) {
     // a secure random salt that should be stored alongside the encrypted data
-    salt = window.crypto.getRandomValues(new Uint8Array(32));
+    salt = crypto.getRandomValues(new Uint8Array(32));
   }
 
-  const key = await window.crypto.subtle.deriveKey(
+  const key = await crypto.subtle.deriveKey(
     {
       name: "PBKDF2",
       salt,
@@ -98,11 +96,11 @@ const deriveAesGcmKeyFromPassword = async (password: string, salt?: Uint8Array) 
  * Encrypt data using AES-GCM.
  */
 export async function encryptData(plainText: Uint8Array, password: string) {
-  const iv = window.crypto.getRandomValues(new Uint8Array(12)); // AES-GCM 12-byte IV
+  const iv = crypto.getRandomValues(new Uint8Array(12)); // AES-GCM 12-byte IV
 
   const { key, salt } = await deriveAesGcmKeyFromPassword(password);
 
-  const ciphertext = await window.crypto.subtle.encrypt({ name: "AES-GCM", iv }, key, plainText);
+  const ciphertext = await crypto.subtle.encrypt({ name: "AES-GCM", iv }, key, plainText);
 
   return {
     iv,
@@ -116,7 +114,7 @@ export async function encryptData(plainText: Uint8Array, password: string) {
  */
 export async function decryptData(iv: Uint8Array, ciphertext: Uint8Array, salt: Uint8Array, password: string) {
   const { key } = await deriveAesGcmKeyFromPassword(password, salt);
-  const decrypted = await window.crypto.subtle.decrypt({ name: "AES-GCM", iv }, key, ciphertext);
+  const decrypted = await crypto.subtle.decrypt({ name: "AES-GCM", iv }, key, ciphertext);
 
   return new Uint8Array(decrypted);
 }

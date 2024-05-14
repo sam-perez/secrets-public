@@ -152,25 +152,6 @@ function UploadLargeInner() {
     xhr.send(new Blob([binaryArray]));
 
     setUploadHash(await computeSHA256HashOfUint8Array(binaryArray));
-
-    // let's test out some stuff
-    const { stringRepresentation, originalLength } = uint8ArrayToString(binaryArray);
-    const reconstituted = stringToUint8Array({ stringRepresentation, originalLength });
-
-    console.log("Data integrity check:", binaryArray.toString() === reconstituted.toString() ? "PASSED" : "FAILED");
-
-    console.log("Converted string (gobbledygook):", stringRepresentation);
-
-    const originalHash = await computeSHA256HashOfUint8Array(binaryArray);
-    const reconstitutedHash = await computeSHA256HashOfUint8Array(reconstituted);
-
-    const sizeOfBinaryArray = binaryArray.length;
-    const sizeOfStr = stringRepresentation.length;
-    console.log("Size of binary array:", sizeOfBinaryArray);
-    console.log("Size of string:", sizeOfStr);
-
-    console.log("Hashes:", { originalHash, reconstitutedHash });
-    console.log("Hash integrity check:", originalHash === reconstitutedHash ? "PASSED" : "FAILED");
   }
 
   function handleFileChange(event: React.ChangeEvent<HTMLInputElement>) {

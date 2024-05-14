@@ -1,11 +1,5 @@
-import {
-  computeSHA256HashOfUint8Array,
-  decryptData,
-  encryptData,
-  uint8ArrayToString,
-  StringifiedUint8Array,
-  stringToUint8Array,
-} from "../encryption";
+// eslint-disable-next-line max-len
+import { decryptData, encryptData, uint8ArrayToString, StringifiedUint8Array, stringToUint8Array } from "../encryption";
 import pako from "pako";
 
 // TODO: not sure what these names should be yet, just a placeholder for now
@@ -22,9 +16,6 @@ type SecretValue = {
   files: {
     /** The name of the file. */
     name: string;
-
-    /** The sha 256 hash of the file data, for integrity purposes. */
-    sha256Hash: string;
 
     /** The file data. */
     data: Uint8Array;
@@ -61,7 +52,6 @@ export const packSecrets = async (secretResponse: SecretResponses): Promise<Pack
       files: secretValue.files.map((file) => {
         return {
           name: file.name,
-          sha256Hash: file.sha256Hash,
           stringifiedUintArray8Data: uint8ArrayToString(file.data),
         };
       }),
@@ -81,7 +71,7 @@ export const packSecrets = async (secretResponse: SecretResponses): Promise<Pack
 
   const { iv, ciphertext, salt } = await encryptData(compressedJsonSecretValues, password);
 
-  // one more layer of conferting the arrays to strings "efficiently"
+  // one more layer of converting the arrays to strings "efficiently"
   return {
     iv: uint8ArrayToString(iv),
     ciphertext: uint8ArrayToString(ciphertext),
@@ -107,7 +97,7 @@ export const unpackSecrets = async (packedSecrets: PackedSecrets) => {
 
   const jsonSerializableSecretValues = JSON.parse(jsonSecretValues) as Array<{
     textValues: string[];
-    files: Array<{ name: string; sha256Hash: string; stringifiedUintArray8Data: StringifiedUint8Array }>;
+    files: Array<{ name: string; stringifiedUintArray8Data: StringifiedUint8Array }>;
   }>;
 
   const retrievedSecretResponse: SecretResponses = jsonSerializableSecretValues.map((jsonSerializableSecretValue) => {
@@ -118,22 +108,11 @@ export const unpackSecrets = async (packedSecrets: PackedSecrets) => {
 
         return {
           name: file.name,
-          sha256Hash: file.sha256Hash,
           data: originalData,
         };
       }),
     };
   });
-
-  // let's do a quick integrity check, just to be sure
-  for (const secretValue of retrievedSecretResponse) {
-    for (const file of secretValue.files) {
-      const hash = await computeSHA256HashOfUint8Array(file.data);
-      if (hash !== file.sha256Hash) {
-        throw new Error("Data integrity check failed.");
-      }
-    }
-  }
 
   return retrievedSecretResponse;
 };
