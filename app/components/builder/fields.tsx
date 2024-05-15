@@ -1,17 +1,25 @@
-import { DndContext, closestCorners } from "@dnd-kit/core";
+import {
+  DndContext,
+  KeyboardSensor,
+  PointerSensor,
+  TouchSensor,
+  closestCorners,
+  useSensor,
+  useSensors,
+} from "@dnd-kit/core";
 
 import { Column } from "./column";
 import { useState } from "react";
-import { arrayMove } from "@dnd-kit/sortable";
+import { arrayMove, sortableKeyboardCoordinates } from "@dnd-kit/sortable";
 
 const itemsData = [
   {
     id: 1,
-    title: "thing 1",
+    title: "API Key Public",
   },
   {
     id: 2,
-    title: "thing 2",
+    title: "API Secret",
   },
   {
     id: 3,
@@ -37,10 +45,19 @@ export default function BuilderFields() {
     });
   };
 
+  //mobile and keyboard
+  const sensors = useSensors(
+    useSensor(PointerSensor),
+    useSensor(TouchSensor),
+    useSensor(KeyboardSensor, {
+      coordinateGetter: sortableKeyboardCoordinates,
+    })
+  );
+
   return (
     <>
       <div className="max-w-4xl mx-auto">
-        <DndContext onDragEnd={handleDragEnd} collisionDetection={closestCorners}>
+        <DndContext sensors={sensors} onDragEnd={handleDragEnd} collisionDetection={closestCorners}>
           <Column items={items} />
         </DndContext>
       </div>
