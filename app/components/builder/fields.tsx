@@ -1,10 +1,13 @@
 import { DndContext, closestCorners } from "@dnd-kit/core";
-import { useState } from "react";
+
 import { Column } from "./column";
-const items = [
+import { useState } from "react";
+import { arrayMove } from "@dnd-kit/sortable";
+
+const itemsData = [
   {
     id: 1,
-    title: "thing",
+    title: "thing 1",
   },
   {
     id: 2,
@@ -17,10 +20,27 @@ const items = [
 ];
 
 export default function BuilderFields() {
+  const [items, setItems] = useState(itemsData);
+
+  const getItemPosition = (id) => items.findIndex((item) => item.id === id);
+
+  const handleDragEnd = (event) => {
+    const { active, over } = event;
+
+    if (active.id === over.id) return; //same position; ignore
+
+    setItems((items) => {
+      const originalPos = getItemPosition(active.id);
+      const newPos = getItemPosition(over.id);
+
+      return arrayMove(items, originalPos, newPos);
+    });
+  };
+
   return (
     <>
       <div className="max-w-4xl mx-auto">
-        <DndContext collisionDetection={closestCorners}>
+        <DndContext onDragEnd={handleDragEnd} collisionDetection={closestCorners}>
           <Column items={items} />
         </DndContext>
       </div>
