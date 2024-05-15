@@ -12,7 +12,12 @@ import { Column } from "./column";
 import { useState } from "react";
 import { arrayMove, sortableKeyboardCoordinates } from "@dnd-kit/sortable";
 
-const itemsData = [
+type Item = {
+  id: number;
+  title: string;
+};
+
+const itemsData: Item[] = [
   {
     id: 1,
     title: "API Key Public",
@@ -30,7 +35,7 @@ const itemsData = [
 export default function BuilderFields() {
   const [items, setItems] = useState(itemsData);
 
-  const getItemPosition = (id) => items.findIndex((item) => item.id === id);
+  const getItemPosition = (id: number) => items.findIndex((item) => item.id === id);
 
   const handleDragEnd = (event) => {
     const { active, over } = event;

@@ -4,7 +4,12 @@ import { Input } from "../ui/input";
 import { DragHandleDots2Icon } from "@radix-ui/react-icons";
 import { Label } from "../ui/label";
 
-export const Item = ({ id, title }) => {
+export type ItemProps = {
+  id: number;
+  title: string;
+};
+
+export const Item = ({ id, title }: ItemProps) => {
   const { attributes, listeners, setNodeRef, transform, transition } = useSortable({ id });
   const style = {
     transition,

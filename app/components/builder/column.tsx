@@ -1,7 +1,12 @@
 import { SortableContext, verticalListSortingStrategy } from "@dnd-kit/sortable";
 
-import { Item } from "./item";
-export const Column = ({ items }) => {
+import { Item, ItemProps } from "./item";
+
+type ColumnProps = {
+  items: ItemProps[];
+};
+
+export const Column = ({ items }: ColumnProps) => {
   return (
     <>
       <div className="bg-red-50 p-5">
