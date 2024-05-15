@@ -1,5 +1,6 @@
 import {
   DndContext,
+  DragEndEvent,
   KeyboardSensor,
   PointerSensor,
   TouchSensor,
@@ -41,17 +42,19 @@ export default function BuilderFields() {
 
   const getItemPosition = (id: number) => items.findIndex((item) => item.id === id);
 
-  const handleDragEnd = (event) => {
+  const handleDragEnd = (event: DragEndEvent) => {
     const { active, over } = event;
 
-    if (active.id === over.id) return; //same position; ignore
+    if (over && active.id === over.id) return; //same position; ignore
 
-    setItems((items) => {
-      const originalPos = getItemPosition(active.id);
-      const newPos = getItemPosition(over.id);
+    if (over) {
+      setItems((items) => {
+        const originalPos = getItemPosition(active.id as number);
+        const newPos = getItemPosition(over.id as number);
 
-      return arrayMove(items, originalPos, newPos);
-    });
+        return arrayMove(items, originalPos, newPos);
+      });
+    }
   };
 
   //mobile and keyboard
