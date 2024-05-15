@@ -11,24 +11,28 @@ import {
 import { Column } from "./column";
 import { useState } from "react";
 import { arrayMove, sortableKeyboardCoordinates } from "@dnd-kit/sortable";
+import { ItemProps } from "./item";
 
-type Item = {
-  id: number;
-  title: string;
-};
-
-const itemsData: Item[] = [
+const itemsData: ItemProps[] = [
   {
     id: 1,
     title: "API Key Public",
+    type: "text",
   },
   {
     id: 2,
     title: "API Secret",
+    type: "text",
   },
   {
     id: 3,
     title: "thing 3",
+    type: "text",
+  },
+  {
+    id: 4,
+    title: "file",
+    type: "file",
   },
 ];
 
