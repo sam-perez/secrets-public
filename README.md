@@ -1,4 +1,5 @@
 ```
+nvm use --lts
 yarn run dev
 ```
 
