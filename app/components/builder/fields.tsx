@@ -1,5 +1,6 @@
 import {
   DndContext,
+  DragEndEvent,
   KeyboardSensor,
   PointerSensor,
   TouchSensor,
@@ -11,38 +12,49 @@ import {
 import { Column } from "./column";
 import { useState } from "react";
 import { arrayMove, sortableKeyboardCoordinates } from "@dnd-kit/sortable";
+import { ItemProps } from "./item";
 
-const itemsData = [
+const itemsData: ItemProps[] = [
   {
     id: 1,
     title: "API Key Public",
+    type: "text",
   },
   {
     id: 2,
     title: "API Secret",
+    type: "text",
   },
   {
     id: 3,
     title: "thing 3",
+    type: "text",
+  },
+  {
+    id: 4,
+    title: "file",
+    type: "file",
   },
 ];
 
 export default function BuilderFields() {
   const [items, setItems] = useState(itemsData);
 
-  const getItemPosition = (id) => items.findIndex((item) => item.id === id);
+  const getItemPosition = (id: number) => items.findIndex((item) => item.id === id);
 
-  const handleDragEnd = (event) => {
+  const handleDragEnd = (event: DragEndEvent) => {
     const { active, over } = event;
 
-    if (active.id === over.id) return; //same position; ignore
+    if (over && active.id === over.id) return; //same position; ignore
 
-    setItems((items) => {
-      const originalPos = getItemPosition(active.id);
-      const newPos = getItemPosition(over.id);
+    if (over) {
+      setItems((items) => {
+        const originalPos = getItemPosition(active.id as number);
+        const newPos = getItemPosition(over.id as number);
 
-      return arrayMove(items, originalPos, newPos);
-    });
+        return arrayMove(items, originalPos, newPos);
+      });
+    }
   };
 
   //mobile and keyboard
