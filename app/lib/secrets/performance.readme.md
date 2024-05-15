@@ -1,39 +1,9 @@
-import { packSecrets, unpackSecrets } from "../lib/secrets";
+## Setup.
 
-if (typeof window !== "undefined" || typeof self !== "undefined") {
-  // This function calculates the nth Fibonacci number
-  const fibonacci = (n: number): number => {
-    if (n <= 1) {
-      return n;
-    }
+We ran the following code in a small benchmark sampling run on Sam's new
+macbook pro 15" with m2 and 24gb of ram in up to date chrome on 2024-05-15.
 
-    return fibonacci(n - 1) + fibonacci(n - 2);
-  };
-
-  console.log("Worker started, in VITE BEAUTY ME PLZ!!!");
-
-  // Listen for messages from the main thread
-  self.onmessage = (event) => {
-    const {
-      data: { data },
-    } = event;
-
-    console.log("DATA:", event.data);
-    if (typeof data === "number") {
-      const result = fibonacci(data);
-      console.log("From worker result:", result);
-      // Send the result back to the main thread
-      self.postMessage(result);
-    } else {
-      self.postMessage("Please provide a number");
-    }
-  };
-
-  // Send a message to the main thread that the worker is initialized
-  self.postMessage({
-    code: "initialized",
-  });
-
+```
   (async () => {
     const dataSizeInMB = [1, 5, 10, 20, 30, 40, 50];
     const samples = 5;
@@ -46,6 +16,7 @@ if (typeof window !== "undefined" || typeof self !== "undefined") {
 
     for (const size of dataSizeInMB) {
       for (let i = 0; i < samples; i++) {
+        // new set of random data per test
         const largeData = new Uint8Array(size * 1024 * 1024).map(() => Math.floor(Math.random() * 256));
 
         const secretResponse = [
@@ -89,4 +60,50 @@ if (typeof window !== "undefined" || typeof self !== "undefined") {
 
     console.log("Average times:", averageTimes);
   })();
-}
+```
+
+## Results.
+
+Observations (avg time across all samples)
+
+### 1 megabyte
+
+_packSecrets_: 456.8ms
+
+_unpackSecrets_: 38.8ms
+
+### 5 megabytes
+
+_packSecrets_: 839.6ms
+
+_unpackSecrets_: 135.4ms
+
+### 10 megabytes
+
+_packSecrets_: 1649.4ms
+
+_unpackSecrets_: 263.8ms
+
+### 20 megabytes
+
+_packSecrets_: 3288.8ms
+
+_unpackSecrets_: 528ms
+
+### 30 megabytes
+
+_packSecrets_: 5144.2ms
+
+_unpackSecrets_: 785.2ms
+
+### 40 megabytes
+
+_packSecrets_: 6614.6ms
+
+_unpackSecrets_: 1048.6ms
+
+### 50 megabytes
+
+_packSecrets_: 8318.6ms
+
+_unpackSecrets_: 1292.6ms
