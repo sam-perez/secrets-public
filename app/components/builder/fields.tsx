@@ -13,6 +13,17 @@ import { Column } from "./column";
 import { useState } from "react";
 import { arrayMove, sortableKeyboardCoordinates } from "@dnd-kit/sortable";
 import { ItemProps } from "./item";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuGroup,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "../ui/dropdown-menu";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "../ui/tooltip";
+import { Button } from "../ui/button";
 
 const itemsData: ItemProps[] = [
   {
@@ -39,6 +50,18 @@ const itemsData: ItemProps[] = [
 
 export default function BuilderFields() {
   const [items, setItems] = useState(itemsData);
+
+  //add new item button
+  const addItem = (type: "text" | "file") => {
+    const newItemId = items.length + 1;
+    const newItem: ItemProps = {
+      id: newItemId,
+      title: type === "text" ? `New Text Item ${newItemId}` : `New File Item ${newItemId}`,
+      type: type,
+    };
+    setItems((prevItems) => [...prevItems, newItem]);
+  };
+  //end
 
   const getItemPosition = (id: number) => items.findIndex((item) => item.id === id);
 
@@ -69,6 +92,32 @@ export default function BuilderFields() {
   return (
     <>
       <div className="max-w-4xl mx-auto">
+        {/* menu TOOD refactor */}
+        <DropdownMenu>
+          <DropdownMenuTrigger>
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger>
+                  <Button variant="link" className="w-full">
+                    + Add Field
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>Add new encrypted field to this form</p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent className="w-56">
+            <DropdownMenuLabel>Add Field</DropdownMenuLabel>
+            <DropdownMenuSeparator />
+            <DropdownMenuGroup>
+              <DropdownMenuItem onClick={() => addItem("text")}>Text</DropdownMenuItem>
+              <DropdownMenuItem onClick={() => addItem("file")}>File Upload</DropdownMenuItem>
+            </DropdownMenuGroup>
+          </DropdownMenuContent>
+        </DropdownMenu>
+        {/* end menu */}
         <DndContext sensors={sensors} onDragEnd={handleDragEnd} collisionDetection={closestCorners}>
           <Column items={items} />
         </DndContext>
