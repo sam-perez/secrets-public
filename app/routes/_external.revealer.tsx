@@ -1,61 +1,72 @@
 import { CopyIcon, DownloadIcon, EyeOpenIcon } from "@radix-ui/react-icons";
+import { Link } from "@remix-run/react";
 import AboutSidenav from "~/components/about-sidenav";
+import { secretBlobProps } from "~/components/builder/fields";
 import { Button } from "~/components/ui/button";
 
-const sends = [
+//load secretBlob data and use props from builder
+const secretBlobDecrypted: secretBlobProps[] = [
   {
-    name: "Sending API Key",
-    email: "taylorballenger@gmail.com",
-    created_on: "4/24/24",
-    created_by: "taylorballenger@gmail.com",
-    expires_in: "3d / 4 views",
-    encrypted_data: [
+    secretHeader: {
+      title: "Sending API Key",
+      created: "Fri, 02 Feb 1996 03:04:05 GMT",
+      expiration_date: "3d",
+      expiration_views_remaining: 2,
+    },
+    secretConfig: [
       {
-        key: "Instructions",
-        value: "Please store your new api key somewhere safe!",
+        id: 1,
+        title: "API Key Public",
         type: "text",
+        placeholder: "enter it!",
+        value: "kqkzqthhsrfdwaojqlsvrfcrastkaqveverrbsiunqqeefcmcxfptezav",
       },
       {
-        key: "API Secret",
-        value: [
-          "kqkzqthhsrfdwaojqlsvrfcrastkaqveverrbsiunqqeefcmcxfptezav",
-          "jvbsyumpxmdxdisxxjytonhkcnnjqtoasdqbehysfsddzlsgxenwcxuqazznnxfgfiqcia",
-        ].join(""),
-        type: "text",
+        id: 2,
+        title: "API Key Private",
+        type: "multi",
+        placeholder: "enter it!",
+        value: "kqkzqthhsrfdwaojqlsvrfcrastkaqveverrbsiunqqeefcmcxfptezavkqkzqthhsrfdwaojqlsvrfcrastkaqvv",
       },
       {
-        key: "API Story",
-        value: [
-          "Check out our new font generator and level up your social bios.",
-          "Need more? Head over to Glyphy for all the fancy fonts and cool symbols you could ever imagine.",
-        ].join(""),
-        type: "text",
-      },
-      {
-        key: "Env file to use",
-        value: "use_this.env.local",
+        id: 3,
+        title: ".env file",
         type: "file",
+        placeholder: "enter it!",
+        value: "filename.txt",
+      },
+      {
+        id: 4,
+        title: "Has value",
+        type: "text",
+        placeholder: "enter it!",
+        value: "has value",
       },
     ],
   },
 ];
 
 export default function Revealer() {
-  const send = sends[0];
+  const send = secretBlobDecrypted[0];
 
   return (
     <>
       <div className="px-4 container max-w-5xl">
-        <h2>{send.name}</h2>
-        <p className="muted mb-4">{send.email} has securely shared this data with you via s2ee.</p>
+        <h2>{send.secretHeader.title}</h2>
+        <p className="muted mb-4">
+          Someone has securely shared this data with you via{" "}
+          <Link target="_blank" to="https://2secured.link" rel="noreferrer">
+            2Secured
+          </Link>
+        </p>
         <div className="mx-auto lg:grid lg:max-w-7xl grid-cols-3 gap-8">
           <div className="lg:col-span-2">
             {/* share content  */}
             <div className="border p-4 rounded mb-4">
-              {send.encrypted_data.map((data, index) => (
+              {send.secretConfig.map((data, index) => (
                 <div key={index} className="flex space-x-2 items-center mb-4">
                   <div className="flex-1">
-                    <p className="font-medium pb-2">{data.key}</p>
+                    <p className="font-medium pb-2">{data.title}</p>
                     <p className="break-all bg-slate-50 p-2 rounded">
                       <code>{data.value}</code>
                     </p>
@@ -99,15 +110,14 @@ export default function Revealer() {
               <div className="space-y-4 border-b pb-10 mb-10">
                 <div>
                   <small>Created on</small>
-                  <p>{send.created_on}</p>
+                  <p>{send.secretHeader.created}</p>
                 </div>
-                <div>
-                  <small>Created by</small>
-                  <p>{send.created_by}</p>
-                </div>
+
                 <div>
                   <small>Expires in</small>
-                  <p>{send.expires_in}</p>
+                  <p>
+                    {send.secretHeader.expiration_date} / {send.secretHeader.expiration_views_remaining} views
+                  </p>
                 </div>
               </div>
               {/* marketing    */}
@@ -118,8 +128,6 @@ export default function Revealer() {
           </div>
         </div>
       </div>
-
-      <hr />
     </>
   );
 }

@@ -26,9 +26,14 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "../ui/
 import { Button } from "../ui/button";
 import EditableText from "./editableText";
 
-interface secretBlobProps {
+export interface secretBlobProps {
   secretHeader: {
     title: string;
+    created?: string;
+    password?: string;
+    mfa_email?: string;
+    expiration_date?: string;
+    expiration_views_remaining?: number;
   };
   secretConfig: ItemProps[];
 }
