@@ -24,35 +24,80 @@ import {
 } from "../ui/dropdown-menu";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "../ui/tooltip";
 import { Button } from "../ui/button";
+import EditableText from "./editableText";
 
-const itemsData: ItemProps[] = [
+interface secretBlobProps {
+  secretHeader: {
+    title: string;
+  };
+  secretConfig: ItemProps[];
+}
+
+const secretBlob: secretBlobProps[] = [
   {
-    id: 1,
-    title: "API Key Public",
-    type: "text",
-  },
-  {
-    id: 2,
-    title: "API Secret",
-    type: "text",
-  },
-  {
-    id: 3,
-    title: "thing 3",
-    type: "text",
-  },
-  {
-    id: 4,
-    title: "file",
-    type: "file",
+    secretHeader: {
+      title: "API Header",
+    },
+    secretConfig: [
+      {
+        id: 1,
+        title: "API Key Public",
+        type: "text",
+        placeholder: "enter it!",
+      },
+      {
+        id: 2,
+        title: "API Key Public",
+        type: "multi",
+        placeholder: "enter it!",
+      },
+      {
+        id: 3,
+        title: ".env file",
+        type: "file",
+        placeholder: "enter it!",
+      },
+      {
+        id: 4,
+        title: "Has value",
+        type: "text",
+        placeholder: "enter it!",
+        value: "has value",
+      },
+    ],
   },
 ];
 
+// const secretConfig: ItemProps[] = [
+//   {
+//     id: 1,
+//     title: "API Key Public",
+//     type: "text",
+//     value: "has a value",
+//   },
+//   {
+//     id: 2,
+//     title: "API Secret",
+//     type: "text",
+//   },
+//   {
+//     id: 3,
+//     title: "thing 3",
+//     type: "text",
+//   },
+//   {
+//     id: 4,
+//     title: "file",
+//     type: "file",
+//   },
+// ];
+
 export default function BuilderFields() {
-  const [items, setItems] = useState(itemsData);
+  //get items from the returned data
+  const [items, setItems] = useState(secretBlob[0].secretConfig);
 
   //add new item button
-  const addItem = (type: "text" | "file") => {
+  const addItem = (type: "text" | "file" | "multi") => {
     const newItemId = items.length + 1;
     const newItem: ItemProps = {
       id: newItemId,
@@ -89,9 +134,17 @@ export default function BuilderFields() {
     })
   );
 
+  console.log(secretBlob[0].secretConfig);
+
   return (
     <>
       <div className="max-w-4xl mx-auto">
+        <div className="p-4">
+          <h4>
+            <EditableText initialText="edit me" />
+          </h4>
+        </div>
+
         {/* menu TOOD refactor */}
         <DropdownMenu>
           <DropdownMenuTrigger>
@@ -113,6 +166,7 @@ export default function BuilderFields() {
             <DropdownMenuSeparator />
             <DropdownMenuGroup>
               <DropdownMenuItem onClick={() => addItem("text")}>Text</DropdownMenuItem>
+              <DropdownMenuItem onClick={() => addItem("multi")}>Multiline Text</DropdownMenuItem>
               <DropdownMenuItem onClick={() => addItem("file")}>File Upload</DropdownMenuItem>
             </DropdownMenuGroup>
           </DropdownMenuContent>

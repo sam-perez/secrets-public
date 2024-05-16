@@ -118,6 +118,8 @@ export default function Revealer() {
           </div>
         </div>
       </div>
+
+      <hr />
     </>
   );
 }
