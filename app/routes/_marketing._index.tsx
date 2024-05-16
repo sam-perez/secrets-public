@@ -1,8 +1,9 @@
-import { PaperPlaneIcon } from "@radix-ui/react-icons";
+import { CheckIcon, DotFilledIcon, PaperPlaneIcon } from "@radix-ui/react-icons";
 import type { MetaFunction } from "@remix-run/node";
 import { Link } from "@remix-run/react";
 import { Badge } from "~/components/ui/badge";
 import { Button } from "~/components/ui/button";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "~/components/ui/tabs";
 
 export const meta: MetaFunction = () => {
   return [
@@ -85,8 +86,7 @@ export default function Index() {
       <section id="howItWorks">
         <div className="grid grid-cols-3 gap-8">
           {howItWorks.map((item, index) => (
-            <div className="" key={index}>
-              <div></div>
+            <div className="p-4 border rounded" key={index}>
               <div>
                 <h4>{item.title}</h4>
                 <p className="pt-2 text-base">{item.description}</p>
@@ -96,52 +96,67 @@ export default function Index() {
         </div>
       </section>
 
-      <section id="useCases">
-        <h3>2Secured helps you keep things safe at work and at home.</h3>
-        <p className="lead">Perfect anytime you are sending or requesting sensitive information from someone else.</p>
-        <div className="grid grid-cols-2 gap-8">
-          <div className="bg-slate-50 border rounded p-4">
-            <h4>For Business</h4>
-            {useCases.work.map((item, index) => (
-              <div key={index} className="flex items-center justify-between border p-4 rounded-md mb-4 bg-white">
-                <h5>{item.title}</h5>
-                <Badge variant={"secondary"}>{item.type}</Badge>
-              </div>
-            ))}
+      <section id="useCases" className="my-24">
+        <div className="grid grid-cols-2 gap-24 items-center">
+          <div className="p-20">
+            <h2>2Secured helps you keep your data safe at work, and at home.</h2>
+            <p className="text-lg mt-4">
+              Perfect anytime you are sending or requesting sensitive information from someone else.
+            </p>
           </div>
-          <div className="bg-slate-50 border rounded p-4">
-            <h4>For Personal</h4>
-            {useCases.personal.map((item, index) => (
-              <div key={index} className="flex items-center justify-between border p-4 rounded-md mb-4 bg-white">
-                <h5>{item.title}</h5>
-                <Badge variant={"secondary"}>{item.type}</Badge>
-              </div>
-            ))}
+          <div>
+            <Tabs defaultValue="business" className="h-[400px] bg-slate-50 p-4">
+              <TabsList className="grid w-full grid-cols-2">
+                <TabsTrigger value="business">For Work</TabsTrigger>
+                <TabsTrigger value="personal">Personal</TabsTrigger>
+              </TabsList>
+              <TabsContent value="business">
+                {useCases.work.map((item, index) => (
+                  <div key={index} className="flex items-center justify-between border p-4 rounded-md mb-4 bg-white">
+                    <h5>{item.title}</h5>
+                    <Badge variant={"secondary"}>{item.type}</Badge>
+                  </div>
+                ))}
+              </TabsContent>
+              <TabsContent value="personal">
+                {useCases.personal.map((item, index) => (
+                  <div key={index} className="flex items-center justify-between border p-4 rounded-md mb-4 bg-white">
+                    <h5>{item.title}</h5>
+                    <Badge variant={"secondary"}>{item.type}</Badge>
+                  </div>
+                ))}
+              </TabsContent>
+            </Tabs>
           </div>
         </div>
       </section>
 
       <section id="formEditor" className="my-24">
-        <div className="grid grid-cols-2 ">
-          <div>
-            <h3>Powerful form editor lets you quickly send or request encrypted files and text to anyone.</h3>
-            <p className="text-lg">
-              Create your own reusable 2Secured forms and save them as templates to quickly reuse.
+        <div className="grid grid-cols-2 gap-24 items-center">
+          <div className="p-20">
+            <h2>Powerful form editor lets you quickly send or request encrypted files and text to anyone.</h2>
+            <p className="text-lg mt-4">
+              Create your own reusable 2Secured forms and save them as templates to quickly reuse them.
             </p>
           </div>
-          <div>asdfasfd</div>
+          <div>
+            <img src="https://place-hold.it/500" alt="" />
+          </div>
         </div>
       </section>
 
       <section id="securitySettings" className="my-24">
-        <div className="grid grid-cols-2 ">
-          <div>
-            <h3>Control access and set permissions to your 2Secured link.</h3>
-            <p className="text-lg">
-              Limit the domains of who can view your data, how many times a link can be viewed, and more.
+        <div className="grid grid-cols-2 gap-24 items-center">
+          <div className="p-20">
+            <h2>Control access and set permissions to your 2Secured link.</h2>
+            <p className="text-lg mt-4">
+              Restrict the email addresses that can view your links, set how many times a link can be viewed, require a
+              password and more.
             </p>
           </div>
-          <div>asdfasfd</div>
+          <div>
+            <img src="https://place-hold.it/500" alt="" />
+          </div>
         </div>
       </section>
 
