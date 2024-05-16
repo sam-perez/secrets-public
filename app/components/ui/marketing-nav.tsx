@@ -20,6 +20,10 @@ const nav_links = [
     name: "Documentation",
     href: "#",
   },
+  {
+    name: "Security",
+    href: "#",
+  },
 ];
 
 export default function MarketingNav() {
