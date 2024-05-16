@@ -6,6 +6,7 @@ import {
   NavigationMenuList,
   navigationMenuTriggerStyle,
 } from "./navigation-menu";
+import LogoIcon from "./logo";
 
 const nav_links = [
   {
@@ -29,9 +30,12 @@ const nav_links = [
 export default function MarketingNav() {
   return (
     <nav className="border-b">
-      <div className="container py-2 flex items-center space-x-4">
+      <div className="container py-2 flex items-center space-x-4 justify-between">
         <Link to={"/"}>
-          <div className="text-sm font-bold tracking-tight">2Secured</div>
+          <div className=" flex items-center">
+            <LogoIcon size="20px" color="#a8a29e" />
+            <span className="text-base font-bold tracking-tight ml-3">2Secured</span>
+          </div>
         </Link>
         <NavigationMenu>
           <NavigationMenuList>
