@@ -127,7 +127,7 @@ export default function Index() {
         </div>
       </section>
 
-      <section id="useCases" className="my-24">
+      <section id="useCases" className="my-24 bg-slate-50">
         <div className="sm:p-20 grid sm:grid-cols-2 grid-cols-1 gap-24 items-center">
           <div>
             <h2>2Secured helps you keep your data safe at work, and at home.</h2>
@@ -171,12 +171,12 @@ export default function Index() {
             </p>
           </div>
           <div>
-            <img src="https://place-hold.it/500" alt="" />
+            <div className="border h-[500px]">sdfasdfasf</div>
           </div>
         </div>
       </section>
 
-      <section id="securitySettings" className="my-12">
+      <section id="securitySettings" className="my-12 bg-slate-50">
         <div className="sm:p-20 grid sm:grid-cols-2 grid-cols-1 sm:gap-24 items-center">
           <div>
             <h2>Control access and set permissions to your 2Secured link.</h2>
@@ -185,9 +185,7 @@ export default function Index() {
               password and more.
             </p>
           </div>
-          <div>
-            <img src="https://place-hold.it/500" alt="" />
-          </div>
+          <div className="border h-[500px]">sdfasdfasf</div>
         </div>
       </section>
 

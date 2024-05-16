@@ -43,7 +43,7 @@ export default function Templates() {
   return (
     <>
       <section className="mx-auto max-w-4xl text-center p-20 space-y-2">
-        <h1>Explore Templates</h1>
+        <h1>Explore templates</h1>
         <p className="lead mb-4">
           Start from one of these reusable forms to quickly send or receive encrypted information.
         </p>

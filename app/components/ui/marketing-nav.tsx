@@ -31,7 +31,7 @@ export default function MarketingNav() {
     <nav className="border-b">
       <div className="container py-2 flex items-center space-x-4">
         <Link to={"/"}>
-          <div className="text-sm font-semibold">2Secure</div>
+          <div className="text-sm font-bold tracking-tight">2Secured</div>
         </Link>
         <NavigationMenu>
           <NavigationMenuList>
