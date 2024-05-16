@@ -31,7 +31,7 @@ export const Item = ({ id, title, type, placeholder, value }: ItemProps) => {
             {/* TODO */}
             <EditableText initialText={title} />
           </Label>
-          <div className="flex items-center space-x-2">
+          <div className="flex items-center space-x-2" data-no-dnd="true">
             {type === "text" && <Input type="text" placeholder={placeholder} value={value} />}
             {type === "file" && <Input type="file" />}
             {type === "multi" && <Textarea placeholder={placeholder} />}

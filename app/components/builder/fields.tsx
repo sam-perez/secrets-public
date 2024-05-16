@@ -127,8 +127,17 @@ export default function BuilderFields() {
 
   //mobile and keyboard
   const sensors = useSensors(
-    useSensor(PointerSensor),
-    useSensor(TouchSensor),
+    useSensor(PointerSensor, {
+      activationConstraint: {
+        distance: 5,
+      },
+    }),
+    useSensor(TouchSensor, {
+      activationConstraint: {
+        delay: 200,
+        tolerance: 6,
+      },
+    }),
     useSensor(KeyboardSensor, {
       coordinateGetter: sortableKeyboardCoordinates,
     })
