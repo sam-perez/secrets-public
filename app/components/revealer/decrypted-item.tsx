@@ -8,9 +8,22 @@ export const DecryptedItem = ({ title, type, value }: ItemProps) => {
   const [isCopied, setIsCopied] = useState(false);
 
   const handleCopy = () => {
+    if (!value) return;
     navigator.clipboard.writeText(value);
     setIsCopied(true);
     setTimeout(() => setIsCopied(false), 2000); // Reset copied state after 2 seconds
+  };
+
+  const handleDownload = () => {
+    if (!value) return;
+
+    const blob = new Blob([value], { type: "text/plain" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `${title.replace(/\s+/g, "-").toLowerCase()}.txt`; // Use title to name the file
+    a.click();
+    URL.revokeObjectURL(url);
   };
 
   return (
@@ -25,11 +38,10 @@ export const DecryptedItem = ({ title, type, value }: ItemProps) => {
         <div className="flex space-x-2">
           {type == "text" && (
             <>
-              {/* copy text */}
               <Button variant={"outline"} size={"icon"} onClick={handleCopy}>
                 {isCopied ? <CheckIcon className="text-green-500 h-4 w-4" /> : <CopyIcon className="h-4 w-4" />}
               </Button>
-              <Button variant={"outline"} size={"icon"}>
+              <Button variant={"outline"} size={"icon"} onClick={handleDownload}>
                 <DownloadIcon className="h-4 w-4" />
               </Button>
             </>
@@ -37,11 +49,10 @@ export const DecryptedItem = ({ title, type, value }: ItemProps) => {
 
           {type == "multi" && (
             <>
-              {/* copy text */}
               <Button variant={"outline"} size={"icon"} onClick={handleCopy}>
                 {isCopied ? <CheckIcon className="text-green-500 h-4 w-4" /> : <CopyIcon className="h-4 w-4" />}
               </Button>
-              <Button variant={"outline"} size={"icon"}>
+              <Button variant={"outline"} size={"icon"} onClick={handleDownload}>
                 <DownloadIcon className="h-4 w-4" />
               </Button>
             </>
