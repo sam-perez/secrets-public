@@ -2,6 +2,8 @@ import { CopyIcon, DownloadIcon, EyeOpenIcon } from "@radix-ui/react-icons";
 import { Link } from "@remix-run/react";
 import AboutSidenav from "~/components/about-sidenav";
 import { secretBlobProps } from "~/components/builder/fields";
+import { ItemProps } from "~/components/builder/item";
+import { DecryptedItem } from "~/components/revealer/decrypted-item";
 import { Button } from "~/components/ui/button";
 
 //load secretBlob data and use props from builder
@@ -47,12 +49,12 @@ const secretBlobDecrypted: secretBlobProps[] = [
 ];
 
 export default function Revealer() {
-  const send = secretBlobDecrypted[0];
+  const decryptedData = secretBlobDecrypted[0];
 
   return (
     <>
       <div className="px-4 container max-w-5xl">
-        <h2>{send.secretHeader.title}</h2>
+        <h2>{decryptedData.secretHeader.title}</h2>
         <p className="muted mb-4">
           Someone has securely shared this data with you via{" "}
           <Link target="_blank" to="https://2secured.link" rel="noreferrer">
@@ -63,41 +65,15 @@ export default function Revealer() {
           <div className="lg:col-span-2">
             {/* share content  */}
             <div className="border p-4 rounded mb-4">
-              {send.secretConfig.map((data, index) => (
-                <div key={index} className="flex space-x-2 items-center mb-4">
-                  <div className="flex-1">
-                    <p className="font-medium pb-2">{data.title}</p>
-                    <p className="break-all bg-slate-50 p-2 rounded">
-                      <code>{data.value}</code>
-                    </p>
-                  </div>
-                  <div className="flex-none">
-                    <div className="flex space-x-2">
-                      {data.type == "text" && (
-                        <>
-                          {/* copy text */}
-                          <Button variant={"outline"} size={"icon"}>
-                            <CopyIcon className="h-4 w-4" />
-                          </Button>
-                          <Button variant={"outline"} size={"icon"}>
-                            <DownloadIcon className="h-4 w-4" />
-                          </Button>
-                        </>
-                      )}
-
-                      {data.type == "file" && (
-                        <>
-                          <Button variant={"outline"} size={"icon"}>
-                            <EyeOpenIcon className="h-4 w-4" />
-                          </Button>
-                          <Button variant={"outline"} size={"icon"}>
-                            <DownloadIcon className="h-4 w-4" />
-                          </Button>
-                        </>
-                      )}
-                    </div>
-                  </div>
-                </div>
+              {decryptedData.secretConfig.map((item) => (
+                <DecryptedItem
+                  id={item.id}
+                  key={item.id}
+                  title={item.title}
+                  type={item.type}
+                  value={item?.value}
+                  placeholder={item?.placeholder}
+                />
               ))}
               <div className="flex justify-between">
                 <Button>Close</Button>
@@ -110,13 +86,14 @@ export default function Revealer() {
               <div className="space-y-4 border-b pb-10 mb-10">
                 <div>
                   <small>Created on</small>
-                  <p>{send.secretHeader.created}</p>
+                  <p>{decryptedData.secretHeader.created}</p>
                 </div>
 
                 <div>
                   <small>Expires in</small>
                   <p>
-                    {send.secretHeader.expiration_date} / {send.secretHeader.expiration_views_remaining} views
+                    {decryptedData.secretHeader.expiration_date} /{" "}
+                    {decryptedData.secretHeader.expiration_views_remaining} views
                   </p>
                 </div>
               </div>
