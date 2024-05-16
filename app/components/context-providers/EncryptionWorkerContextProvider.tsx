@@ -1,18 +1,8 @@
-import { createContext, useContext, ReactNode } from "react";
+import { createContext, useContext } from "react";
+import { SecretResponses, PackedSecrets } from "../../lib/secrets";
+
 // eslint-disable-next-line import/default
 import EncryptionWorker from "../../workers/encryptionWorker.js?worker";
-
-// Define the type for the context value
-interface EncryptionWorkerContextType {
-  sendMessage: (message: unknown) => Promise<void>; // Define a more specific type instead of `unknown` if possible
-}
-
-// Creating the context with TypeScript specifics
-const EncryptionWorkerContext = createContext<EncryptionWorkerContextType | null>(null);
-
-interface EncryptionWorkerProviderProps {
-  children: ReactNode;
-}
 
 // Memoized function to get the worker instance, lazy initialization
 const getEncryptionWorker = (() => {
@@ -25,8 +15,7 @@ const getEncryptionWorker = (() => {
 
       workerInitialized = new Promise<void>((resolve) => {
         const initializedEventListner = (event: MessageEvent) => {
-          console.log("Received from worker:", event.data);
-          if (event.data.code === "initialized") {
+          if (event.data.code === "INITIALIZED") {
             encryptionWorker.removeEventListener("message", initializedEventListner);
             resolve();
           }
@@ -40,20 +29,69 @@ const getEncryptionWorker = (() => {
   };
 })();
 
-// Provider Component with TypeScript
-export const EncryptionWorkerProvider = ({ children }: EncryptionWorkerProviderProps) => {
-  // The value provided to the context consumers
-  const value = {
-    sendMessage: async (message: unknown) => {
-      const { encryptionWorker, workerInitialized } = getEncryptionWorker();
+// Define the type for the context value
+interface EncryptionWorkerContextType {
+  sendSecretResponsesForEncryption: (secretResponses: SecretResponses) => Promise<PackedSecrets>;
+  sendPackedSecretsForDecryption: (packedSecrets: PackedSecrets) => Promise<SecretResponses>;
+}
 
-      await workerInitialized;
-      encryptionWorker.postMessage(message);
-    },
-  };
+const defaultContextValue: EncryptionWorkerContextType = {
+  sendSecretResponsesForEncryption: async (secretResponses: SecretResponses) => {
+    const { encryptionWorker, workerInitialized } = getEncryptionWorker();
+    await workerInitialized;
 
-  return <EncryptionWorkerContext.Provider value={value}>{children}</EncryptionWorkerContext.Provider>;
+    encryptionWorker.postMessage({
+      code: "PACK_SECRETS",
+      secretResponses,
+    });
+
+    const packedSecrets = await new Promise<PackedSecrets>((resolve) => {
+      const donePackingEventListener = (event: MessageEvent) => {
+        if (event.data.code === "DONE_PACKING_SECRETS") {
+          encryptionWorker.removeEventListener("message", donePackingEventListener);
+          resolve(event.data.packedSecrets as PackedSecrets);
+        }
+      };
+
+      encryptionWorker.addEventListener("message", donePackingEventListener);
+    });
+
+    return packedSecrets;
+  },
+  sendPackedSecretsForDecryption: async (packedSecrets: PackedSecrets) => {
+    const { encryptionWorker, workerInitialized } = getEncryptionWorker();
+    await workerInitialized;
+
+    encryptionWorker.postMessage({
+      code: "UNPACK_SECRETS",
+      packedSecrets,
+    });
+
+    const secretResponses = await new Promise<SecretResponses>((resolve) => {
+      const doneUnpackingEventListener = (event: MessageEvent) => {
+        if (event.data.code === "DONE_UNPACKING_SECRETS") {
+          encryptionWorker.removeEventListener("message", doneUnpackingEventListener);
+          resolve(event.data.secretResponses as SecretResponses);
+        }
+      };
+
+      encryptionWorker.addEventListener("message", doneUnpackingEventListener);
+    });
+
+    return secretResponses;
+  },
 };
 
-// Custom hook to use the worker context
-export const useEncryptionWorker = (): EncryptionWorkerContextType | null => useContext(EncryptionWorkerContext);
+export const EncryptionWorkerContext = createContext<EncryptionWorkerContextType>(defaultContextValue);
+
+export const useEncryptionWorker = () => {
+  return useContext(EncryptionWorkerContext);
+};
+
+interface EncryptionWorkerProviderProps {
+  children: React.ReactNode;
+}
+
+export const EncryptionWorkerProvider: React.FC<EncryptionWorkerProviderProps> = ({ children }) => {
+  return <EncryptionWorkerContext.Provider value={defaultContextValue}>{children}</EncryptionWorkerContext.Provider>;
+};

@@ -1,4 +1,4 @@
-import { Links, LiveReload, Meta, Outlet, Scripts, ScrollRestoration } from "@remix-run/react";
+import { Links, Meta, Outlet, Scripts, ScrollRestoration } from "@remix-run/react";
 import styles from "~/styles/globals.css?url";
 
 export function links() {
@@ -15,7 +15,6 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <Links />
       </head>
       <body>
-        <LiveReload />
         {children}
         <ScrollRestoration />
         <Scripts />

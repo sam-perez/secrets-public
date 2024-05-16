@@ -8,7 +8,7 @@ import pako from "pako";
  * Represents a secret value. Is a response to a secret prompt within a send
  * or receive operation.
  */
-type SecretValue = {
+export type SecretValue = {
   /** Text values. */
   textValues: string[];
 
@@ -26,12 +26,12 @@ type SecretValue = {
  * Represents a collection of secret values. Is a response to a secret data request.
  * It is an ordered array of secret values, each corresponding to a secret prompt.
  */
-type SecretResponses = Array<SecretValue>;
+export type SecretResponses = Array<SecretValue>;
 
 /**
  * Represents a packed secret response.
  */
-type PackedSecrets = {
+export type PackedSecrets = {
   iv: StringifiedUint8Array;
   ciphertext: StringifiedUint8Array;
   salt: StringifiedUint8Array;

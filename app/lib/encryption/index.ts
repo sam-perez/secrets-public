@@ -76,6 +76,8 @@ const deriveAesGcmKeyFromPassword = async (password: string, salt?: Uint8Array) 
   const key = await crypto.subtle.deriveKey(
     {
       name: "PBKDF2",
+      // note: these salts are likely not providing any security benefit since our passwords are random. aka,
+      // there is no expectation that the same password will be used across multiple secrets.
       salt,
       iterations: 100000,
       hash: "SHA-256",

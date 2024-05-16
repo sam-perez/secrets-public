@@ -1,15 +1,15 @@
 import { json, ActionFunction } from "@remix-run/node";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { PassThrough } from "stream";
 import { Readable } from "node:stream";
-import { stringToUint8Array, uint8ArrayToString, computeSHA256HashOfUint8Array } from "../lib/encryption";
+import { PackedSecrets, SecretResponses } from "../lib/secrets";
 import { uploadToS3, BUCKET_OPTIONS } from "../lib/s3";
 import {
   useEncryptionWorker,
   EncryptionWorkerProvider,
 } from "../components/context-providers/EncryptionWorkerContextProvider";
 
-const MAX_FILE_SIZE = 1024 * 1024 * 10; // 10 MB
+const MAX_FILE_SIZE = 1024 * 1024 * 100; // 100 MB
 
 // Server-side action function to handle the file upload
 export const action: ActionFunction = async ({ request }) => {
@@ -36,11 +36,13 @@ export const action: ActionFunction = async ({ request }) => {
   counterStream.on("data", (chunk: Buffer) => {
     totalBytes += chunk.length; // Increment the total bytes counter
 
-    if (totalBytes > MAX_FILE_SIZE || Math.random() <= 1) {
+    if (totalBytes > MAX_FILE_SIZE) {
       // If the total bytes exceeds the maximum, destroy the stream
       counterStream.destroy(new Error("Payload too large"));
     }
 
+    console.log(`Received ${chunk.length} bytes`); // Log the number of bytes received
+    console.log(`Total bytes received: ${totalBytes}`); // Log the total bytes received
     chunks.push(chunk);
   });
 
@@ -74,11 +76,13 @@ export const action: ActionFunction = async ({ request }) => {
     // in the future, when we are on a platform that supports body sizes larger than 4.5MB (vercel limitation),
     // we can stream the data directly to S3.
     const buffer = Buffer.concat(chunks);
+    console.log(`Uploading ${buffer.length} bytes to S3`);
     await uploadToS3({
       bucket: process.env["AWS_APPLICATION_BUCKET"] as BUCKET_OPTIONS, // i swear
       key: "large-file.bin",
       body: buffer,
     });
+    console.log("Upload complete");
 
     // After all data has been received
     return json({ success: true, totalBytes });
@@ -93,6 +97,27 @@ export const action: ActionFunction = async ({ request }) => {
   }
 };
 
+function stringToUtf16ArrayBuffer(str: string) {
+  const buf = new ArrayBuffer(str.length * 2); // 2 bytes per character
+  const bufView = new Uint16Array(buf);
+  for (let i = 0, strLen = str.length; i < strLen; i++) {
+    bufView[i] = str.charCodeAt(i);
+  }
+  return buf;
+}
+
+async function utf16ArrayBufferBlobToString(blob: Blob) {
+  const arrayBuffer = await blob.arrayBuffer();
+  const reconstructedStringChars = [];
+  const uint16Array = new Uint16Array(arrayBuffer);
+
+  for (let i = 0; i < uint16Array.length; i++) {
+    reconstructedStringChars.push(String.fromCharCode(uint16Array[i]));
+  }
+
+  return reconstructedStringChars.join("");
+}
+
 export default function UploadLarge() {
   return (
     <EncryptionWorkerProvider>
@@ -104,21 +129,28 @@ export default function UploadLarge() {
 function UploadLargeInner() {
   const [progress, setProgress] = useState<number>(0);
   const [message, setMessage] = useState<string>("");
-  const [uploadHash, setUploadHash] = useState<string>("");
-  const [downloadHash, setDownloadHash] = useState<string>("");
+  const [packedSecrets, setPackedSecrets] = useState<PackedSecrets | null>(null);
 
   const encryptionWorker = useEncryptionWorker();
 
-  // side effect on load to calculate some fibonacci numbers
-  useEffect(() => {
-    if (encryptionWorker !== null) {
-      console.log("Calculating fibonacci numbers...");
-
-      encryptionWorker.sendMessage({ data: 40 });
-    }
-  }, [encryptionWorker]);
-
   async function uploadLargeBinaryData(binaryArray: Uint8Array) {
+    const secretResponses: SecretResponses = [
+      {
+        textValues: ["This is a large file.", "It is very large."],
+        files: [
+          {
+            name: "large-file.bin",
+            data: binaryArray,
+          },
+        ],
+      },
+    ];
+
+    console.log("Sending secret responses for encryption...");
+    const packedSecrets = await encryptionWorker.sendSecretResponsesForEncryption(secretResponses);
+    console.log("Done sending secret responses for encryption.");
+    const packedSecretsJson = JSON.stringify(packedSecrets);
+
     const xhr = new XMLHttpRequest();
     xhr.open("POST", "/upload-large");
 
@@ -132,6 +164,7 @@ function UploadLargeInner() {
     xhr.onload = () => {
       if (xhr.status === 200) {
         setMessage("Upload successful");
+        setPackedSecrets(packedSecrets);
       } else {
         setMessage(`Upload failed: ${xhr.responseText}`);
       }
@@ -149,9 +182,7 @@ function UploadLargeInner() {
     };
 
     xhr.setRequestHeader("Content-Type", "application/octet-stream");
-    xhr.send(new Blob([binaryArray]));
-
-    setUploadHash(await computeSHA256HashOfUint8Array(binaryArray));
+    xhr.send(new Blob([stringToUtf16ArrayBuffer(packedSecretsJson)], { type: "application/octet-stream" }));
   }
 
   function handleFileChange(event: React.ChangeEvent<HTMLInputElement>) {
@@ -173,16 +204,18 @@ function UploadLargeInner() {
       <input type="file" onChange={handleFileChange} />
       <p>Progress: {progress.toFixed(2)}%</p>
       <p>{message}</p>
-      <p>Upload hash: {uploadHash || "Unavailable"}</p>
-      <p>Download hash: {downloadHash || "Unavailable"}</p>
-      {uploadHash !== "" ? (
+      {packedSecrets !== null ? (
         <button
           onClick={async () => {
             const response = await fetch(`/fetch-blob?key=${encodeURIComponent("large-file.bin")}`);
             const blob = await response.blob();
-            const buffer = await blob.arrayBuffer();
+            const text = await utf16ArrayBufferBlobToString(blob);
+            // TODO: validate that the parsing is successful
+            const parsedPackedSecrets = JSON.parse(text) as PackedSecrets;
 
-            setDownloadHash(await computeSHA256HashOfUint8Array(new Uint8Array(buffer)));
+            const secretResponses = await encryptionWorker.sendPackedSecretsForDecryption(parsedPackedSecrets);
+
+            console.log("Decrypted secret responses:", secretResponses);
           }}
         >
           Now Download
