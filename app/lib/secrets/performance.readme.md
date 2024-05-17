@@ -1,7 +1,6 @@
 ## Setup.
 
-We ran the following code in a small benchmark sampling run on Sam's new
-macbook pro 15" with m2 and 24gb of ram in up to date chrome on 2024-05-15.
+We ran the following code in a small benchmark sampling run.
 
 ```
   (async () => {
@@ -64,46 +63,32 @@ macbook pro 15" with m2 and 24gb of ram in up to date chrome on 2024-05-15.
 
 ## Results.
 
+Machine: Sam's new macbook pro 15" with m2 and 24gb of ram in up to date chrome on 2024-05-15.
+
 Observations (avg time across all samples)
 
-### 1 megabyte
+| Size         | _packSecrets_ (ms) | _unpackSecrets_ (ms) |
+| ------------ | ------------------ | -------------------- |
+| 1 megabyte   | 456.8              | 38.8                 |
+| 5 megabytes  | 839.6              | 135.4                |
+| 10 megabytes | 1649.4             | 263.8                |
+| 20 megabytes | 3288.8             | 528                  |
+| 30 megabytes | 5144.2             | 785.2                |
+| 40 megabytes | 6614.6             | 1048.6               |
+| 50 megabytes | 8318.6             | 1292.6               |
 
-_packSecrets_: 456.8ms
+---
 
-_unpackSecrets_: 38.8ms
+Machine: Taylor's M1 Macbook Pro, 16gb of ram in chrome.
 
-### 5 megabytes
+Observations (avg time across all samples)
 
-_packSecrets_: 839.6ms
-
-_unpackSecrets_: 135.4ms
-
-### 10 megabytes
-
-_packSecrets_: 1649.4ms
-
-_unpackSecrets_: 263.8ms
-
-### 20 megabytes
-
-_packSecrets_: 3288.8ms
-
-_unpackSecrets_: 528ms
-
-### 30 megabytes
-
-_packSecrets_: 5144.2ms
-
-_unpackSecrets_: 785.2ms
-
-### 40 megabytes
-
-_packSecrets_: 6614.6ms
-
-_unpackSecrets_: 1048.6ms
-
-### 50 megabytes
-
-_packSecrets_: 8318.6ms
-
-_unpackSecrets_: 1292.6ms
+| Size         | _packSecrets_ (ms) | _unpackSecrets_ (ms) |
+| ------------ | ------------------ | -------------------- |
+| 1 megabytes  | 596.6              | 44.8                 |
+| 5 megabytes  | 959                | 156.2                |
+| 10 megabytes | 1870.6             | 305                  |
+| 20 megabytes | 3762               | 574                  |
+| 30 megabytes | 5893.6             | 865.2                |
+| 40 megabytes | 7769.2             | 1158.6               |
+| 50 megabytes | 9681.6             | 1468.6               |
