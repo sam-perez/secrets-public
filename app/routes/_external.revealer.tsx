@@ -1,10 +1,21 @@
-import { CopyIcon, DownloadIcon, EyeOpenIcon } from "@radix-ui/react-icons";
 import { Link } from "@remix-run/react";
 import AboutSidenav from "~/components/about-sidenav";
 import { secretBlobProps } from "~/components/builder/fields";
-import { ItemProps } from "~/components/builder/item";
-import { DecryptedItem } from "~/components/revealer/decrypted-item";
+
+import { DecryptedItem } from "~/components/revealer/DecryptedItem";
+import { EnterEmailToDecrypt } from "~/components/revealer/EnterEmail";
+import { EnterPasswordToDecrypt } from "~/components/revealer/EnterPassword";
 import { Button } from "~/components/ui/button";
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "~/components/ui/dialog";
 
 //load secretBlob data and use props from builder
 const secretBlobDecrypted: secretBlobProps[] = [
@@ -53,13 +64,35 @@ export default function Revealer() {
 
   return (
     <>
+      {/* Enter password popup */}
+      <Dialog>
+        <DialogTrigger asChild>
+          <Button variant="outline">Enter Password Dialog</Button>
+        </DialogTrigger>
+        <DialogContent className="sm:max-w-md">
+          <div className="space-y-2">
+            <EnterPasswordToDecrypt />
+          </div>
+        </DialogContent>
+      </Dialog>
+      <Dialog>
+        <DialogTrigger asChild>
+          <Button variant="outline">Enter Email Dialog</Button>
+        </DialogTrigger>
+        <DialogContent className="sm:max-w-md">
+          <div className="space-y-2">
+            <EnterEmailToDecrypt />
+          </div>
+        </DialogContent>
+      </Dialog>
       <div className="px-4 container max-w-5xl">
-        <h2>{decryptedData.secretHeader.title}</h2>
+        <h3>{decryptedData.secretHeader.title}</h3>
         <p className="muted mb-4">
           Someone has securely shared this data with you via{" "}
           <Link target="_blank" to="https://2secured.link" rel="noreferrer">
             2Secured
           </Link>
+          .
         </p>
         <div className="mx-auto lg:grid lg:max-w-7xl grid-cols-3 gap-8">
           <div className="lg:col-span-2">
