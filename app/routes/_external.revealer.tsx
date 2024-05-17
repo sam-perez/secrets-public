@@ -138,7 +138,7 @@ export default function Revealer() {
                 <div>
                   <Label>Expires in</Label>
                   <p>
-                    {decryptedData.secretHeader.expiration_date} /{" "}
+                    {decryptedData.secretHeader.expiration_date} or{" "}
                     {decryptedData.secretHeader.expiration_views_remaining} views
                   </p>
                 </div>

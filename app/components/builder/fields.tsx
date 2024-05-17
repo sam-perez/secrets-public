@@ -143,10 +143,10 @@ export default function BuilderFields() {
         delay: 200,
         tolerance: 6,
       },
-    }),
-    useSensor(KeyboardSensor, {
-      coordinateGetter: sortableKeyboardCoordinates,
     })
+    // useSensor(KeyboardSensor, {
+    //   coordinateGetter: sortableKeyboardCoordinates,
+    // })
   );
 
   console.log(secretBlob[0].secretConfig);
