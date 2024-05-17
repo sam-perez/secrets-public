@@ -1,4 +1,6 @@
+import { CheckIcon, CopyIcon } from "@radix-ui/react-icons";
 import { Link } from "@remix-run/react";
+import { useState } from "react";
 import AboutSidenav from "~/components/about-sidenav";
 import { secretBlobProps } from "~/components/builder/fields";
 
@@ -6,16 +8,9 @@ import { DecryptedItem } from "~/components/revealer/DecryptedItem";
 import { EnterEmailToDecrypt } from "~/components/revealer/EnterEmail";
 import { EnterPasswordToDecrypt } from "~/components/revealer/EnterPassword";
 import { Button } from "~/components/ui/button";
-import {
-  Dialog,
-  DialogClose,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "~/components/ui/dialog";
+import { Dialog, DialogContent, DialogTrigger } from "~/components/ui/dialog";
+import { Input } from "~/components/ui/input";
+import { Label } from "~/components/ui/label";
 
 //load secretBlob data and use props from builder
 const secretBlobDecrypted: secretBlobProps[] = [
@@ -25,6 +20,7 @@ const secretBlobDecrypted: secretBlobProps[] = [
       created: "Fri, 02 Feb 1996 03:04:05 GMT",
       expiration_date: "3d",
       expiration_views_remaining: 2,
+      link: "https://2secured.link/req123#decryptionkey",
     },
     secretConfig: [
       {
@@ -60,7 +56,15 @@ const secretBlobDecrypted: secretBlobProps[] = [
 ];
 
 export default function Revealer() {
+  const [isCopied, setIsCopied] = useState(false);
   const decryptedData = secretBlobDecrypted[0];
+
+  const handleLinkCopy = () => {
+    if (!decryptedData.secretHeader.link) return;
+    navigator.clipboard.writeText(decryptedData.secretHeader.link);
+    setIsCopied(true);
+    setTimeout(() => setIsCopied(false), 2000); // Reset copied state after 2 seconds
+  };
 
   return (
     <>
@@ -118,12 +122,21 @@ export default function Revealer() {
             <aside className="sticky top-6">
               <div className="space-y-4 border-b pb-10 mb-10">
                 <div>
-                  <small>Created on</small>
+                  <Label>Secure link</Label>
+                  <div className="flex space-x-2">
+                    <Input disabled={true} value={decryptedData.secretHeader.link} />
+                    <Button variant={"outline"} size={"icon"} onClick={handleLinkCopy}>
+                      {isCopied ? <CheckIcon className="text-green-500 h-4 w-4" /> : <CopyIcon className="h-4 w-4" />}
+                    </Button>
+                  </div>
+                </div>
+                <div>
+                  <Label>Created on</Label>
                   <p>{decryptedData.secretHeader.created}</p>
                 </div>
 
                 <div>
-                  <small>Expires in</small>
+                  <Label>Expires in</Label>
                   <p>
                     {decryptedData.secretHeader.expiration_date} /{" "}
                     {decryptedData.secretHeader.expiration_views_remaining} views

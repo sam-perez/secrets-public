@@ -34,6 +34,7 @@ export interface secretBlobProps {
     mfa_email?: string;
     expiration_date?: string;
     expiration_views_remaining?: number;
+    link?: string;
   };
   secretConfig: ItemProps[];
 }
