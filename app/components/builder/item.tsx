@@ -27,7 +27,7 @@ export const Item = ({ id, title, type, placeholder, value }: ItemProps) => {
       <div className="flex items-center p-2">
         <DragHandleDots2Icon className="h-4 w-4 flex-none mr-2 text-slate-400 hover:text-slate-800" />
         <div className="w-full space-y-2">
-          <Label>
+          <Label className="hover:text-slate-600 w-full">
             {/* TODO */}
             <EditableText initialText={title} />
           </Label>

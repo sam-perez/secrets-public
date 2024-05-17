@@ -22,10 +22,16 @@ const EditableText = ({ initialText }: initialTextProps) => {
     // Save the changes or perform any required actions here
   };
 
+  const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
+    if (event.key === "Enter") {
+      handleBlur();
+    }
+  };
+
   return (
     <div onDoubleClick={handleDoubleClick} className="cursor-pointer">
       {isEditing ? (
-        <Input type="text" value={text} onChange={handleChange} onBlur={handleBlur} />
+        <Input type="text" value={text} onChange={handleChange} onBlur={handleBlur} onKeyDown={handleKeyDown} />
       ) : (
         <span>{text || "Untitled"}</span>
       )}

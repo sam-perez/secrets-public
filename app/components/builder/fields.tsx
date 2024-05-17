@@ -1,7 +1,6 @@
 import {
   DndContext,
   DragEndEvent,
-  KeyboardSensor,
   PointerSensor,
   TouchSensor,
   closestCorners,
@@ -11,7 +10,7 @@ import {
 
 import { Column } from "./column";
 import { useState } from "react";
-import { arrayMove, sortableKeyboardCoordinates } from "@dnd-kit/sortable";
+import { arrayMove } from "@dnd-kit/sortable";
 import { ItemProps } from "./item";
 import {
   DropdownMenu,
@@ -74,30 +73,6 @@ const secretBlob: secretBlobProps[] = [
   },
 ];
 
-// const secretConfig: ItemProps[] = [
-//   {
-//     id: 1,
-//     title: "API Key Public",
-//     type: "text",
-//     value: "has a value",
-//   },
-//   {
-//     id: 2,
-//     title: "API Secret",
-//     type: "text",
-//   },
-//   {
-//     id: 3,
-//     title: "thing 3",
-//     type: "text",
-//   },
-//   {
-//     id: 4,
-//     title: "file",
-//     type: "file",
-//   },
-// ];
-
 export default function BuilderFields() {
   //get items from the returned data
   const [items, setItems] = useState(secretBlob[0].secretConfig);
@@ -155,7 +130,7 @@ export default function BuilderFields() {
     <>
       <div className="max-w-4xl mx-auto">
         <div className="p-4">
-          <h4>
+          <h4 className="hover:bg-slate-50">
             <EditableText initialText="edit me" />
           </h4>
         </div>
