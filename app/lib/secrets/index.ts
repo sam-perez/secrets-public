@@ -3,7 +3,6 @@ import { decryptData, encryptData, uint8ArrayToString, StringifiedUint8Array, st
 import pako from "pako";
 
 // TODO: not sure what these names should be yet, just a placeholder for now
-
 /**
  * Represents a secret value. Is a response to a secret prompt within a send
  * or receive operation.

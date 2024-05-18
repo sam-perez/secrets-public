@@ -9,7 +9,7 @@ const getEncryptionWorker = (() => {
   let encryptionWorker: Worker;
   let workerInitialized: Promise<void>;
 
-  return () => {
+  return async () => {
     if (!encryptionWorker) {
       encryptionWorker = new EncryptionWorker();
 
@@ -25,7 +25,9 @@ const getEncryptionWorker = (() => {
       });
     }
 
-    return { encryptionWorker, workerInitialized };
+    await workerInitialized;
+
+    return { encryptionWorker };
   };
 })();
 
@@ -37,8 +39,7 @@ interface EncryptionWorkerContextType {
 
 const defaultContextValue: EncryptionWorkerContextType = {
   sendSecretResponsesForEncryption: async (secretResponses: SecretResponses) => {
-    const { encryptionWorker, workerInitialized } = getEncryptionWorker();
-    await workerInitialized;
+    const { encryptionWorker } = await getEncryptionWorker();
 
     encryptionWorker.postMessage({
       code: "PACK_SECRETS",
@@ -59,8 +60,7 @@ const defaultContextValue: EncryptionWorkerContextType = {
     return packedSecrets;
   },
   sendPackedSecretsForDecryption: async (packedSecrets: PackedSecrets) => {
-    const { encryptionWorker, workerInitialized } = getEncryptionWorker();
-    await workerInitialized;
+    const { encryptionWorker } = await getEncryptionWorker();
 
     encryptionWorker.postMessage({
       code: "UNPACK_SECRETS",

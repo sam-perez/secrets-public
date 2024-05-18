@@ -1,3 +1,5 @@
+import { getRandomIntInclusive, toBase62 } from "../crypto-utils";
+
 /**
  * Pack a uint8Array into a string.
  *
@@ -18,6 +20,9 @@ export function uint8ArrayToString(uint8Array: Uint8Array) {
     chars.push(String.fromCharCode(num));
   }
 
+  // Most implementations of javascript will have a limit of at least
+  // 512MB for a string, so we should be fine here. Limiting the file size should
+  // happen upstream in the component that is loading the file.
   return { stringRepresentation: chars.join(""), originalLength: uint8Array.length };
 }
 
@@ -120,3 +125,19 @@ export async function decryptData(iv: Uint8Array, ciphertext: Uint8Array, salt: 
 
   return new Uint8Array(decrypted);
 }
+
+/**
+ * Generate a random password of a given length.
+ *
+ * Will be used in a fragment of a url, so we are using a base62 string to play nice with urls.
+ */
+export const generateRandomPassword = (length: number) => {
+  const chars: string[] = [];
+
+  for (let i = 0; i < length; i++) {
+    const nextInt = getRandomIntInclusive(0, 61);
+    chars.push(toBase62(nextInt));
+  }
+
+  return chars.join("");
+};
