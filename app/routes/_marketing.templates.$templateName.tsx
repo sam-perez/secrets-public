@@ -19,7 +19,7 @@ type Template = {
   id: number;
   name: string;
   description: string;
-  secretBlobId: secretBlobProps[];
+  secretBlob: secretBlobProps[];
 };
 
 const templates: Template[] = [
@@ -27,7 +27,7 @@ const templates: Template[] = [
     id: 1,
     description: "Use this template to securely send an API Key that is end-to-end encrypted.",
     name: "API Key",
-    secretBlobId: 1,
+    secretBlob: [],
   },
 ];
 
