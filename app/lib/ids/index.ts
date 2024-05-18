@@ -1,4 +1,4 @@
-import { getRandomIntInclusive, toBase62 } from "../crypto-utils";
+import { getRandomBase62String, toBase62 } from "../crypto-utils";
 
 /**
  * A type for an id that is a unique identifier of that id.
@@ -17,14 +17,7 @@ export function generateUniqueId<T extends string>(prefix: T, randomPartLength: 
   // Time part: current timestamp in milliseconds
   const timePart = toBase62(Date.now());
 
-  // get a 7 character random part
-  // that's 3.5e12 possible combinations, which should be enough for our use case.
-  const randomPart = Array.from({ length: randomPartLength })
-    .map(() => {
-      const nextInt = getRandomIntInclusive(0, 61);
-      return toBase62(nextInt);
-    })
-    .join("");
+  const randomPart = getRandomBase62String(randomPartLength);
 
   // Concatenate prefix, time part, and random part
   return `${prefix}-${timePart}-${randomPart}` as BrandedId<T>;

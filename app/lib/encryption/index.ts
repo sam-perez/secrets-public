@@ -1,4 +1,4 @@
-import { getRandomIntInclusive, toBase62 } from "../crypto-utils";
+import { getRandomBase62String } from "../crypto-utils";
 
 /**
  * Pack a uint8Array into a string.
@@ -132,12 +132,5 @@ export async function decryptData(iv: Uint8Array, ciphertext: Uint8Array, salt: 
  * Will be used in a fragment of a url, so we are using a base62 string to play nice with urls.
  */
 export const generateRandomPassword = (length: number) => {
-  const chars: string[] = [];
-
-  for (let i = 0; i < length; i++) {
-    const nextInt = getRandomIntInclusive(0, 61);
-    chars.push(toBase62(nextInt));
-  }
-
-  return chars.join("");
+  return getRandomBase62String(length);
 };

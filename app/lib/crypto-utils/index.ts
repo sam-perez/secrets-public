@@ -27,3 +27,17 @@ export function getRandomIntInclusive(min: number, max: number) {
   max = Math.floor(max);
   return Math.floor(randomNumber * (max - min + 1)) + min;
 }
+
+/**
+ * Get a random base62 string of a given length.
+ */
+export function getRandomBase62String(length: number) {
+  const chars: string[] = [];
+
+  for (let i = 0; i < length; i++) {
+    const nextInt = getRandomIntInclusive(0, 61);
+    chars.push(toBase62(nextInt));
+  }
+
+  return chars.join("");
+}

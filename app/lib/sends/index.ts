@@ -1,14 +1,14 @@
 import { BrandedId, generateUniqueId } from "../ids";
 
+/** Send id type. */
+type SendId = BrandedId<"s">;
+
 /**
  * A configuration for a send.
  */
 export type SendConfig = {
   /** The id of the send. */
-  id: BrandedId<"s">;
-
-  /** ISO-8601 date string when the send was created. */
-  createdAt: string;
+  sendId: SendId;
 
   /** The email address that we will use for mfa confirmation. */
   confirmationEmail?: string;
@@ -23,16 +23,25 @@ export type SendConfig = {
   password?: string;
 };
 
-/** The status of a send. */
-export type SendStatus = "active" | "expired" | "deleted";
-
 /** The state of a send. Has to be tracked separately from the config. Stored in S3 for now. */
 export type SendState = {
   /** The id of the send. */
-  id: BrandedId<"s">;
+  sendId: SendId;
 
-  /** The status of the send. */
-  status: SendStatus;
+  /** The password required when uploading encrypted parts. */
+  encryptedPartsPassword: string;
+
+  /** ISO-8601 date string when the send was created. */
+  createdAt: string;
+
+  /** ISO-8601 date string when the send ready. Once a send is marked ready, it will stop accepting new parts. */
+  readyAt: string | null;
+
+  /** ISO-8601 date string when the send data was deleted. */
+  dataDeletedAt: string | null;
+
+  /** The reason the send data was deleted. */
+  deletedReason: "expired" | "deleted" | "viewed" | null;
 
   // TODO: we probably want to not just assume that the send has been viewed once the client has downloaded the file,
   // but instead wait for a confirmation from the client that the file has been viewed using a piece of data
@@ -42,10 +51,16 @@ export type SendState = {
   // Like, reset the views and the expiration date and allow the target to try to pull the data again.
 
   /** The number of times the send has been viewed. */
-  views: number;
+  views: Array<{
+    /** ISO-8601 date string when the send was viewed. */
+    viewedAt: string;
+
+    /** Metadata about the view. */
+    metadata: Record<string, string>;
+  }>;
 };
 
 /**
  * Generate a send id.
  */
-export const generateSendId = (): BrandedId<"s"> => generateUniqueId("s", 10);
+export const generateSendId = (): SendId => generateUniqueId("s", 10);
