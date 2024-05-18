@@ -1,19 +1,31 @@
-import { ClockIcon, EnvelopeClosedIcon, LockClosedIcon } from "@radix-ui/react-icons";
+import {
+  ClockIcon,
+  CounterClockwiseClockIcon,
+  EnvelopeClosedIcon,
+  EnvelopeOpenIcon,
+  LinkBreak1Icon,
+  LinkBreak2Icon,
+  LinkNone1Icon,
+  LinkNone2Icon,
+  LockClosedIcon,
+  LockOpen1Icon,
+} from "@radix-ui/react-icons";
 import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
 import { Input } from "../ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select";
 import { Button } from "../ui/button";
+import { useState } from "react";
 
 export default function BuilderFooter() {
   return (
     <>
       <div className="border-t bg-slate-50 rounded-b-xl">
-        <div className="px-4 py-2 flex justify-between items-center">
+        <div className="px-4 py-2 flex justify-between items-center grow-0	text-sm">
           {/* actions  */}
-          <div className="flex text-sm space-x-4">
-            {LinkExpirationPopover()}
-            {RestrictEmailPopover()}
-            {AddPasswordPopover()}
+          <div className="flex items-center space-x-4">
+            <div className="max-w-[140px] overflow-hidden truncate ">{LinkExpirationPopover()}</div>
+            <div className="max-w-[140px] text-ellipsis overflow-hidden">{RestrictEmailPopover()}</div>
+            <div className="max-w-[140px] text-ellipsis overflow-hidden">{AddPasswordPopover()}</div>
           </div>
           {/* button */}
           <div>
@@ -26,16 +38,42 @@ export default function BuilderFooter() {
 }
 
 export function LinkExpirationPopover() {
+  const [views, setViews] = useState<number | undefined>(undefined);
+  const [expirationNumber, setExpirationNumber] = useState<number | undefined>(undefined);
+  const [expirationUnit, setExpirationUnit] = useState<string>("");
+
+  const handleViewChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const value = event.target.value;
+    setViews(value === "" ? undefined : parseInt(value, 10));
+  };
+
+  const handleExpirationNumberChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const value = event.target.value;
+    setExpirationNumber(value === "" ? undefined : parseInt(value, 10));
+  };
+
+  const handleExpirationUnitChange = (value: string) => {
+    setExpirationUnit(value);
+  };
+
   return (
     <Popover>
       <PopoverTrigger>
         <Button variant="link" className="px-0">
-          <ClockIcon className="h-4 w-4 mr-1" />
-          <span className="hidden sm:block">Link Expiration</span>
+          {(expirationNumber && expirationUnit) || views ? (
+            <span className="flex items-center">
+              <LinkBreak2Icon className="h-4 w-4 mr-1" />
+              {expirationNumber && expirationUnit ? `${expirationNumber}${expirationUnit}` : ""}
+              {expirationNumber && views ? " ·" : ""}
+              {views !== undefined ? ` ${views} views` : ""}
+            </span>
+          ) : (
+            <>
+              <LinkNone2Icon className="h-4 w-4 mr-1" />
+              <span className="hidden sm:block">Link Expiration</span>
+            </>
+          )}
         </Button>
-        {/* <small className="flex items-center hover:text-slate-500 hover:underline">
-          <ClockIcon className="h-4 w-4 mr-1" /> <span className="hidden sm:block">Link Expiration</span>
-        </small> */}
       </PopoverTrigger>
       <PopoverContent>
         <div className="space-y-1 mb-2">
@@ -44,22 +82,33 @@ export function LinkExpirationPopover() {
         </div>
         <small>Time</small>
         <div className="flex space-x-2 mt-1 mb-3">
-          <Input placeholder="Number" />
-          <Select>
+          <Input
+            placeholder="Number"
+            type="number"
+            value={expirationNumber !== undefined ? expirationNumber.toString() : ""}
+            onChange={handleExpirationNumberChange}
+          />
+          <Select onValueChange={handleExpirationUnitChange}>
             <SelectTrigger>
               <SelectValue placeholder="Choose" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="minutes">Minutes</SelectItem>
-              <SelectItem value="hours">Hours</SelectItem>
-              <SelectItem value="days">Days</SelectItem>
-              <SelectItem value="weeks">Weeks</SelectItem>
+              <SelectItem value="min">Minutes</SelectItem>
+              <SelectItem value="hr">Hours</SelectItem>
+              <SelectItem value="d">Days</SelectItem>
+              <SelectItem value="w">Weeks</SelectItem>
             </SelectContent>
           </Select>
         </div>
         <small>Total View Count</small>
         <div className="flex space-x-2 mt-1"></div>
-        <Input />
+        <Input
+          className=""
+          type="number"
+          placeholder="Enter max views"
+          value={views !== undefined ? views.toString() : ""}
+          onChange={handleViewChange}
+        />
         <span className="muted text-xs">Leave blank for unlimited views</span>
       </PopoverContent>
     </Popover>
@@ -67,11 +116,24 @@ export function LinkExpirationPopover() {
 }
 
 export function RestrictEmailPopover() {
+  const [email, setEmail] = useState("");
+  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setEmail(event.target.value);
+  };
   return (
     <Popover>
       <PopoverTrigger>
         <Button variant="link" className="px-0">
-          <EnvelopeClosedIcon className="h-4 w-4 mr-1" /> <span className="hidden sm:block">Restrict Email</span>
+          {email ? (
+            <span className="flex items-center font-medium">
+              <EnvelopeOpenIcon className="h-4 w-4 mr-1" /> {email}
+            </span>
+          ) : (
+            <>
+              <EnvelopeClosedIcon className="h-4 w-4 mr-1" />
+              <span className="hidden sm:block">Restrict Email</span>
+            </>
+          )}
         </Button>
       </PopoverTrigger>
       <PopoverContent>
@@ -84,18 +146,30 @@ export function RestrictEmailPopover() {
 
         <small>Enter Email</small>
         <div className="flex space-x-2 mt-1"></div>
-        <Input placeholder="example@test.com" type="email" />
+        <Input placeholder="example@test.com" type="email" value={email} onChange={handleChange} />
       </PopoverContent>
     </Popover>
   );
 }
 
 export function AddPasswordPopover() {
+  const [password, setPassword] = useState("");
+  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setPassword(event.target.value);
+  };
   return (
     <Popover>
       <PopoverTrigger>
         <Button variant="link" className="px-0">
-          <LockClosedIcon className="h-4 w-4 mr-1" /> <span className="hidden sm:block">Add Password</span>
+          {password ? (
+            <span className="flex items-center text-sm font-medium">
+              <LockClosedIcon className="h-4 w-4 mr-1 flex-none" /> Password Set
+            </span>
+          ) : (
+            <>
+              <LockOpen1Icon className="h-4 w-4 mr-1" /> <span className="hidden sm:block">Add Password</span>
+            </>
+          )}
         </Button>
       </PopoverTrigger>
       <PopoverContent>
@@ -106,7 +180,7 @@ export function AddPasswordPopover() {
 
         <small>Create Password</small>
         <div className="flex space-x-2 mt-1"></div>
-        <Input placeholder="" type="text" />
+        <Input placeholder="" type="text" value={password} onChange={handleChange} />
       </PopoverContent>
     </Popover>
   );
