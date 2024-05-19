@@ -8,8 +8,9 @@ import {
   useEncryptionWorker,
   EncryptionWorkerProvider,
 } from "../components/context-providers/EncryptionWorkerContextProvider";
+import { InitiateSendResponse } from "./initiate-send";
 
-const MAX_FILE_SIZE = 1024 * 1024 * 100; // 100 MB
+const MAX_FILE_SIZE = 1024 * 1024 * 10; // 10 MB
 
 // Server-side action function to handle the file upload
 export const action: ActionFunction = async ({ request }) => {
@@ -134,6 +135,10 @@ function UploadLargeInner() {
   const encryptionWorker = useEncryptionWorker();
 
   async function uploadLargeBinaryData(binaryArray: Uint8Array) {
+    // initiate the secret send
+    const initiateSendResponseFetch = await fetch("/initiate-send");
+    const initiateSendResponse: InitiateSendResponse = await initiateSendResponseFetch.json();
+
     const secretResponses: SecretResponses = [
       {
         textValues: ["This is a large file.", "It is very large."],

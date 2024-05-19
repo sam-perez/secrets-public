@@ -1,7 +1,7 @@
 import { BrandedId, generateUniqueId } from "../ids";
 
 /** Send id type. */
-type SendId = BrandedId<"s">;
+export type SendId = BrandedId<"s">;
 
 /**
  * A configuration for a send.
@@ -41,7 +41,7 @@ export type SendState = {
   dataDeletedAt: string | null;
 
   /** The reason the send data was deleted. */
-  deletedReason: "expired" | "deleted" | "viewed" | null;
+  dataDeletedReason: "expired" | "deleted" | "viewed" | null;
 
   // TODO: we probably want to not just assume that the send has been viewed once the client has downloaded the file,
   // but instead wait for a confirmation from the client that the file has been viewed using a piece of data

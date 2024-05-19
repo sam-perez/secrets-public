@@ -1,7 +1,13 @@
 import { ActionFunction } from "@remix-run/node";
-import { downloadFromS3, uploadToS3 } from "../lib/s3";
-import { generateSendId, SendConfig, SendState } from "../lib/sends";
+import { uploadToS3 } from "../lib/s3";
+import { generateSendId, SendConfig, SendState, SendId } from "../lib/sends";
 import { getRandomBase62String } from "../lib/crypto-utils";
+
+/** The response from the initiate send endpoint. */
+export type InitiateSendResponse = {
+  sendId: SendId;
+  encryptedPartsPassword: string;
+};
 
 export const action: ActionFunction = async () => {
   const sendId = generateSendId();
@@ -18,7 +24,7 @@ export const action: ActionFunction = async () => {
     encryptedPartsPassword: getRandomBase62String(32),
     readyAt: null,
     dataDeletedAt: null,
-    deletedReason: null,
+    dataDeletedReason: null,
     views: [],
   };
 
@@ -40,17 +46,16 @@ export const action: ActionFunction = async () => {
       }),
     ]);
 
-    return new Response(
-      JSON.stringify({
-        sendId,
-        encryptedPartsPassword: fakeSendState.encryptedPartsPassword,
-      }),
-      {
-        headers: {
-          "Content-Type": "application/json",
-        },
-      }
-    );
+    const initiateSendResponse: InitiateSendResponse = {
+      sendId,
+      encryptedPartsPassword: fakeSendState.encryptedPartsPassword,
+    };
+
+    return new Response(JSON.stringify(initiateSendResponse), {
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
   } catch (error) {
     console.error(error);
     return new Response("Server error", { status: 500 });
