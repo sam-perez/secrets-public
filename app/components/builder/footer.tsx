@@ -20,16 +20,16 @@ export default function BuilderFooter() {
   return (
     <>
       <div className="border-t bg-slate-50 rounded-b-xl">
-        <div className="px-4 py-2 flex justify-between items-center grow-0	text-sm">
+        <div className="px-4 py-2 sm:flex justify-between items-center grow-0	text-sm">
           {/* actions  */}
           <div className="flex items-center space-x-4">
-            <div className="max-w-[140px] overflow-hidden truncate ">{LinkExpirationPopover()}</div>
-            <div className="max-w-[140px] text-ellipsis overflow-hidden">{RestrictEmailPopover()}</div>
-            <div className="max-w-[140px] text-ellipsis overflow-hidden">{AddPasswordPopover()}</div>
+            <div className="max-w-1/3 sm:max-w-[140px] overflow-hidden truncate ">{LinkExpirationPopover()}</div>
+            <div className="max-w-1/3 sm:max-w-[140px] text-ellipsis overflow-hidden">{RestrictEmailPopover()}</div>
+            <div className="max-w-1/3 sm:max-w-[140px] text-ellipsis overflow-hidden">{AddPasswordPopover()}</div>
           </div>
           {/* button */}
           <div>
-            <Button>Generate Encrypted Link</Button>
+            <Button className="w-full">Generate Encrypted Link</Button>
           </div>
         </div>
       </div>
@@ -70,7 +70,7 @@ export function LinkExpirationPopover() {
           ) : (
             <>
               <LinkNone2Icon className="h-4 w-4 mr-1" />
-              <span className="hidden sm:block">Link Expiration</span>
+              <span className="hidden sm:block text-slate-500">Link Expiration</span>
             </>
           )}
         </Button>
@@ -131,7 +131,7 @@ export function RestrictEmailPopover() {
           ) : (
             <>
               <EnvelopeClosedIcon className="h-4 w-4 mr-1" />
-              <span className="hidden sm:block">Restrict Email</span>
+              <span className="hidden sm:block text-slate-500">Restrict Email</span>
             </>
           )}
         </Button>
@@ -167,7 +167,8 @@ export function AddPasswordPopover() {
             </span>
           ) : (
             <>
-              <LockOpen1Icon className="h-4 w-4 mr-1" /> <span className="hidden sm:block">Add Password</span>
+              <LockOpen1Icon className="h-4 w-4 mr-1" />{" "}
+              <span className="hidden sm:block text-slate-500">Add Password</span>
             </>
           )}
         </Button>
