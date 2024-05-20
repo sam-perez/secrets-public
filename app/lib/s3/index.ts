@@ -1,5 +1,6 @@
 import { S3Client, PutObjectCommand, GetObjectCommand, ListObjectsCommand } from "@aws-sdk/client-s3";
 
+// Create an S3 client
 const s3Client = new S3Client({
   region: "us-east-1",
   credentials: {
@@ -8,6 +9,9 @@ const s3Client = new S3Client({
   },
 });
 
+/**
+ * The buckets that we use in our application.
+ */
 const BUCKETS = {
   MARKETING_BUCKET: "secret-sausage-marketing",
 } as const;
@@ -15,7 +19,7 @@ const BUCKETS = {
 export type BUCKET_OPTIONS = keyof typeof BUCKETS;
 
 /**
- * Uploads a file to S3.
+ * Uploads a buffer to S3.
  */
 export async function uploadToS3({ bucket, key, body }: { bucket: BUCKET_OPTIONS; key: string; body: Buffer }) {
   const command = new PutObjectCommand({
@@ -28,7 +32,7 @@ export async function uploadToS3({ bucket, key, body }: { bucket: BUCKET_OPTIONS
 }
 
 /**
- * Downloads a file from S3.
+ * Downloads a buffer from S3.
  */
 export async function downloadFromS3({ bucket, key }: { bucket: BUCKET_OPTIONS; key: string }) {
   const command = new GetObjectCommand({

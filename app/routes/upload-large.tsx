@@ -1,102 +1,12 @@
-import { json, ActionFunction } from "@remix-run/node";
 import { useState } from "react";
-import { PassThrough } from "stream";
-import { Readable } from "node:stream";
 import { PackedSecrets, SecretResponses } from "../lib/secrets";
-import { uploadToS3, BUCKET_OPTIONS } from "../lib/s3";
 import {
   useEncryptionWorker,
   EncryptionWorkerProvider,
 } from "../components/context-providers/EncryptionWorkerContextProvider";
 import { InitiateSendResponse } from "./initiate-send";
-
-const MAX_FILE_SIZE = 1024 * 1024 * 10; // 10 MB
-
-// Server-side action function to handle the file upload
-export const action: ActionFunction = async ({ request }) => {
-  if (request.headers.get("content-type") !== "application/octet-stream") {
-    return json({ error: "Invalid content type." }, { status: 400 });
-  }
-
-  if (request.body === null) {
-    return json({ error: "No stream uploaded." }, { status: 400 });
-  }
-
-  // Get the Content-Length header
-  const contentLength = request.headers.get("content-length");
-
-  if (contentLength && parseInt(contentLength, 10) > MAX_FILE_SIZE) {
-    // If Content-Length exceeds the maximum, return a 413 Payload Too Large error
-    return json({ error: "Payload too large" }, { status: 413 });
-  }
-
-  let totalBytes = 0;
-  const counterStream = new PassThrough();
-  const chunks: Buffer[] = [];
-
-  counterStream.on("data", (chunk: Buffer) => {
-    totalBytes += chunk.length; // Increment the total bytes counter
-
-    if (totalBytes > MAX_FILE_SIZE) {
-      // If the total bytes exceeds the maximum, destroy the stream
-      counterStream.destroy(new Error("Payload too large"));
-    }
-
-    console.log(`Received ${chunk.length} bytes`); // Log the number of bytes received
-    console.log(`Total bytes received: ${totalBytes}`); // Log the total bytes received
-    chunks.push(chunk);
-  });
-
-  try {
-    // Wait for all data to pass through
-    await new Promise<void>((resolve, reject) => {
-      counterStream.on("end", resolve);
-      counterStream.on("error", reject);
-
-      const bodyIterable: AsyncIterable<unknown> = {
-        [Symbol.asyncIterator]() {
-          const reader = request.body?.getReader();
-          return {
-            async next() {
-              const { done, value } = (await reader?.read()) ?? { done: true, value: undefined };
-              return { done, value };
-            },
-          };
-        },
-      };
-
-      const stream = Readable.from(bodyIterable, {
-        objectMode: false,
-        highWaterMark: 16,
-      });
-
-      stream.pipe(counterStream);
-    });
-
-    // Upload the file to S3. for now, we're just loading the entire file into memory instead of streaming it.
-    // in the future, when we are on a platform that supports body sizes larger than 4.5MB (vercel limitation),
-    // we can stream the data directly to S3.
-    const buffer = Buffer.concat(chunks);
-    console.log(`Uploading ${buffer.length} bytes to S3`);
-    await uploadToS3({
-      bucket: process.env["AWS_APPLICATION_BUCKET"] as BUCKET_OPTIONS, // i swear
-      key: "large-file.bin",
-      body: buffer,
-    });
-    console.log("Upload complete");
-
-    // After all data has been received
-    return json({ success: true, totalBytes });
-  } catch (error) {
-    const errorMessage = error instanceof Error ? error.message : "An error occurred";
-
-    if (errorMessage === "Payload too large") {
-      return json({ error: "Payload too large" }, { status: 413 });
-    } else {
-      return json({ error: errorMessage }, { status: 500 });
-    }
-  }
-};
+import { UPLOAD_SEND_ENCRYPTED_PART_HEADERS } from "./upload-send-encrypted-part";
+import { DOWNLOAD_SEND_ENCRYPTED_PART_HEADERS } from "./download-send-encrypted-part";
 
 function stringToUtf16ArrayBuffer(str: string) {
   const buf = new ArrayBuffer(str.length * 2); // 2 bytes per character
@@ -107,8 +17,7 @@ function stringToUtf16ArrayBuffer(str: string) {
   return buf;
 }
 
-async function utf16ArrayBufferBlobToString(blob: Blob) {
-  const arrayBuffer = await blob.arrayBuffer();
+function utf16ArrayBufferToString(arrayBuffer: ArrayBuffer) {
   const reconstructedStringChars = [];
   const uint16Array = new Uint16Array(arrayBuffer);
 
@@ -127,17 +36,29 @@ export default function UploadLarge() {
   );
 }
 
+/**
+ * The parts of the secret that are considered public.
+ * This is the data that is sent to the server for encryption.
+ */
+type PublicPackedSecrets = Omit<PackedSecrets, "password">;
+
 function UploadLargeInner() {
   const [progress, setProgress] = useState<number>(0);
   const [message, setMessage] = useState<string>("");
-  const [packedSecrets, setPackedSecrets] = useState<PackedSecrets | null>(null);
+  const [password, setPassword] = useState<string | null>(null);
+  const [requestData, setRequestData] = useState<{
+    totalParts: number;
+    sendId: string;
+  } | null>(null);
 
   const encryptionWorker = useEncryptionWorker();
 
   async function uploadLargeBinaryData(binaryArray: Uint8Array) {
     // initiate the secret send
-    const initiateSendResponseFetch = await fetch("/initiate-send");
-    const initiateSendResponse: InitiateSendResponse = await initiateSendResponseFetch.json();
+    const initiateSendResponseFetch = await fetch("/initiate-send", {
+      method: "PUT",
+    });
+    const initiateSendResponse = (await initiateSendResponseFetch.json()) as InitiateSendResponse;
 
     const secretResponses: SecretResponses = [
       {
@@ -154,40 +75,72 @@ function UploadLargeInner() {
     console.log("Sending secret responses for encryption...");
     const packedSecrets = await encryptionWorker.sendSecretResponsesForEncryption(secretResponses);
     console.log("Done sending secret responses for encryption.");
-    const packedSecretsJson = JSON.stringify(packedSecrets);
-
-    const xhr = new XMLHttpRequest();
-    xhr.open("POST", "/upload-large");
-
-    xhr.upload.onprogress = (event: ProgressEvent) => {
-      if (event.lengthComputable) {
-        const percentComplete = (event.loaded / event.total) * 100;
-        setProgress(percentComplete);
-      }
+    const publicPackedSecrets: PublicPackedSecrets = {
+      iv: packedSecrets.iv,
+      ciphertext: packedSecrets.ciphertext,
+      salt: packedSecrets.salt,
     };
 
-    xhr.onload = () => {
-      if (xhr.status === 200) {
-        setMessage("Upload successful");
-        setPackedSecrets(packedSecrets);
-      } else {
-        setMessage(`Upload failed: ${xhr.responseText}`);
+    setPassword(packedSecrets.password);
+
+    const publicPackedSecretsJson = JSON.stringify(publicPackedSecrets);
+
+    // split up the json string into 4mb chunks, assuming 2 bytes per character
+    const bytesPerCharacter = 2;
+    const chunkSize = (4 * 1024 * 1024) / bytesPerCharacter;
+    const chunkArrays: Array<Array<string>> = [[]];
+    for (let i = 0; i < publicPackedSecretsJson.length; i += 1) {
+      let currentChunk = chunkArrays[chunkArrays.length - 1];
+
+      if (currentChunk.length >= chunkSize) {
+        chunkArrays.push([]);
+        currentChunk = chunkArrays[chunkArrays.length - 1];
       }
-    };
 
-    xhr.onerror = () => setMessage("Upload failed: Network error " + xhr.status);
+      currentChunk.push(publicPackedSecretsJson[i]);
+    }
 
-    xhr.onreadystatechange = function () {
-      console.log(`Ready state: ${xhr.readyState}`);
-      if (xhr.readyState == XMLHttpRequest.HEADERS_RECEIVED) {
-        if (xhr.status === 413) {
-          xhr.abort(); // Abort the request if the server says the payload is too large
-        }
+    const chunks = chunkArrays.map((chunk) => chunk.join(""));
+
+    console.log("Uploading encrypted parts..., chunks: ", chunks.length);
+    const totalParts = chunks.length;
+
+    setRequestData({
+      totalParts,
+      sendId: initiateSendResponse.sendId,
+    });
+
+    let finishedParts = 0;
+
+    const uploadPromises = chunks.map((chunk, index) => {
+      const fetchPromise = fetch(`/upload-send-encrypted-part`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/octet-stream",
+          [UPLOAD_SEND_ENCRYPTED_PART_HEADERS.SEND_ID]: initiateSendResponse.sendId,
+          [UPLOAD_SEND_ENCRYPTED_PART_HEADERS.PART_NUMBER]: `${index + 1}`,
+          [UPLOAD_SEND_ENCRYPTED_PART_HEADERS.ENCRYPTED_PART_PASSWORD]: initiateSendResponse.encryptedPartsPassword,
+          [UPLOAD_SEND_ENCRYPTED_PART_HEADERS.TOTAL_PARTS]: `${totalParts}`,
+        },
+        body: new Blob([stringToUtf16ArrayBuffer(chunk)], { type: "application/octet-stream" }),
+      });
+
+      return fetchPromise.finally(() => {
+        finishedParts += 1;
+        setProgress((finishedParts / totalParts) * 100);
+      });
+    });
+
+    const uploadEncryptedPartResults = await Promise.all(uploadPromises);
+
+    // check to make sure that they all uploaded successfully
+    uploadEncryptedPartResults.forEach((result) => {
+      if (!result.ok) {
+        throw new Error("Failed to upload encrypted part.");
       }
-    };
+    });
 
-    xhr.setRequestHeader("Content-Type", "application/octet-stream");
-    xhr.send(new Blob([stringToUtf16ArrayBuffer(packedSecretsJson)], { type: "application/octet-stream" }));
+    console.log("Finished uploading encrypted parts.");
   }
 
   function handleFileChange(event: React.ChangeEvent<HTMLInputElement>) {
@@ -209,14 +162,38 @@ function UploadLargeInner() {
       <input type="file" onChange={handleFileChange} />
       <p>Progress: {progress.toFixed(2)}%</p>
       <p>{message}</p>
-      {packedSecrets !== null ? (
+      {password !== null && requestData !== null ? (
         <button
           onClick={async () => {
-            const response = await fetch(`/fetch-blob?key=${encodeURIComponent("large-file.bin")}`);
-            const blob = await response.blob();
-            const text = await utf16ArrayBufferBlobToString(blob);
+            const { sendId, totalParts } = requestData;
+            // fetch the encrypted parts
+            const fetchEncryptedPartsPromises = Array.from({ length: totalParts }).map((_, index) =>
+              fetch(`/download-send-encrypted-part`, {
+                method: "GET",
+                headers: {
+                  [DOWNLOAD_SEND_ENCRYPTED_PART_HEADERS.SEND_ID]: sendId,
+                  [DOWNLOAD_SEND_ENCRYPTED_PART_HEADERS.PART_NUMBER]: `${index + 1}`,
+                  // no send password for now
+                  // [DOWNLOAD_SEND_ENCRYPTED_PART_HEADERS.SEND_PASSWORD]: password,
+                },
+              })
+            );
+
+            // get the string data out from each and then concatenate them
+            const encryptedParts = await Promise.all(fetchEncryptedPartsPromises);
+            const encryptedPartArrayBuffers = await Promise.all(encryptedParts.map((part) => part.arrayBuffer()));
+            const text = encryptedPartArrayBuffers
+              // each of these buffers should be a utf16 string and should be concatenated in order
+              .map((arrayBuffer) => utf16ArrayBufferToString(arrayBuffer))
+              .join("");
+
             // TODO: validate that the parsing is successful
-            const parsedPackedSecrets = JSON.parse(text) as PackedSecrets;
+            const parsedPublicPackedSecrets = JSON.parse(text) as PublicPackedSecrets;
+
+            const parsedPackedSecrets: PackedSecrets = {
+              ...parsedPublicPackedSecrets,
+              password,
+            };
 
             const secretResponses = await encryptionWorker.sendPackedSecretsForDecryption(parsedPackedSecrets);
 
