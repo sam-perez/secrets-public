@@ -31,6 +31,9 @@ export type SendConfig = {
   password: string | null;
 };
 
+/** Send view id type. */
+export type SendViewId = BrandedId<"sv">;
+
 /** The state of a send. Has to be tracked separately from the config. Stored in S3 for now. */
 export type SendState = {
   /** The id of the send. */
@@ -63,37 +66,49 @@ export type SendState = {
 
   /** The number of times the send has been viewed. */
   views: Array<{
-    /** ISO-8601 date string when the send was viewed. */
-    viewedAt: string;
+    /** The id for the send view. */
+    sendViewId: string;
+
+    /** ISO-8601 date string when the send view was initiated. */
+    viewInitiatedAt: string;
+
+    /** ISO-8601 date string when the send view was marked as ready. */
+    viewReadyAt: string | null;
+
+    /** ISO-8601 date string when the send view was completed. */
+    viewCompletedAt: string | null;
+
+    /** The password used to view the send. */
+    viewPassword: string;
 
     /** Metadata about the view. */
     metadata: Record<string, string>;
-  }>;
 
-  /**
-   * Email confirmation attempts.
-   *
-   * We are going to use this to track all of the email confirmation attempts for a send.
-   * If any of the email confirmation attempts are successful, then we will consider the send
-   * unlocked and ready to be viewed.
-   *
-   * When a user is trying to view a send and they have not confirmed their email, we will
-   * assume that they are trying to respond to the latest email confirmation attempt,
-   * and will not compare the confirmation code to any of the other email confirmation attempts,
-   * even if they are still unexpired
-   */
-  emailConfirmationAttempts: Array<{
-    /** Tracker for the attempt. Need to modify this once we choose an email provider. */
-    tracker: string;
+    /**
+     * Email confirmation attempts.
+     *
+     * We are going to use this to track all of the email confirmation attempts for a send.
+     * If any of the email confirmation attempts are successful, then we will consider the send
+     * unlocked and ready to be viewed.
+     *
+     * When a user is trying to view a send and they have not confirmed their email, we will
+     * assume that they are trying to respond to the latest email confirmation attempt,
+     * and will not compare the confirmation code to any of the other email confirmation attempts,
+     * even if they are still unexpired
+     */
+    emailConfirmationAttempts: Array<{
+      /** Tracker for the attempt. Need to modify this once we choose an email provider. */
+      tracker: string;
 
-    /** The confirmation code that we sent to the email address. */
-    code: string;
+      /** The confirmation code that we sent to the email address. */
+      code: string;
 
-    /** ISO-8601 date string when the email was sent. */
-    sentAt: string;
+      /** ISO-8601 date string when the email was sent. */
+      sentAt: string;
 
-    /** ISO-8601 date string when the email was confirmed. */
-    emailConfirmedAt: string | null;
+      /** ISO-8601 date string when the email was confirmed. */
+      emailConfirmedAt: string | null;
+    }>;
   }>;
 };
 
@@ -101,6 +116,11 @@ export type SendState = {
  * Generate a send id.
  */
 export const generateSendId = (): SendId => generateUniqueId("s", 10);
+
+/**
+ * Generate a send view id.
+ */
+export const generateSendViewId = (): SendViewId => generateUniqueId("sv", 20);
 
 /**
  * Get the key for the send config in s3.

@@ -7,6 +7,8 @@ import {
 import { InitiateSendResponse } from "./initiate-send";
 import { UPLOAD_SEND_ENCRYPTED_PART_HEADERS } from "./upload-send-encrypted-part";
 import { DOWNLOAD_SEND_ENCRYPTED_PART_HEADERS } from "./download-send-encrypted-part";
+import { INITIATE_SEND_VIEW_HEADERS, InitiateSendViewResponse } from "./initiate-send-view";
+import { COMPLETE_SEND_VIEW_HEADERS } from "./complete-send-view";
 
 function stringToUtf16ArrayBuffer(str: string) {
   const buf = new ArrayBuffer(str.length * 2); // 2 bytes per character
@@ -44,7 +46,6 @@ type PublicPackedSecrets = Omit<PackedSecrets, "password">;
 
 function UploadLargeInner() {
   const [progress, setProgress] = useState<number>(0);
-  const [message, setMessage] = useState<string>("");
   const [password, setPassword] = useState<string | null>(null);
   const [requestData, setRequestData] = useState<{
     totalParts: number;
@@ -161,10 +162,24 @@ function UploadLargeInner() {
       <h1>Upload Large Binary Data</h1>
       <input type="file" onChange={handleFileChange} />
       <p>Progress: {progress.toFixed(2)}%</p>
-      <p>{message}</p>
       {password !== null && requestData !== null ? (
         <button
           onClick={async () => {
+            // initiate the secret send view
+            const initiateSendViewResponseFetch = await fetch("/initiate-send-view", {
+              method: "PUT",
+              headers: {
+                [INITIATE_SEND_VIEW_HEADERS.SEND_ID]: requestData.sendId,
+                // no send password for now
+                // [INITIATE_SEND_VIEW_HEADERS.SEND_PASSWORD]: password,
+              },
+            });
+            const initiateSendViewResponse = (await initiateSendViewResponseFetch.json()) as InitiateSendViewResponse;
+
+            if (initiateSendViewResponse.requiresConfirmation) {
+              throw new Error("CONFIRMATION NOT READY YET.");
+            }
+
             const { sendId, totalParts } = requestData;
             // fetch the encrypted parts
             const fetchEncryptedPartsPromises = Array.from({ length: totalParts }).map((_, index) =>
@@ -173,8 +188,8 @@ function UploadLargeInner() {
                 headers: {
                   [DOWNLOAD_SEND_ENCRYPTED_PART_HEADERS.SEND_ID]: sendId,
                   [DOWNLOAD_SEND_ENCRYPTED_PART_HEADERS.PART_NUMBER]: `${index + 1}`,
-                  // no send password for now
-                  // [DOWNLOAD_SEND_ENCRYPTED_PART_HEADERS.SEND_PASSWORD]: password,
+                  [DOWNLOAD_SEND_ENCRYPTED_PART_HEADERS.SEND_VIEW_ID]: initiateSendViewResponse.sendViewId,
+                  [DOWNLOAD_SEND_ENCRYPTED_PART_HEADERS.SEND_VIEW_PASSWORD]: initiateSendViewResponse.viewPassword,
                 },
               })
             );
@@ -198,6 +213,16 @@ function UploadLargeInner() {
             const secretResponses = await encryptionWorker.sendPackedSecretsForDecryption(parsedPackedSecrets);
 
             console.log("Decrypted secret responses:", secretResponses);
+
+            // close the view
+            await fetch(`/complete-send-view`, {
+              method: "POST",
+              headers: {
+                [COMPLETE_SEND_VIEW_HEADERS.SEND_ID]: sendId,
+                [COMPLETE_SEND_VIEW_HEADERS.SEND_VIEW_ID]: initiateSendViewResponse.sendViewId,
+                [COMPLETE_SEND_VIEW_HEADERS.SEND_VIEW_PASSWORD]: initiateSendViewResponse.viewPassword,
+              },
+            });
           }}
         >
           Now Download

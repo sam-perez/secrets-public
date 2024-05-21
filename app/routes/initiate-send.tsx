@@ -27,17 +27,17 @@ export const action: ActionFunction = async () => {
     password: null,
   };
 
-  // with a fake send state
-  const fakeSendState: SendState = {
+  // with an initial send state
+  const initialSendState: SendState = {
     sendId,
     createdAt: new Date().toISOString(),
     // super secure password
     encryptedPartsPassword: getRandomBase62String(32),
     readyAt: null,
+    totalEncryptedParts: null,
     dataDeletedAt: null,
     dataDeletedReason: null,
     views: [],
-    emailConfirmationAttempts: [],
   };
 
   // we are going to store the send config in S3 under sends/{sendId}/config.json
@@ -53,14 +53,14 @@ export const action: ActionFunction = async () => {
       }),
       uploadToS3({
         bucket: "MARKETING_BUCKET",
-        body: Buffer.from(JSON.stringify(fakeSendState)),
+        body: Buffer.from(JSON.stringify(initialSendState)),
         key: getSendStateKey(sendId),
       }),
     ]);
 
     const initiateSendResponse: InitiateSendResponse = {
       sendId,
-      encryptedPartsPassword: fakeSendState.encryptedPartsPassword,
+      encryptedPartsPassword: initialSendState.encryptedPartsPassword,
     };
 
     return new Response(JSON.stringify(initiateSendResponse), {
