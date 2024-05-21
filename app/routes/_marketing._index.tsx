@@ -8,6 +8,11 @@ import "highlight.js/styles/tokyo-night-dark.css";
 import hljs from "highlight.js";
 import { useEffect } from "react";
 import { marked } from "marked";
+import Builder from "./builder";
+import BuilderWrapper from "~/components/builder/wrapper";
+import BuilderFields from "~/components/builder/fields";
+import BuilderFooter from "~/components/builder/footer";
+import { TemplateCard } from "~/components/ui/TemplateCard";
 
 export const meta: MetaFunction = () => {
   return [
@@ -18,15 +23,15 @@ export const meta: MetaFunction = () => {
 
 const howItWorks = [
   {
-    title: "Start with a 2Secured form",
+    title: "1. Start with a 2Secured form",
     description: "Build a 2Secured form in seconds to send or request text and files securely. ",
   },
   {
-    title: "Get an encrypted link",
+    title: "2. Get an encrypted link",
     description: "2Secured encrypts the data using the SHA-256 algorithm and generates a link.",
   },
   {
-    title: "Share, decrypt and view",
+    title: "3. Share, decrypt and view",
     description:
       "Only you and the recipient have the decryption token, no other system or human can view it (not even us).",
   },
@@ -37,28 +42,40 @@ const useCases = {
     {
       title: "Rotating API Keys",
       type: "Send",
+      slug: "api-key",
+      uses: 234,
     },
     {
       title: "Collecting bank account info from a client",
       type: "Request",
+      slug: "api-key",
+      uses: 234,
     },
     {
       title: "Sharing your password with a coworker",
       type: "Send",
+      slug: "api-key",
+      uses: 1234,
     },
     {
       title: "Sharing your password with a coworker",
       type: "Send",
+      slug: "api-key",
+      uses: 234,
     },
   ],
   personal: [
     {
       title: "Sharing tax documents with your Accountant",
       type: "Send",
+      slug: "api-key",
+      uses: 234,
     },
     {
       title: "Sharing WIFI Password",
       type: "Send",
+      slug: "api-key",
+      uses: 234,
     },
   ],
 };
@@ -93,23 +110,31 @@ export default function Index() {
 
   return (
     <>
-      <section>
-        <div className="max-w-3xl py-32 space-y-3 mx-auto text-center">
-          <h1 className="">Send and receive sensitive data with end-to-end encryption</h1>
-          <p className="lead">
-            Stop risking passwords, API keys, banking info and other scary information by sharing over email. 2Secure is
-            a simple yet powerful way to send and receive data securely.
-          </p>
-          <div className="space-x-2 pt-4">
-            <Link to="/builder">
-              <Button className="">
-                <PaperPlaneIcon className="mr-2 h-3 w-3" />
-                New Encrypted Send
-              </Button>
-            </Link>
-            <Link to="/templates">
-              <Button variant={"outline"}>Browse Templates</Button>
-            </Link>
+      <section className="pb-14">
+        <div className="sm:p-2 grid sm:grid-cols-2 grid-cols-1 sm:gap-24 items-center">
+          <div className="">
+            <h1 className="mb-4">Send and receive sensitive data with end-to-end encryption</h1>
+            <p className="lead">
+              Stop risking passwords, API keys, banking info and other scary information by sharing over email. 2Secure
+              is a simple yet powerful way to send and receive data securely.
+            </p>
+            <div className="space-x-2 pt-4">
+              <Link to="/builder">
+                <Button className="">
+                  <PaperPlaneIcon className="mr-2 h-3 w-3" />
+                  New Encrypted Send
+                </Button>
+              </Link>
+              <Link to="/templates">
+                <Button variant={"outline"}>Browse Templates</Button>
+              </Link>
+            </div>
+          </div>
+          <div>
+            <BuilderWrapper>
+              <BuilderFields />
+              <BuilderFooter />
+            </BuilderWrapper>
           </div>
         </div>
       </section>
@@ -141,19 +166,27 @@ export default function Index() {
                 <TabsTrigger value="business">For Work</TabsTrigger>
                 <TabsTrigger value="personal">Personal</TabsTrigger>
               </TabsList>
-              <TabsContent value="business">
+              <TabsContent value="business" className="space-y-4">
                 {useCases.work.map((item, index) => (
-                  <div key={index} className="flex items-center justify-between border p-4 rounded-md mb-4 bg-white">
-                    <small>{item.title}</small>
-                    <Badge variant={"secondary"}>{item.type}</Badge>
+                  <div key={index}>
+                    <TemplateCard
+                      show_description={false}
+                      template_slug={item.slug}
+                      name={item.title}
+                      uses={item.uses}
+                    />
                   </div>
                 ))}
               </TabsContent>
-              <TabsContent value="personal">
+              <TabsContent value="personal" className="space-y-4">
                 {useCases.personal.map((item, index) => (
-                  <div key={index} className="flex items-center justify-between border p-4 rounded-md mb-4 bg-white">
-                    <small>{item.title}</small>
-                    <Badge variant={"secondary"}>{item.type}</Badge>
+                  <div key={index}>
+                    <TemplateCard
+                      show_description={false}
+                      template_slug={item.slug}
+                      name={item.title}
+                      uses={item.uses}
+                    />
                   </div>
                 ))}
               </TabsContent>

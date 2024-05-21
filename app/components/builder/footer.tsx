@@ -1,11 +1,7 @@
 import {
-  ClockIcon,
-  CounterClockwiseClockIcon,
   EnvelopeClosedIcon,
   EnvelopeOpenIcon,
-  LinkBreak1Icon,
   LinkBreak2Icon,
-  LinkNone1Icon,
   LinkNone2Icon,
   LockClosedIcon,
   LockOpen1Icon,

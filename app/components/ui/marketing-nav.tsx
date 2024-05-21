@@ -33,7 +33,7 @@ export default function MarketingNav() {
       <div className="container py-2 flex items-center space-x-4 justify-between">
         <Link to={"/"}>
           <div className=" flex items-center">
-            <LogoIcon size="20px" color="#a8a29e" />
+            {/* <LogoIcon size="20px" color="#a8a29e" /> */}
             <span className="text-base font-bold tracking-tight ml-3">2Secured</span>
           </div>
         </Link>

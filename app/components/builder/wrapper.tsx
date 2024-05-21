@@ -5,5 +5,5 @@ interface WrapperProps {
 }
 
 export default function BuilderWrapper({ children }: WrapperProps) {
-  return <div className="border rounded-xl mb-4 shadow-xl">{children}</div>;
+  return <div className="border rounded-xl mb-4 shadow-lg">{children}</div>;
 }
