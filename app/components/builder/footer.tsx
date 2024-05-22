@@ -16,7 +16,7 @@ export default function BuilderFooter() {
   return (
     <>
       <div className="border-t bg-slate-50 rounded-b-xl">
-        <div className="px-4 py-2 sm:flex justify-between items-center grow-0	text-sm">
+        <div className="px-4 py-2 sm:flex flex-wrap justify-between items-center text-sm overflow-hidden">
           {/* actions  */}
           <div className="flex items-center space-x-4">
             <div className="max-w-1/3 sm:max-w-[140px] overflow-hidden truncate ">{LinkExpirationPopover()}</div>

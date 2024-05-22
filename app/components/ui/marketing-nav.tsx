@@ -34,10 +34,10 @@ export default function MarketingNav() {
         <Link to={"/"}>
           <div className=" flex items-center">
             {/* <LogoIcon size="20px" color="#a8a29e" /> */}
-            <span className="text-base font-bold tracking-tight ml-3">2Secured</span>
+            <span className="text-base font-bold tracking-tight">2Secured</span>
           </div>
         </Link>
-        <NavigationMenu>
+        <NavigationMenu className="hidden sm:block">
           <NavigationMenuList>
             {/* <NavigationMenuItem>
               <NavigationMenuTrigger>Item One</NavigationMenuTrigger>

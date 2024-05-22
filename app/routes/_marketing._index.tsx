@@ -112,7 +112,7 @@ export default function Index() {
     <>
       <section className="pb-14">
         <div className="sm:p-2 grid sm:grid-cols-2 grid-cols-1 sm:gap-24 items-center">
-          <div className="">
+          <div className="p-4">
             <h1 className="mb-4">Send and receive sensitive data with end-to-end encryption</h1>
             <p className="lead">
               Stop risking passwords, API keys, banking info and other scary information by sharing over email. 2Secure
@@ -142,7 +142,7 @@ export default function Index() {
       <section id="howItWorks">
         <div className="grid sm:grid-cols-3 grid-cols-1 gap-8">
           {howItWorks.map((item, index) => (
-            <div className="p-4 border rounded" key={index}>
+            <div className="" key={index}>
               <div>
                 <h4>{item.title}</h4>
                 <p className="pt-2 text-base">{item.description}</p>
@@ -234,7 +234,7 @@ export default function Index() {
         </div>
       </section>
 
-      <section id="integrations" className="my-12">
+      <section id="integrations" className="my-12 bg-slate-50">
         <h3>Add 2Secured to your workflow for sensitive data</h3>
         <p className="text-lg">
           Pull data from, or push data to, other applications you may use. Want something not listed? Tell us
