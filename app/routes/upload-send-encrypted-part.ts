@@ -58,6 +58,20 @@ export const action: ActionFunction = async ({ request }) => {
     }
 
     // we need to store the encrypted part in S3
+    const partNumberInt = parseInt(partNumber, 10);
+    const totalPartsInt = parseInt(totalParts, 10);
+
+    if (isNaN(totalPartsInt) || isNaN(partNumberInt) || partNumberInt < 0 || partNumberInt >= totalPartsInt) {
+      return new Response("Invalid part number.", { status: 400 });
+    }
+
+    // we want a max of let's say 15 parts for now. Each request is a max of 4.5MB, so we are looking at a max
+    // of 15 * 4.5MB = 67.5MB. The client should impose a limit on the total size of the file that they are
+    // sending, but we should also protect ourselves from a malicious client.
+    if (totalPartsInt > 15) {
+      return new Response("Too many parts.", { status: 400 });
+    }
+
     const encryptedPartKey = getEncryptedPartKey(sendId as SendId, parseInt(partNumber, 10));
 
     // just get the body from the request. we don't care about size for now since we are hosting in
@@ -84,13 +98,9 @@ export const action: ActionFunction = async ({ request }) => {
       prefix: encryptedPartsPrefix,
     });
 
-    const expectedTotalParts = parseInt(totalParts, 10);
     const actualTotalParts = encryptedParts?.length ?? 0;
 
-    console.log(`Expected total parts: ${expectedTotalParts}.`);
-    console.log(`Actual total parts: ${actualTotalParts}.`);
-
-    if (actualTotalParts === expectedTotalParts) {
+    if (actualTotalParts === totalPartsInt) {
       sendState.readyAt = new Date().toISOString();
 
       // TODO: move this to the initiate-send route? would only be worthwhile if we wanted to check before
