@@ -51,7 +51,7 @@ export default function Templates() {
       </section>
       {/* todo sort by tag */}
 
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 ">
+      <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 md:grid-cols-4">
         {templates.map((template, index) => (
           <div key={index}>
             <TemplateCard

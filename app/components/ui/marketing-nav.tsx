@@ -6,7 +6,6 @@ import {
   NavigationMenuList,
   navigationMenuTriggerStyle,
 } from "./navigation-menu";
-import LogoIcon from "./logo";
 
 const nav_links = [
   {

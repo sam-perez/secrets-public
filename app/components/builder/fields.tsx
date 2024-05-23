@@ -41,7 +41,7 @@ export interface secretBlobProps {
 const secretBlob: secretBlobProps[] = [
   {
     secretHeader: {
-      title: "API Header",
+      title: "Untitled encrypted send",
     },
     secretConfig: [
       {
@@ -131,7 +131,7 @@ export default function BuilderFields() {
       <div className="max-w-4xl mx-auto">
         <div className="p-4">
           <h4 className="hover:bg-slate-50">
-            <EditableText initialText="edit me" />
+            <EditableText initialText={secretBlob[0].secretHeader.title} />
           </h4>
         </div>
 
