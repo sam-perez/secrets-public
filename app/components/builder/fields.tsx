@@ -129,7 +129,7 @@ export default function BuilderFields() {
   return (
     <>
       <div className="max-w-4xl mx-auto">
-        <div className="p-4">
+        <div className="px-4 pt-4">
           <h4 className="hover:bg-slate-50">
             <EditableText initialText={secretBlob[0].secretHeader.title} />
           </h4>

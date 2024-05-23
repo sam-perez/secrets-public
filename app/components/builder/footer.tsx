@@ -66,7 +66,7 @@ export function LinkExpirationPopover() {
           ) : (
             <>
               <LinkNone2Icon className="h-4 w-4 mr-1" />
-              <span className="hidden sm:block text-slate-500">Link Expiration</span>
+              <span className="hidden sm:block text-slate-500 text-xs">Link Expiration</span>
             </>
           )}
         </Button>
@@ -121,13 +121,13 @@ export function RestrictEmailPopover() {
       <PopoverTrigger>
         <Button variant="link" className="px-0">
           {email ? (
-            <span className="flex items-center font-medium">
+            <span className="flex items-center font-medium text-sm">
               <EnvelopeOpenIcon className="h-4 w-4 mr-1" /> {email}
             </span>
           ) : (
             <>
               <EnvelopeClosedIcon className="h-4 w-4 mr-1" />
-              <span className="hidden sm:block text-slate-500">Restrict Email</span>
+              <span className="hidden sm:block text-slate-500 text-xs">Restrict Email</span>
             </>
           )}
         </Button>
@@ -164,7 +164,7 @@ export function AddPasswordPopover() {
           ) : (
             <>
               <LockOpen1Icon className="h-4 w-4 mr-1" />{" "}
-              <span className="hidden sm:block text-slate-500">Add Password</span>
+              <span className="hidden sm:block text-slate-500 text-xs">Add Password</span>
             </>
           )}
         </Button>
