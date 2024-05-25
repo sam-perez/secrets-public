@@ -4,13 +4,16 @@
  * Base 62 is a way to represent numbers using the characters 0-9, A-Z, and a-z.
  */
 export function toBase62(num: number): string {
+  // this character set is in lexicographical order, which is important for sorting
   const characters = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
-  let result = "";
+
+  const result: string[] = [];
   do {
-    result = characters[num % 62] + result;
+    result.push(characters[num % 62]);
     num = Math.floor(num / 62);
   } while (num > 0);
-  return result;
+
+  return result.join("");
 }
 
 /**

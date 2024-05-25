@@ -12,21 +12,19 @@ export function cn(...inputs: ClassValue[]) {
 export const parallelWithLimit = async <T>(args: { limit: number; fns: (() => Promise<T>)[] }): Promise<T[]> => {
   const { limit, fns } = args;
 
-  const results: T[] = [];
+  const results: T[] = new Array(fns.length);
   let index = 0;
 
-  const next = async () => {
-    const i = index++;
-    if (i >= fns.length) {
-      return;
-    }
+  const worker = async () => {
+    while (index < fns.length) {
+      const currentIndex = index;
+      index += 1;
 
-    const result = await fns[i]();
-    results.push(result);
-    await next();
+      results[currentIndex] = await fns[currentIndex]();
+    }
   };
 
-  await Promise.all([...Array(limit)].map(next));
+  await Promise.all([...Array(limit)].map(worker));
 
   return results;
 };
