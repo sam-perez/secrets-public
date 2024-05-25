@@ -1,6 +1,6 @@
 import { ActionFunction } from "@remix-run/node";
 import { downloadFromS3, uploadToS3 } from "../lib/s3";
-import { generateSendViewId, getSendStateKey, getSendConfigKey, SendId, SendState, SendConfig } from "../lib/sends";
+import { getSendStateKey, SendId, SendState } from "../lib/sends";
 
 /**
  * The headers that we expect to be present in the request for completing a send view.

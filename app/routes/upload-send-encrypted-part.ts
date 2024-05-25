@@ -61,7 +61,7 @@ export const action: ActionFunction = async ({ request }) => {
     const partNumberInt = parseInt(partNumber, 10);
     const totalPartsInt = parseInt(totalParts, 10);
 
-    if (isNaN(totalPartsInt) || isNaN(partNumberInt) || partNumberInt < 0 || partNumberInt >= totalPartsInt) {
+    if (isNaN(totalPartsInt) || isNaN(partNumberInt) || partNumberInt < 0 || partNumberInt > totalPartsInt) {
       return new Response("Invalid part number.", { status: 400 });
     }
 
