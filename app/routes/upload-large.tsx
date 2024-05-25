@@ -9,6 +9,7 @@ import { UPLOAD_SEND_ENCRYPTED_PART_HEADERS } from "./upload-send-encrypted-part
 import { DOWNLOAD_SEND_ENCRYPTED_PART_HEADERS } from "./download-send-encrypted-part";
 import { INITIATE_SEND_VIEW_HEADERS, InitiateSendViewResponse } from "./initiate-send-view";
 import { COMPLETE_SEND_VIEW_HEADERS } from "./complete-send-view";
+import { parallelWithLimit } from "../lib/utils";
 
 function stringToUtf16ArrayBuffer(str: string) {
   const buf = new ArrayBuffer(str.length * 2); // 2 bytes per character
@@ -114,25 +115,30 @@ function UploadLargeInner() {
     let finishedParts = 0;
 
     const uploadPromises = chunks.map((chunk, index) => {
-      const fetchPromise = fetch(`/upload-send-encrypted-part`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/octet-stream",
-          [UPLOAD_SEND_ENCRYPTED_PART_HEADERS.SEND_ID]: initiateSendResponse.sendId,
-          [UPLOAD_SEND_ENCRYPTED_PART_HEADERS.PART_NUMBER]: `${index + 1}`,
-          [UPLOAD_SEND_ENCRYPTED_PART_HEADERS.ENCRYPTED_PART_PASSWORD]: initiateSendResponse.encryptedPartsPassword,
-          [UPLOAD_SEND_ENCRYPTED_PART_HEADERS.TOTAL_PARTS]: `${totalParts}`,
-        },
-        body: new Blob([stringToUtf16ArrayBuffer(chunk)], { type: "application/octet-stream" }),
-      });
+      return async () => {
+        const fetchPromise = fetch(`/upload-send-encrypted-part`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/octet-stream",
+            [UPLOAD_SEND_ENCRYPTED_PART_HEADERS.SEND_ID]: initiateSendResponse.sendId,
+            [UPLOAD_SEND_ENCRYPTED_PART_HEADERS.PART_NUMBER]: `${index + 1}`,
+            [UPLOAD_SEND_ENCRYPTED_PART_HEADERS.ENCRYPTED_PART_PASSWORD]: initiateSendResponse.encryptedPartsPassword,
+            [UPLOAD_SEND_ENCRYPTED_PART_HEADERS.TOTAL_PARTS]: `${totalParts}`,
+          },
+          body: new Blob([stringToUtf16ArrayBuffer(chunk)], { type: "application/octet-stream" }),
+        });
 
-      return fetchPromise.finally(() => {
-        finishedParts += 1;
-        setProgress((finishedParts / totalParts) * 100);
-      });
+        return fetchPromise.finally(() => {
+          finishedParts += 1;
+          setProgress((finishedParts / totalParts) * 100);
+        });
+      };
     });
 
-    const uploadEncryptedPartResults = await Promise.all(uploadPromises);
+    const uploadEncryptedPartResults = await parallelWithLimit({
+      fns: uploadPromises,
+      limit: 3,
+    });
 
     // check to make sure that they all uploaded successfully
     uploadEncryptedPartResults.forEach((result) => {
@@ -181,21 +187,28 @@ function UploadLargeInner() {
             }
 
             const { sendId, totalParts } = requestData;
+
             // fetch the encrypted parts
-            const fetchEncryptedPartsPromises = Array.from({ length: totalParts }).map((_, index) =>
-              fetch(`/download-send-encrypted-part`, {
-                method: "GET",
-                headers: {
-                  [DOWNLOAD_SEND_ENCRYPTED_PART_HEADERS.SEND_ID]: sendId,
-                  [DOWNLOAD_SEND_ENCRYPTED_PART_HEADERS.PART_NUMBER]: `${index + 1}`,
-                  [DOWNLOAD_SEND_ENCRYPTED_PART_HEADERS.SEND_VIEW_ID]: initiateSendViewResponse.sendViewId,
-                  [DOWNLOAD_SEND_ENCRYPTED_PART_HEADERS.SEND_VIEW_PASSWORD]: initiateSendViewResponse.viewPassword,
-                },
-              })
-            );
+            const fetchEncryptedPartsPromises = Array.from({ length: totalParts }).map((_, index) => {
+              return async () => {
+                return fetch(`/download-send-encrypted-part`, {
+                  method: "GET",
+                  headers: {
+                    [DOWNLOAD_SEND_ENCRYPTED_PART_HEADERS.SEND_ID]: sendId,
+                    [DOWNLOAD_SEND_ENCRYPTED_PART_HEADERS.PART_NUMBER]: `${index + 1}`,
+                    [DOWNLOAD_SEND_ENCRYPTED_PART_HEADERS.SEND_VIEW_ID]: initiateSendViewResponse.sendViewId,
+                    [DOWNLOAD_SEND_ENCRYPTED_PART_HEADERS.SEND_VIEW_PASSWORD]: initiateSendViewResponse.viewPassword,
+                  },
+                });
+              };
+            });
 
             // get the string data out from each and then concatenate them
-            const encryptedParts = await Promise.all(fetchEncryptedPartsPromises);
+            const encryptedParts = await parallelWithLimit({
+              fns: fetchEncryptedPartsPromises,
+              limit: 3,
+            });
+
             const encryptedPartArrayBuffers = await Promise.all(encryptedParts.map((part) => part.arrayBuffer()));
             const text = encryptedPartArrayBuffers
               // each of these buffers should be a utf16 string and should be concatenated in order
