@@ -1,15 +1,15 @@
 import { ActionFunction } from "@remix-run/node";
-import { downloadFromS3, uploadToS3 } from "../lib/s3";
+import { getRandomBase62String } from "../lib/crypto-utils";
+import { sendEmail } from "../lib/email";
 import {
   generateSendViewId,
   SendViewId,
-  getSendStateKey,
-  getSendConfigKey,
   SendId,
   SendState,
-  SendConfig,
+  getSendState,
+  saveSendState,
+  getSendConfig,
 } from "../lib/sends";
-import { getRandomBase62String } from "../lib/crypto-utils";
 
 /** The response from the initiate send view endpoint. */
 export type InitiateSendViewResponse = {
@@ -53,23 +53,10 @@ export const action: ActionFunction = async ({ request }) => {
       return new Response("Missing required headers.", { status: 400 });
     }
 
-    // pull down the state and the config for the send
-    const sendStateKey = getSendStateKey(sendId as SendId);
-    const sendConfigKey = getSendConfigKey(sendId as SendId);
-
-    const [sendStateResponse, sendConfigResponse] = await Promise.all([
-      downloadFromS3({
-        bucket: "MARKETING_BUCKET",
-        key: sendStateKey,
-      }),
-      downloadFromS3({
-        bucket: "MARKETING_BUCKET",
-        key: sendConfigKey,
-      }),
+    const [sendState, sendConfig] = await Promise.all([
+      getSendState(sendId as SendId),
+      getSendConfig(sendId as SendId),
     ]);
-
-    const sendState = JSON.parse(new TextDecoder().decode(sendStateResponse.data)) as SendState;
-    const sendConfig = JSON.parse(new TextDecoder().decode(sendConfigResponse.data)) as SendConfig;
 
     // check to see if the send has been marked as ready
     if (sendState.readyAt === null) {
@@ -124,7 +111,25 @@ export const action: ActionFunction = async ({ request }) => {
         requiresConfirmation: true,
       };
 
-      // TODO: send an email to the confirmation email address with a code that the user can enter to confirm the view
+      const code = getRandomBase62String(6);
+
+      // send an email to the confirmation email address with a code that the user can enter to confirm the view
+      // TODO: handle errors?
+      const emailResponse = await sendEmail({
+        to: sendConfig.confirmationEmail,
+        from: "2Secured <noreply@2secured.link>",
+        subject: "2Secured View Confirmation",
+        body: `To confirm your view of the 2Secured send, use the following code: ${code}`,
+      });
+
+      // add the email confirmation attempt to the view
+      view.emailConfirmationAttempts.push({
+        code,
+        sentAt: new Date().toISOString(),
+        emailConfirmedAt: null,
+        messageId: emailResponse.MessageId || "no-message-id",
+        messageMetadata: { ...emailResponse.$metadata },
+      });
     } else {
       initiateSendViewResponse = {
         sendViewId,
@@ -138,11 +143,7 @@ export const action: ActionFunction = async ({ request }) => {
 
     // save the view to the send state
     sendState.views.push(view);
-    await uploadToS3({
-      bucket: "MARKETING_BUCKET",
-      body: Buffer.from(JSON.stringify(sendState)),
-      key: sendStateKey,
-    });
+    await saveSendState(sendState);
 
     return new Response(JSON.stringify(initiateSendViewResponse), {
       headers: {

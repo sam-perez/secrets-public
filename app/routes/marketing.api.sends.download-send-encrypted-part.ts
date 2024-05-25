@@ -1,6 +1,6 @@
 import { LoaderFunction } from "@remix-run/node";
 import { downloadFromS3 } from "../lib/s3";
-import { getEncryptedPartKey, getSendStateKey, SendId, SendState } from "../lib/sends";
+import { getEncryptedPartKey, SendId, SEND_VIEW_EXPIRATION_MS, getSendState } from "../lib/sends";
 
 export const DOWNLOAD_SEND_ENCRYPTED_PART_HEADERS = {
   SEND_ID: "X-2SECURED-SEND-ID",
@@ -8,8 +8,6 @@ export const DOWNLOAD_SEND_ENCRYPTED_PART_HEADERS = {
   SEND_VIEW_PASSWORD: "X-2SECURED-SEND-VIEW-PASSWORD",
   PART_NUMBER: "X-2SECURED-PART-NUMBER",
 };
-
-const VIEW_EXPIRATION_MS = 60 * 60 * 1000; // 1 hour
 
 /**
  * Action for downloading the encrypted parts of a send.
@@ -29,16 +27,7 @@ export const loader: LoaderFunction = async ({ request }) => {
       return new Response("Missing required headers.", { status: 400 });
     }
 
-    const sendStateKey = getSendStateKey(sendId as SendId);
-
-    const [sendStateResponse] = await Promise.all([
-      downloadFromS3({
-        bucket: "MARKETING_BUCKET",
-        key: sendStateKey,
-      }),
-    ]);
-
-    const sendState = JSON.parse(new TextDecoder().decode(sendStateResponse.data)) as SendState;
+    const sendState = await getSendState(sendId as SendId);
 
     // find the matching view
     const view = sendState.views.find((v) => v.sendViewId === sendViewId);
@@ -46,7 +35,7 @@ export const loader: LoaderFunction = async ({ request }) => {
       return new Response("No matching view found.", { status: 400 });
     }
 
-    // check the password
+    // check the password. we assume that the password has not been distributed unless the view is confirmed.
     if (view.viewPassword !== viewPassword) {
       return new Response("Invalid view password.", { status: 400 });
     }
@@ -62,7 +51,7 @@ export const loader: LoaderFunction = async ({ request }) => {
     }
 
     // check to make sure the view has not expired
-    if (new Date().getTime() - new Date(view.viewInitiatedAt).getTime() > VIEW_EXPIRATION_MS) {
+    if (new Date().getTime() - new Date(view.viewInitiatedAt).getTime() > SEND_VIEW_EXPIRATION_MS) {
       return new Response("View has expired.", { status: 400 });
     }
 

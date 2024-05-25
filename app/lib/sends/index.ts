@@ -1,3 +1,4 @@
+import { downloadFromS3, uploadToS3, listObjectsInS3 } from "../s3";
 import { BrandedId, generateUniqueId } from "../ids";
 
 /** Send id type. */
@@ -57,14 +58,7 @@ export type SendState = {
   /** The reason the send data was deleted. */
   dataDeletedReason: "expired" | "deleted" | "viewed" | null;
 
-  // TODO: we probably want to not just assume that the send has been viewed once the client has downloaded the file,
-  // but instead wait for a confirmation from the client that the file has been viewed using a piece of data
-  // that is only available to the client after the file has been decrypted.
-  // This is probably an edge case? Low priority for now, and maybe this is a feature we can build and bill around
-  // later. AKA, a feature where we schedule the deletion of the data but they have time to cancel the deletion.
-  // Like, reset the views and the expiration date and allow the target to try to pull the data again.
-
-  /** The number of times the send has been viewed. */
+  /** The views for the send. */
   views: Array<{
     /** The id for the send view. */
     sendViewId: string;
@@ -97,8 +91,11 @@ export type SendState = {
      * even if they are still unexpired
      */
     emailConfirmationAttempts: Array<{
-      /** Tracker for the attempt. Need to modify this once we choose an email provider. */
-      tracker: string;
+      /** Message id. Used to track the email in logs etc. */
+      messageId: string;
+
+      /** Metadata about the email message. */
+      messageMetadata: { [key: string]: string | number | undefined };
 
       /** The confirmation code that we sent to the email address. */
       code: string;
@@ -125,15 +122,101 @@ export const generateSendViewId = (): SendViewId => generateUniqueId("sv", 20);
 /**
  * Get the key for the send config in s3.
  */
-export const getSendConfigKey = (sendId: SendId): string => `sends/${sendId}/config.json`;
+export const getSendConfigKey = (sendId: SendId): string => `sends/instance-data/${sendId}/config.json`;
 
 /**
  * Get the key for the send state in s3.
  */
-export const getSendStateKey = (sendId: SendId): string => `sends/${sendId}/state.json`;
+export const getSendStateKey = (sendId: SendId): string => `sends/instance-data/${sendId}/state.json`;
 
 /**
  *  Get the key for and encrypted part in s3.
  */
 export const getEncryptedPartKey = (sendId: SendId, partNumber: number): string =>
-  `sends/${sendId}/encrypted/${partNumber}.bin`;
+  `sends/instance-data/${sendId}/encrypted-parts/${partNumber}.bin`;
+
+/**
+ * Get the key for send expiration info in s3.
+ */
+export const getSendExpirationKey = (sendId: SendId, expiration: string): string =>
+  `sends/expirations/sends/${expiration}/${sendId}`;
+
+/**
+ * Get the key for send view expiration info in s3.
+ */
+export const getSendViewExpirationKey = (sendId: SendId, sendViewId: SendViewId, expiration: string): string =>
+  `sends/expirations/views/${expiration}/${sendId}/${sendViewId}`;
+
+/**
+ * The amount of time we are willing to wait after a view is initiated before we consider it too old
+ * and reject further requests to download parts.
+ */
+export const SEND_VIEW_EXPIRATION_MS = 60 * 60 * 1000; // 1 hour
+
+/**
+ * Get the send state from s3.
+ */
+export const getSendState = async (sendId: SendId): Promise<SendState> => {
+  const sendStateKey = getSendStateKey(sendId);
+
+  const response = await downloadFromS3({
+    bucket: "MARKETING_BUCKET",
+    key: sendStateKey,
+  });
+
+  return JSON.parse(new TextDecoder().decode(response.data)) as SendState;
+};
+
+/**
+ * Save the send state to s3.
+ */
+export const saveSendState = async (sendState: SendState): Promise<void> => {
+  const sendStateKey = getSendStateKey(sendState.sendId);
+
+  await uploadToS3({
+    bucket: "MARKETING_BUCKET",
+    body: Buffer.from(JSON.stringify(sendState)),
+    key: sendStateKey,
+  });
+};
+
+/**
+ * Get the send config from s3.
+ */
+export const getSendConfig = async (sendId: SendId): Promise<SendConfig> => {
+  const sendConfigKey = getSendConfigKey(sendId);
+
+  const response = await downloadFromS3({
+    bucket: "MARKETING_BUCKET",
+    key: sendConfigKey,
+  });
+
+  return JSON.parse(new TextDecoder().decode(response.data)) as SendConfig;
+};
+
+/**
+ * Save the send config to s3.
+ */
+export const saveSendConfig = async (sendConfig: SendConfig): Promise<void> => {
+  const sendConfigKey = getSendConfigKey(sendConfig.sendId);
+
+  await uploadToS3({
+    bucket: "MARKETING_BUCKET",
+    body: Buffer.from(JSON.stringify(sendConfig)),
+    key: sendConfigKey,
+  });
+};
+
+/**
+ * List all of the send encrypted parts in s3.
+ */
+export const listSendEncryptedParts = async (sendId: SendId) => {
+  // check to see if all of the parts have been uploaded
+  const encryptedPartsPrefix = `sends/instance-data/${sendId}/encrypted-parts/`;
+  const { Contents: encryptedParts } = await listObjectsInS3({
+    bucket: "MARKETING_BUCKET",
+    prefix: encryptedPartsPrefix,
+  });
+
+  return encryptedParts;
+};

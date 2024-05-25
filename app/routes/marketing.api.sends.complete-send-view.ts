@@ -1,6 +1,5 @@
 import { ActionFunction } from "@remix-run/node";
-import { downloadFromS3, uploadToS3 } from "../lib/s3";
-import { getSendStateKey, SendId, SendState } from "../lib/sends";
+import { SendId, SEND_VIEW_EXPIRATION_MS, getSendState, saveSendState } from "../lib/sends";
 
 /**
  * The headers that we expect to be present in the request for completing a send view.
@@ -26,15 +25,7 @@ export const action: ActionFunction = async ({ request }) => {
       return new Response("Missing required headers.", { status: 400 });
     }
 
-    // pull down the state and the config for the send
-    const sendStateKey = getSendStateKey(sendId as SendId);
-
-    const sendStateResponse = await downloadFromS3({
-      bucket: "MARKETING_BUCKET",
-      key: sendStateKey,
-    });
-
-    const sendState = JSON.parse(new TextDecoder().decode(sendStateResponse.data)) as SendState;
+    const sendState = await getSendState(sendId as SendId);
 
     // find the matching view
     const view = sendState.views.find((v) => v.sendViewId === sendViewId);
@@ -57,16 +48,15 @@ export const action: ActionFunction = async ({ request }) => {
       return new Response("View is not ready.", { status: 400 });
     }
 
-    // we don't care about expiration for now, if you want to close the view and you have the password you can close it
+    // check to make sure the view has not expired
+    if (new Date().getTime() - new Date(view.viewInitiatedAt).getTime() > SEND_VIEW_EXPIRATION_MS) {
+      return new Response("View has expired.", { status: 400 });
+    }
 
     // mark the view as completed
     view.viewCompletedAt = new Date().toISOString();
 
-    await uploadToS3({
-      bucket: "MARKETING_BUCKET",
-      body: Buffer.from(JSON.stringify(sendState)),
-      key: sendStateKey,
-    });
+    await saveSendState(sendState);
 
     return new Response(null, { status: 204 });
   } catch (error) {

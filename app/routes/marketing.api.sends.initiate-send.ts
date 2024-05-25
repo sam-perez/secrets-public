@@ -22,7 +22,7 @@ export const action: ActionFunction = async () => {
   const fakeSendConfig: SendConfig = {
     sendId,
     confirmationEmail: null,
-    maxViews: null,
+    maxViews: 1,
     expiresAt: null,
     password: null,
   };

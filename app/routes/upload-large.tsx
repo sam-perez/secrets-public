@@ -4,11 +4,11 @@ import {
   useEncryptionWorker,
   EncryptionWorkerProvider,
 } from "../components/context-providers/EncryptionWorkerContextProvider";
-import { InitiateSendResponse } from "./initiate-send";
-import { UPLOAD_SEND_ENCRYPTED_PART_HEADERS } from "./upload-send-encrypted-part";
-import { DOWNLOAD_SEND_ENCRYPTED_PART_HEADERS } from "./download-send-encrypted-part";
-import { INITIATE_SEND_VIEW_HEADERS, InitiateSendViewResponse } from "./initiate-send-view";
-import { COMPLETE_SEND_VIEW_HEADERS } from "./complete-send-view";
+import { InitiateSendResponse } from "./marketing.api.sends.initiate-send";
+import { UPLOAD_SEND_ENCRYPTED_PART_HEADERS } from "./marketing.api.sends.upload-send-encrypted-part";
+import { DOWNLOAD_SEND_ENCRYPTED_PART_HEADERS } from "./marketing.api.sends.download-send-encrypted-part";
+import { INITIATE_SEND_VIEW_HEADERS, InitiateSendViewResponse } from "./marketing.api.sends.initiate-send-view";
+import { COMPLETE_SEND_VIEW_HEADERS } from "./marketing.api.sends.complete-send-view";
 import { parallelWithLimit } from "../lib/utils";
 
 function stringToUtf16ArrayBuffer(str: string) {
@@ -57,7 +57,7 @@ function UploadLargeInner() {
 
   async function uploadLargeBinaryData(binaryArray: Uint8Array) {
     // initiate the secret send
-    const initiateSendResponseFetch = await fetch("/initiate-send", {
+    const initiateSendResponseFetch = await fetch("/marketing/api/sends/initiate-send", {
       method: "PUT",
     });
     const initiateSendResponse = (await initiateSendResponseFetch.json()) as InitiateSendResponse;
@@ -116,7 +116,7 @@ function UploadLargeInner() {
 
     const uploadPromises = chunks.map((chunk, index) => {
       return async () => {
-        const fetchPromise = fetch(`/upload-send-encrypted-part`, {
+        const fetchPromise = fetch(`/marketing/api/sends/upload-send-encrypted-part`, {
           method: "POST",
           headers: {
             "Content-Type": "application/octet-stream",
@@ -172,7 +172,7 @@ function UploadLargeInner() {
         <button
           onClick={async () => {
             // initiate the secret send view
-            const initiateSendViewResponseFetch = await fetch("/initiate-send-view", {
+            const initiateSendViewResponseFetch = await fetch("/marketing/api/sends/initiate-send-view", {
               method: "PUT",
               headers: {
                 [INITIATE_SEND_VIEW_HEADERS.SEND_ID]: requestData.sendId,
@@ -191,7 +191,7 @@ function UploadLargeInner() {
             // fetch the encrypted parts
             const fetchEncryptedPartsPromises = Array.from({ length: totalParts }).map((_, index) => {
               return async () => {
-                return fetch(`/download-send-encrypted-part`, {
+                return fetch(`/marketing/api/sends/download-send-encrypted-part`, {
                   method: "GET",
                   headers: {
                     [DOWNLOAD_SEND_ENCRYPTED_PART_HEADERS.SEND_ID]: sendId,
@@ -228,7 +228,7 @@ function UploadLargeInner() {
             console.log("Decrypted secret responses:", secretResponses);
 
             // close the view
-            await fetch(`/complete-send-view`, {
+            await fetch(`/marketing/api/sends/complete-send-view`, {
               method: "POST",
               headers: {
                 [COMPLETE_SEND_VIEW_HEADERS.SEND_ID]: sendId,

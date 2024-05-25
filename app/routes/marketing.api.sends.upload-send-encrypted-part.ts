@@ -1,6 +1,6 @@
 import { ActionFunction } from "@remix-run/node";
-import { uploadToS3, downloadFromS3, listObjectsInS3 } from "../lib/s3";
-import { SendState, getEncryptedPartKey, getSendStateKey, SendId } from "../lib/sends";
+import { uploadToS3 } from "../lib/s3";
+import { getEncryptedPartKey, SendId, getSendState, saveSendState, listSendEncryptedParts } from "../lib/sends";
 
 /**
  * The headers that we expect to be present in the request for uploading an encrypted part.
@@ -31,15 +31,7 @@ export const action: ActionFunction = async ({ request }) => {
   }
 
   try {
-    // for now, don't validate that the sendId is a valid sendId. We can do that later if we want.
-    const sendStateKey = getSendStateKey(sendId as SendId);
-
-    const { data: sendStateData } = await downloadFromS3({
-      bucket: "MARKETING_BUCKET",
-      key: sendStateKey,
-    });
-
-    const sendState: SendState = JSON.parse(new TextDecoder().decode(sendStateData));
+    const sendState = await getSendState(sendId as SendId);
 
     // check to see if the encrypted part password matches the one we have stored
     if (sendState.encryptedPartsPassword !== encryptedPartPassword) {
@@ -72,7 +64,7 @@ export const action: ActionFunction = async ({ request }) => {
       return new Response("Too many parts.", { status: 400 });
     }
 
-    const encryptedPartKey = getEncryptedPartKey(sendId as SendId, parseInt(partNumber, 10));
+    const encryptedPartKey = getEncryptedPartKey(sendState.sendId, parseInt(partNumber, 10));
 
     // just get the body from the request. we don't care about size for now since we are hosting in
     // vercel and they have a 4.5MB limit on request size
@@ -91,13 +83,7 @@ export const action: ActionFunction = async ({ request }) => {
       body: responseBuffer,
     });
 
-    // check to see if all of the parts have been uploaded
-    const encryptedPartsPrefix = `sends/${sendId}/encrypted/`;
-    const { Contents: encryptedParts } = await listObjectsInS3({
-      bucket: "MARKETING_BUCKET",
-      prefix: encryptedPartsPrefix,
-    });
-
+    const encryptedParts = await listSendEncryptedParts(sendState.sendId);
     const actualTotalParts = encryptedParts?.length ?? 0;
 
     if (actualTotalParts === totalPartsInt) {
@@ -107,11 +93,7 @@ export const action: ActionFunction = async ({ request }) => {
       // accepting parts.
       sendState.totalEncryptedParts = actualTotalParts;
 
-      await uploadToS3({
-        bucket: "MARKETING_BUCKET",
-        key: sendStateKey,
-        body: Buffer.from(JSON.stringify(sendState)),
-      });
+      await saveSendState(sendState);
     }
 
     return new Response(null, { status: 204 });
