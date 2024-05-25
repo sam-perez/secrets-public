@@ -2,11 +2,11 @@ import { CheckIcon, CopyIcon } from "@radix-ui/react-icons";
 import { Link } from "@remix-run/react";
 import { useState } from "react";
 import AboutSidenav from "~/components/about-sidenav";
-import { secretBlobProps } from "~/components/builder/fields";
+import { secretBlobProps } from "~/components/sends/builder/fields";
 
-import { DecryptedItem } from "~/components/revealer/DecryptedItem";
-import { EnterEmailToDecrypt } from "~/components/revealer/EnterEmail";
-import { EnterPasswordToDecrypt } from "~/components/revealer/EnterPassword";
+import { DecryptedItem } from "~/components/sends/revealer/DecryptedItem";
+import { EnterEmailToDecrypt } from "~/components/sends/revealer/EnterEmail";
+import { EnterPasswordToDecrypt } from "~/components/sends/revealer/EnterPassword";
 import { Button } from "~/components/ui/button";
 import { Dialog, DialogContent, DialogTrigger } from "~/components/ui/dialog";
 import { Input } from "~/components/ui/input";

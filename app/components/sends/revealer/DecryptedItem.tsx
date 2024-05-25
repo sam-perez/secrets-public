@@ -1,6 +1,6 @@
-import { Button } from "../ui/button";
+import { Button } from "../../ui/button";
 import { CheckIcon, CopyIcon, DownloadIcon, EyeOpenIcon } from "@radix-ui/react-icons";
-import { Label } from "../ui/label";
+import { Label } from "../../ui/label";
 import { ItemProps } from "../builder/item";
 import { useState } from "react";
 

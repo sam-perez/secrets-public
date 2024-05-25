@@ -1,16 +1,17 @@
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
-import { Input } from "../ui/input";
+import { Input } from "../../ui/input";
 import { Cross1Icon, DragHandleDots2Icon } from "@radix-ui/react-icons";
-import { Label } from "../ui/label";
-import { Button } from "../ui/button";
-import { Textarea } from "../ui/textarea";
+import { Label } from "../../ui/label";
+import { Button } from "../../ui/button";
+import { Textarea } from "../../ui/textarea";
 import EditableText from "./editableText";
+import { SendBuilderField } from "./types";
 
 export interface ItemProps {
   id: number;
   title: string;
-  type: "text" | "file" | "multi";
+  type: SendBuilderField["type"];
   value?: string;
   placeholder?: string;
 }
@@ -32,9 +33,9 @@ export const Item = ({ id, title, type, placeholder, value }: ItemProps) => {
             <EditableText initialText={title} />
           </Label>
           <div className="flex items-center space-x-2" data-no-dnd="true">
-            {type === "text" && <Input type="text" placeholder={placeholder} value={value} />}
+            {type === "single-line-text" && <Input type="text" placeholder={placeholder} value={value} />}
             {type === "file" && <Input type="file" />}
-            {type === "multi" && <Textarea placeholder={placeholder} />}
+            {type === "multi-line-text" && <Textarea placeholder={placeholder} />}
             <Button variant="outline" size="icon">
               <Cross1Icon className="h-3 w-3 flex-none" />
             </Button>

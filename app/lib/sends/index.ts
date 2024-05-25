@@ -14,7 +14,7 @@ export type SendConfig = {
   confirmationEmail: string | null;
 
   /** Max number of views allowed for the send. */
-  maxViews: number | null;
+  maxViews: number;
 
   /**
    * We are going to use the lexocographic ordering of S3 when we list objects for the first version of our

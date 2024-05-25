@@ -20,10 +20,10 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "~
 
 import { Textarea } from "~/components/ui/textarea";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "~/components/ui/tooltip";
-import BuilderFooter from "~/components/builder/footer";
-import BuilderHeader from "~/components/builder/header";
-import BuilderFields from "~/components/builder/fields";
-import BuilderWrapper from "~/components/builder/wrapper";
+import BuilderFooter from "~/components/sends/builder/footer";
+import BuilderHeader from "~/components/sends/builder/header";
+import BuilderFields from "~/components/sends/builder/fields";
+import BuilderWrapper from "~/components/sends/builder/wrapper";
 
 type FieldType = "text" | "file" | "password" | "phone" | "routing_number" | "bank_account_number" | "address";
 

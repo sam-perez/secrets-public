@@ -123,7 +123,7 @@ export default function Sends() {
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent>
-                  <Link to={"/templates/" + template.id} className="">
+                  <Link to={"/sends/templates/" + template.id} className="">
                     <DropdownMenuItem>View</DropdownMenuItem>
                   </Link>
                   <DropdownMenuItem>Edit</DropdownMenuItem>

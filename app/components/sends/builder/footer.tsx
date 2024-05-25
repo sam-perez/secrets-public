@@ -6,10 +6,10 @@ import {
   LockClosedIcon,
   LockOpen1Icon,
 } from "@radix-ui/react-icons";
-import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
-import { Input } from "../ui/input";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select";
-import { Button } from "../ui/button";
+import { Popover, PopoverContent, PopoverTrigger } from "../../ui/popover";
+import { Input } from "../../ui/input";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../../ui/select";
+import { Button } from "../../ui/button";
 import { useState } from "react";
 
 export default function BuilderFooter() {

@@ -10,7 +10,7 @@ interface TemplateCardProps {
 
 export const TemplateCard = ({ name, show_description, template_slug, uses }: TemplateCardProps) => {
   return (
-    <Link to={"/templates/" + template_slug}>
+    <Link to={"/sends/templates/" + template_slug}>
       <div className="p-4 border rounded-lg bg-white hover:bg-slate-50 flex items-center space-x-2 justify-between">
         <div className="space-y-1">
           <h5 className="font-medium">{name}</h5>

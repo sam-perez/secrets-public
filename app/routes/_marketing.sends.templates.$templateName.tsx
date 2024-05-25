@@ -1,7 +1,8 @@
+import { useParams } from "react-router-dom";
 import AboutSidenav from "~/components/about-sidenav";
-import BuilderFooter from "~/components/builder/footer";
+import BuilderFooter from "~/components/sends/builder/footer";
 
-import BuilderWrapper from "~/components/builder/wrapper";
+import BuilderWrapper from "~/components/sends/builder/wrapper";
 import { Badge } from "~/components/ui/badge";
 import {
   Breadcrumb,
@@ -11,28 +12,24 @@ import {
   BreadcrumbSeparator,
 } from "~/components/ui/breadcrumb";
 
-import BuilderFields, { secretBlobProps } from "~/components/builder/fields";
+import BuilderFields from "~/components/sends/builder/fields";
 
-//type FieldType = "text" | "file" | "password" | "phone" | "routing_number" | "bank_account_number" | "address";
-
-type Template = {
-  id: number;
-  name: string;
-  description: string;
-  secretBlob: secretBlobProps[];
-};
-
-const templates: Template[] = [
-  {
-    id: 1,
-    description: "Use this template to securely send an API Key that is end-to-end encrypted.",
-    name: "API Key",
-    secretBlob: [],
-  },
-];
+import { SEND_BUILDER_TEMPLATES } from "../components/sends/builder/types";
 
 export default function TemplateDetails() {
-  const template = templates[0];
+  const { templateName } = useParams<{ templateName: string }>();
+
+  if (!templateName) {
+    return <p>Invalid template.</p>;
+  }
+
+  // Retrieve the template using the slug
+  const template = SEND_BUILDER_TEMPLATES[templateName];
+
+  if (!template) {
+    return <p>Template not found.</p>;
+  }
+
   return (
     <div className="mx-auto px-4 max-w-5xl">
       <div>
@@ -51,13 +48,23 @@ export default function TemplateDetails() {
           </BreadcrumbList>
         </Breadcrumb>
       </div>
-      <h2>{template.name}</h2>
+      <h2>{template.title}</h2>
       <p className="muted mb-4">{template.description}</p>
       <div className="mx-auto lg:grid lg:max-w-7xl grid-cols-3 gap-8">
         <div className="lg:col-span-2">
           {/* share content  */}
           <BuilderWrapper>
-            <BuilderFields />
+            <BuilderFields
+              // this will have to be modified so that we can change its state
+              builderConfiguration={{
+                title: template.title,
+                password: null,
+                expirationDate: null,
+                confirmationEmail: null,
+                maxViews: null,
+                fields: template.fields.map((field) => ({ ...field, value: null })),
+              }}
+            />
             <BuilderFooter />
           </BuilderWrapper>
         </div>

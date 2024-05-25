@@ -1,18 +1,17 @@
 import { PaperPlaneIcon } from "@radix-ui/react-icons";
 import type { MetaFunction } from "@remix-run/node";
 import { Link } from "@remix-run/react";
-import { Badge } from "~/components/ui/badge";
 import { Button } from "~/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "~/components/ui/tabs";
 import "highlight.js/styles/tokyo-night-dark.css";
 import hljs from "highlight.js";
 import { useEffect } from "react";
 import { marked } from "marked";
-import Builder from "./builder";
-import BuilderWrapper from "~/components/builder/wrapper";
-import BuilderFields from "~/components/builder/fields";
-import BuilderFooter from "~/components/builder/footer";
+import BuilderWrapper from "~/components/sends/builder/wrapper";
+import BuilderFields from "~/components/sends/builder/fields";
+import BuilderFooter from "~/components/sends/builder/footer";
 import { TemplateCard } from "~/components/ui/TemplateCard";
+import { SEND_BUILDER_TEMPLATES } from "../components/sends/builder/types";
 
 export const meta: MetaFunction = () => {
   return [
@@ -39,6 +38,12 @@ const howItWorks = [
 
 const useCases = {
   work: [
+    {
+      title: "AWS API Keys",
+      type: "Send",
+      slug: "aws-api-key",
+      uses: 234,
+    },
     {
       title: "Rotating API Keys",
       type: "Send",
@@ -82,16 +87,16 @@ const useCases = {
 
 const markdown = `
   \`\`\`bash
-  > secret-sausage-cli send-secret 
+  > 2secured-cli send-secret
   --api-key XYZ
   --expiration "7 days"
-  --confirmation-email "secret.sausage@gmail.com"
+  --confirmation-email "email@2secured.com"
   --template "template_name"
   --data "DATA_TO_ENCRYPT"
   --file "./file/to/encrypt"
   --message "some message for the user"
   --tag "tags"
-  
+
 
   #response
 
@@ -107,6 +112,8 @@ export default function Index() {
   useEffect(() => {
     hljs.highlightAll();
   }, []);
+
+  const defaultTemplate = SEND_BUILDER_TEMPLATES["aws-api-key"];
 
   return (
     <>
@@ -125,14 +132,23 @@ export default function Index() {
                   New Encrypted Send
                 </Button>
               </Link>
-              <Link to="/templates">
+              <Link to="/sends/templates">
                 <Button variant={"outline"}>Browse Templates</Button>
               </Link>
             </div>
           </div>
           <div>
             <BuilderWrapper>
-              <BuilderFields />
+              <BuilderFields
+                builderConfiguration={{
+                  title: defaultTemplate.title,
+                  password: null,
+                  expirationDate: null,
+                  confirmationEmail: null,
+                  maxViews: null,
+                  fields: defaultTemplate.fields.map((field) => ({ ...field, value: null })),
+                }}
+              />
               <BuilderFooter />
             </BuilderWrapper>
           </div>

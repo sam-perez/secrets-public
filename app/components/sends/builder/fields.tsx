@@ -11,7 +11,6 @@ import {
 import { Column } from "./column";
 import { useState } from "react";
 import { arrayMove } from "@dnd-kit/sortable";
-import { ItemProps } from "./item";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -20,74 +19,49 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "../ui/dropdown-menu";
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "../ui/tooltip";
-import { Button } from "../ui/button";
+} from "../../ui/dropdown-menu";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "../../ui/tooltip";
+import { Button } from "../../ui/button";
 import EditableText from "./editableText";
+import { SendBuilderConfiguration, SendBuilderField } from "./types";
 
-export interface secretBlobProps {
-  secretHeader: {
-    title: string;
-    created?: string;
-    password?: string;
-    mfa_email?: string;
-    expiration_date?: string;
-    expiration_views_remaining?: number;
-    link?: string;
-  };
-  secretConfig: ItemProps[];
-}
+/** Internally used type for the builder fields, id is required to play nicely with dnd-kit */
+type SendBuilderFieldWithId = SendBuilderField & { id: number };
 
-const secretBlob: secretBlobProps[] = [
-  {
-    secretHeader: {
-      title: "Untitled encrypted send",
-    },
-    secretConfig: [
-      {
-        id: 1,
-        title: "API Key Public",
-        type: "text",
-        placeholder: "enter it!",
-      },
-      {
-        id: 2,
-        title: "API Key Public",
-        type: "multi",
-        placeholder: "enter it!",
-      },
-      {
-        id: 3,
-        title: ".env file",
-        type: "file",
-        placeholder: "enter it!",
-      },
-      {
-        id: 4,
-        title: "Has value",
-        type: "text",
-        placeholder: "enter it!",
-        value: "has value",
-      },
-    ],
-  },
-];
+export default function BuilderFields({ builderConfiguration }: { builderConfiguration: SendBuilderConfiguration }) {
+  const [items, setItems] = useState<Array<SendBuilderFieldWithId>>(
+    builderConfiguration.fields.map((field, index) => ({ ...field, id: index }))
+  );
 
-export default function BuilderFields() {
-  //get items from the returned data
-  const [items, setItems] = useState(secretBlob[0].secretConfig);
-
-  //add new item button
-  const addItem = (type: "text" | "file" | "multi") => {
+  const addItem = (type: SendBuilderField["type"]) => {
     const newItemId = items.length + 1;
-    const newItem: ItemProps = {
-      id: newItemId,
-      title: type === "text" ? `New Text Item ${newItemId}` : `New File Item ${newItemId}`,
-      type: type,
-    };
+    let newItem: SendBuilderFieldWithId;
+
+    if (type === "single-line-text") {
+      newItem = {
+        id: newItemId,
+        title: "New Field",
+        type: "single-line-text",
+        value: null,
+      };
+    } else if (type === "multi-line-text") {
+      newItem = {
+        id: newItemId,
+        title: "New Field",
+        type: "multi-line-text",
+        value: null,
+      };
+    } else {
+      newItem = {
+        id: newItemId,
+        title: "New Field",
+        type: "file",
+        value: null,
+      };
+    }
+
     setItems((prevItems) => [...prevItems, newItem]);
   };
-  //end
 
   const getItemPosition = (id: number) => items.findIndex((item) => item.id === id);
 
@@ -124,14 +98,12 @@ export default function BuilderFields() {
     // })
   );
 
-  console.log(secretBlob[0].secretConfig);
-
   return (
     <>
       <div className="max-w-4xl mx-auto">
         <div className="px-4 pt-4">
           <h4 className="hover:bg-slate-50">
-            <EditableText initialText={secretBlob[0].secretHeader.title} />
+            <EditableText initialText={builderConfiguration.title} />
           </h4>
         </div>
 
@@ -155,15 +127,24 @@ export default function BuilderFields() {
             <DropdownMenuLabel>Add Field</DropdownMenuLabel>
             <DropdownMenuSeparator />
             <DropdownMenuGroup>
-              <DropdownMenuItem onClick={() => addItem("text")}>Text</DropdownMenuItem>
-              <DropdownMenuItem onClick={() => addItem("multi")}>Multiline Text</DropdownMenuItem>
+              <DropdownMenuItem onClick={() => addItem("single-line-text")}>Text</DropdownMenuItem>
+              <DropdownMenuItem onClick={() => addItem("multi-line-text")}>Multiline Text</DropdownMenuItem>
               <DropdownMenuItem onClick={() => addItem("file")}>File Upload</DropdownMenuItem>
             </DropdownMenuGroup>
           </DropdownMenuContent>
         </DropdownMenu>
         {/* end menu */}
         <DndContext sensors={sensors} onDragEnd={handleDragEnd} collisionDetection={closestCorners}>
-          <Column items={items} />
+          <Column
+            items={items.map((item) => ({
+              id: item.id,
+              title: item.title,
+              type: item.type,
+              // TODO: handle nulls and files properly
+              value: item.value === null ? undefined : typeof item.value === "string" ? item.value : "FILES",
+              placeholder: item.placeholder,
+            }))}
+          />
         </DndContext>
       </div>
     </>
