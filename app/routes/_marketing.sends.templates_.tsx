@@ -1,5 +1,3 @@
-import { Share2Icon } from "@radix-ui/react-icons";
-import { Link } from "@remix-run/react";
 import { TemplateCard } from "~/components/ui/TemplateCard";
 
 const templates = [

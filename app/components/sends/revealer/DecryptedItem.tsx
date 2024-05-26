@@ -36,7 +36,7 @@ export const DecryptedItem = ({ title, type, value }: ItemProps) => {
       </div>
       <div className="flex-none">
         <div className="flex space-x-2">
-          {type == "text" && (
+          {type === "single-line-text" && (
             <>
               <Button variant={"outline"} size={"icon"} onClick={handleCopy}>
                 {isCopied ? <CheckIcon className="text-green-500 h-4 w-4" /> : <CopyIcon className="h-4 w-4" />}
@@ -47,7 +47,7 @@ export const DecryptedItem = ({ title, type, value }: ItemProps) => {
             </>
           )}
 
-          {type == "multi" && (
+          {type == "multi-line-text" && (
             <>
               <Button variant={"outline"} size={"icon"} onClick={handleCopy}>
                 {isCopied ? <CheckIcon className="text-green-500 h-4 w-4" /> : <CopyIcon className="h-4 w-4" />}

@@ -2,7 +2,6 @@ import { CheckIcon, CopyIcon } from "@radix-ui/react-icons";
 import { Link } from "@remix-run/react";
 import { useState } from "react";
 import AboutSidenav from "~/components/about-sidenav";
-import { secretBlobProps } from "~/components/sends/builder/fields";
 
 import { DecryptedItem } from "~/components/sends/revealer/DecryptedItem";
 import { EnterEmailToDecrypt } from "~/components/sends/revealer/EnterEmail";
@@ -13,7 +12,7 @@ import { Input } from "~/components/ui/input";
 import { Label } from "~/components/ui/label";
 
 //load secretBlob data and use props from builder
-const secretBlobDecrypted: secretBlobProps[] = [
+const secretBlobDecrypted = [
   {
     secretHeader: {
       title: "Sending API Key",
@@ -26,14 +25,14 @@ const secretBlobDecrypted: secretBlobProps[] = [
       {
         id: 1,
         title: "API Key Public",
-        type: "text",
+        type: "single-line-text",
         placeholder: "enter it!",
         value: "kqkzqthhsrfdwaojqlsvrfcrastkaqveverrbsiunqqeefcmcxfptezav",
       },
       {
         id: 2,
         title: "API Key Private",
-        type: "multi",
+        type: "multi-line-text",
         placeholder: "enter it!",
         value: "kqkzqthhsrfdwaojqlsvrfcrastkaqveverrbsiunqqeefcmcxfptezavkqkzqthhsrfdwaojqlsvrfcrastkaqvv",
       },
@@ -47,13 +46,13 @@ const secretBlobDecrypted: secretBlobProps[] = [
       {
         id: 4,
         title: "Has value",
-        type: "text",
+        type: "single-line-text",
         placeholder: "enter it!",
         value: "has value",
       },
     ],
   },
-];
+] as const;
 
 export default function Revealer() {
   const [isCopied, setIsCopied] = useState(false);

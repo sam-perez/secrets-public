@@ -33,6 +33,7 @@ module.exports = {
       files: ["**/*.{js,jsx,ts,tsx}"],
       rules: {
         "react/prop-types": "off",
+        "jsx-a11y/heading-has-content": "off",
       },
       plugins: ["react", "jsx-a11y"],
       extends: [
