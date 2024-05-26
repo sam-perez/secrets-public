@@ -1,24 +1,31 @@
-import { ChevronRightIcon, Share2Icon } from "@radix-ui/react-icons";
+import { ChevronRightIcon, ReaderIcon } from "@radix-ui/react-icons";
 import { Link } from "@remix-run/react";
 
 interface TemplateCardProps {
   name: string;
   show_description: boolean;
+  description?: string;
   template_slug: string;
-  uses?: number;
+  number_fields?: number;
 }
 
-export const TemplateCard = ({ name, show_description, template_slug, uses }: TemplateCardProps) => {
+export const TemplateCard = ({
+  name,
+  show_description,
+  template_slug,
+  number_fields,
+  description,
+}: TemplateCardProps) => {
   return (
     <Link to={"/sends/templates/" + template_slug}>
       <div className="p-4 border rounded-lg bg-white hover:bg-slate-50 flex items-center space-x-2 justify-between">
         <div className="space-y-1">
           <h5 className="font-medium">{name}</h5>
-          {show_description && <p className="">Send or request {name} details using e2e encryption.</p>}
-          {uses && (
+          {show_description && <p className="">{description}</p>}
+          {number_fields && (
             <span className="muted block flex items-center text-xs">
-              <Share2Icon className="h-3 w-3 mr-1" />
-              {uses}
+              <ReaderIcon className="h-3 w-3 mr-1" />
+              {number_fields} fields
             </span>
           )}
         </div>
