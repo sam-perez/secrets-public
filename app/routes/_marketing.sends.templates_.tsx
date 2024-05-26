@@ -11,7 +11,7 @@ export default function Templates() {
   const handleSearchChange = (event: ChangeEvent<HTMLInputElement>) => {
     setSearchQuery(event.target.value);
   };
-  const filteredTemplates = Object.entries(sendTemplates).filter(([slug, template]) =>
+  const filteredTemplates = Object.entries(sendTemplates).filter(([, template]) =>
     template.title.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
