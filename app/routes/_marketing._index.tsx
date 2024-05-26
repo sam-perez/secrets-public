@@ -126,7 +126,7 @@ export default function Index() {
               is a simple yet powerful way to send and receive data securely.
             </p>
             <div className="space-x-2 pt-4">
-              <Link to="/builder">
+              <Link to="/sends/templates/new">
                 <Button className="">
                   <PaperPlaneIcon className="mr-2 h-3 w-3" />
                   New Encrypted Send
