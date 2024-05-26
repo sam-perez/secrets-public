@@ -54,7 +54,7 @@ export function LinkExpirationPopover() {
 
   return (
     <Popover>
-      <PopoverTrigger>
+      <PopoverTrigger asChild>
         <Button variant="link" className="px-0">
           {(expirationNumber && expirationUnit) || views ? (
             <span className="flex items-center">
@@ -118,7 +118,7 @@ export function RestrictEmailPopover() {
   };
   return (
     <Popover>
-      <PopoverTrigger>
+      <PopoverTrigger asChild>
         <Button variant="link" className="px-0">
           {email ? (
             <span className="flex items-center font-medium text-sm">
@@ -155,7 +155,7 @@ export function AddPasswordPopover() {
   };
   return (
     <Popover>
-      <PopoverTrigger>
+      <PopoverTrigger asChild>
         <Button variant="link" className="px-0">
           {password ? (
             <span className="flex items-center text-sm font-medium">
