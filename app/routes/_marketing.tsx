@@ -10,6 +10,8 @@ export default function MarketingLayout() {
     setIsClient(true);
   }, []);
 
+  // Don't render anything on the server. We're getting some hydration errors,
+  // so this is a workaround for now. The hydration errors are likely due to radix-ui.
   if (!isClient) {
     return null;
   }

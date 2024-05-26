@@ -1,11 +1,5 @@
 import { Link, NavLink } from "@remix-run/react";
-import {
-  NavigationMenu,
-  NavigationMenuItem,
-  NavigationMenuLink,
-  NavigationMenuList,
-  navigationMenuTriggerStyle,
-} from "./navigation-menu";
+import { NavigationMenu, NavigationMenuItem, NavigationMenuList, navigationMenuTriggerStyle } from "./navigation-menu";
 const nav_links_left = [
   {
     name: "Browse Templates",
@@ -50,9 +44,7 @@ export default function MarketingNav() {
             </NavigationMenuItem> */}
               {nav_links_left.map((link, index) => (
                 <NavLink to={link.href} key={index} className={navigationMenuTriggerStyle()}>
-                  <NavigationMenuItem>
-                    <NavigationMenuLink>{link.name}</NavigationMenuLink>
-                  </NavigationMenuItem>
+                  <NavigationMenuItem>{link.name}</NavigationMenuItem>
                 </NavLink>
               ))}
             </NavigationMenuList>
@@ -63,9 +55,7 @@ export default function MarketingNav() {
           <NavigationMenuList>
             {nav_links_right.map((link, index) => (
               <NavLink key={index} to={link.href} className={navigationMenuTriggerStyle()}>
-                <NavigationMenuItem>
-                  <NavigationMenuLink>{link.name}</NavigationMenuLink>
-                </NavigationMenuItem>
+                <NavigationMenuItem>{link.name}</NavigationMenuItem>
               </NavLink>
             ))}
           </NavigationMenuList>

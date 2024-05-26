@@ -30,7 +30,7 @@ type SendBuilderFieldWithId = SendBuilderField & { id: number };
 
 export default function BuilderFields({ builderConfiguration }: { builderConfiguration: SendBuilderConfiguration }) {
   const [items, setItems] = useState<Array<SendBuilderFieldWithId>>(
-    builderConfiguration.fields.map((field, index) => ({ ...field, id: index }))
+    builderConfiguration.fields.map((field, index) => ({ ...field, id: index + 1 }))
   );
 
   const addItem = (type: SendBuilderField["type"]) => {
