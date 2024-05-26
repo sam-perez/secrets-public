@@ -1,4 +1,4 @@
-import { Link } from "@remix-run/react";
+import { Link, NavLink } from "@remix-run/react";
 import {
   NavigationMenu,
   NavigationMenuItem,
@@ -13,23 +13,23 @@ const nav_links_left = [
   },
 ];
 const nav_links_right = [
-  {
-    name: "Pricing",
-    href: "#",
-  },
+  // {
+  //   name: "Pricing",
+  //   href: "/pricing",
+  // },
   {
     name: "Documentation",
-    href: "#",
+    href: "https://github.com/",
   },
   {
     name: "Security",
-    href: "#",
+    href: "/security",
   },
 ];
 
 export default function MarketingNav() {
   return (
-    <nav className="border-b">
+    <nav className="border-b" id="marketing-nav">
       <div className="container py-2 flex items-center space-x-4 justify-between">
         {/* left nav */}
         <div className="flex items-center">
@@ -49,11 +49,11 @@ export default function MarketingNav() {
               </NavigationMenuContent>
             </NavigationMenuItem> */}
               {nav_links_left.map((link, index) => (
-                <NavigationMenuItem key={index}>
-                  <Link to={link.href}>
-                    <NavigationMenuLink className={navigationMenuTriggerStyle()}>{link.name}</NavigationMenuLink>
-                  </Link>
-                </NavigationMenuItem>
+                <NavLink to={link.href} key={index} className={navigationMenuTriggerStyle()}>
+                  <NavigationMenuItem>
+                    <NavigationMenuLink>{link.name}</NavigationMenuLink>
+                  </NavigationMenuItem>
+                </NavLink>
               ))}
             </NavigationMenuList>
           </NavigationMenu>
@@ -61,18 +61,12 @@ export default function MarketingNav() {
 
         <NavigationMenu className="hidden sm:block">
           <NavigationMenuList>
-            {/* <NavigationMenuItem>
-              <NavigationMenuTrigger>Item One</NavigationMenuTrigger>
-              <NavigationMenuContent className="w-64">
-                <NavigationMenuLink>Link</NavigationMenuLink>
-              </NavigationMenuContent>
-            </NavigationMenuItem> */}
             {nav_links_right.map((link, index) => (
-              <NavigationMenuItem key={index}>
-                <Link to={link.href}>
-                  <NavigationMenuLink className={navigationMenuTriggerStyle()}>{link.name}</NavigationMenuLink>
-                </Link>
-              </NavigationMenuItem>
+              <NavLink key={index} to={link.href} className={navigationMenuTriggerStyle()}>
+                <NavigationMenuItem>
+                  <NavigationMenuLink>{link.name}</NavigationMenuLink>
+                </NavigationMenuItem>
+              </NavLink>
             ))}
           </NavigationMenuList>
         </NavigationMenu>

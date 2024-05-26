@@ -113,7 +113,7 @@ export default function Index() {
     hljs.highlightAll();
   }, []);
 
-  const defaultTemplate = SEND_BUILDER_TEMPLATES["aws-api-key"];
+  const defaultTemplate = SEND_BUILDER_TEMPLATES["new"];
 
   return (
     <>
