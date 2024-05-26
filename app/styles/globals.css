@@ -103,4 +103,7 @@
   input.error{
     @apply border-red-500 bg-red-50 border focus:ring-red-500 placeholder:text-red-400;
   }
+  #marketing-nav .active{
+    @apply bg-slate-100
+  }
 }

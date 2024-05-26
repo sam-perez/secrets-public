@@ -36,14 +36,15 @@ export default function TemplateDetails() {
         <Breadcrumb className="flex items-center mb-2">
           <BreadcrumbList>
             <BreadcrumbItem>
-              <BreadcrumbLink href="/templates">Templates</BreadcrumbLink>
-            </BreadcrumbItem>
-            <BreadcrumbSeparator />
-            <BreadcrumbItem>
               <Badge variant={"secondary"} className="">
                 Send
               </Badge>
             </BreadcrumbItem>
+            <BreadcrumbSeparator />
+            <BreadcrumbItem>
+              <BreadcrumbLink href="/sends/templates">Templates</BreadcrumbLink>
+            </BreadcrumbItem>
+
             <BreadcrumbSeparator />
           </BreadcrumbList>
         </Breadcrumb>

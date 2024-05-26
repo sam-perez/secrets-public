@@ -113,11 +113,11 @@ export default function Index() {
     hljs.highlightAll();
   }, []);
 
-  const defaultTemplate = SEND_BUILDER_TEMPLATES["aws-api-key"];
+  const defaultTemplate = SEND_BUILDER_TEMPLATES["new"];
 
   return (
     <>
-      <section className="pb-14">
+      <section className="py-14 mb-24">
         <div className="sm:p-2 grid sm:grid-cols-2 grid-cols-1 sm:gap-24 items-center">
           <div className="p-4">
             <h1 className="mb-4">Send and receive sensitive data with end-to-end encryption</h1>
@@ -177,7 +177,7 @@ export default function Index() {
             </p>
           </div>
           <div>
-            <Tabs defaultValue="business" className="h-[400px] bg-slate-50 p-4">
+            <Tabs defaultValue="business" className="min-h-[400px] bg-slate-50 p-4">
               <TabsList className="grid w-full grid-cols-2 mb-4">
                 <TabsTrigger value="business">For Work</TabsTrigger>
                 <TabsTrigger value="personal">Personal</TabsTrigger>
@@ -185,24 +185,14 @@ export default function Index() {
               <TabsContent value="business" className="space-y-4">
                 {useCases.work.map((item, index) => (
                   <div key={index}>
-                    <TemplateCard
-                      show_description={false}
-                      template_slug={item.slug}
-                      name={item.title}
-                      uses={item.uses}
-                    />
+                    <TemplateCard show_description={false} template_slug={item.slug} name={item.title} />
                   </div>
                 ))}
               </TabsContent>
               <TabsContent value="personal" className="space-y-4">
                 {useCases.personal.map((item, index) => (
                   <div key={index}>
-                    <TemplateCard
-                      show_description={false}
-                      template_slug={item.slug}
-                      name={item.title}
-                      uses={item.uses}
-                    />
+                    <TemplateCard show_description={false} template_slug={item.slug} name={item.title} />
                   </div>
                 ))}
               </TabsContent>
