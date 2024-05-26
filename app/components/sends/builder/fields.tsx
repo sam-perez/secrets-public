@@ -114,7 +114,7 @@ export default function BuilderFields({ builderConfiguration }: { builderConfigu
               <TooltipTrigger asChild>
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
-                    <Button variant="secondary" className="">
+                    <Button variant="outline" className="">
                       + Add Field
                     </Button>
                   </DropdownMenuTrigger>
