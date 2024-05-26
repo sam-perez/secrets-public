@@ -18,7 +18,10 @@ export const TemplateCard = ({
 }: TemplateCardProps) => {
   return (
     <Link to={"/sends/templates/" + template_slug}>
-      <div className="p-4 border rounded-lg bg-white hover:bg-slate-50 flex items-center space-x-2 justify-between">
+      <div
+        className="p-4 h-full border rounded-lg 
+      bg-white hover:bg-slate-50 flex items-center space-x-2 justify-between"
+      >
         <div className="space-y-1">
           <h5 className="font-medium">{name}</h5>
           {show_description && <p className="">{description}</p>}
