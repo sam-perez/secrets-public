@@ -4,14 +4,12 @@ import { SEND_BUILDER_TEMPLATES } from "~/components/sends/builder/types";
 import { TemplateCard } from "~/components/ui/TemplateCard";
 import { Input } from "~/components/ui/input";
 
-const sendTemplates = SEND_BUILDER_TEMPLATES;
-
 export default function Templates() {
   const [searchQuery, setSearchQuery] = useState("");
   const handleSearchChange = (event: ChangeEvent<HTMLInputElement>) => {
     setSearchQuery(event.target.value);
   };
-  const filteredTemplates = Object.entries(sendTemplates).filter(([, template]) =>
+  const filteredTemplates = Object.entries(SEND_BUILDER_TEMPLATES).filter(([, template]) =>
     template.title.toLowerCase().includes(searchQuery.toLowerCase())
   );
 

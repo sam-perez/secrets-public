@@ -21,10 +21,10 @@ export const action: ActionFunction = async () => {
   // let's make a fake request for now
   const fakeSendConfig: SendConfig = {
     sendId,
-    confirmationEmail: null,
+    confirmationEmail: "samuel.e.perez@gmail.com",
     maxViews: 1,
     expiresAt: null,
-    password: null,
+    password: "asdf",
   };
 
   // with an initial send state
