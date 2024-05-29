@@ -29,9 +29,9 @@ export default function AboutSidenav({ showAbout }: AboutSidenavProps) {
           <Link to={"/"}>
             <Alert className="bg-slate-50 hover:bg-slate-100">
               <InfoCircledIcon className="h-4 w-4" />
-              <AlertTitle>About 2Secure</AlertTitle>
+              <AlertTitle>About 2Secured</AlertTitle>
               <AlertDescription>
-                2Secure is a free, secure way to send or request sensitive information securely using end-to-end
+                2secured is a free, secure way to send or request sensitive information securely using end-to-end
                 encryption.
               </AlertDescription>
             </Alert>

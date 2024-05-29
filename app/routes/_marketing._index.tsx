@@ -36,55 +36,6 @@ const howItWorks = [
   },
 ];
 
-const useCases = {
-  work: [
-    {
-      title: "AWS API Keys",
-      type: "Send",
-      slug: "aws-api-key",
-      uses: 234,
-    },
-    {
-      title: "Rotating API Keys",
-      type: "Send",
-      slug: "api-key",
-      uses: 234,
-    },
-    {
-      title: "Collecting bank account info from a client",
-      type: "Request",
-      slug: "api-key",
-      uses: 234,
-    },
-    {
-      title: "Sharing your password with a coworker",
-      type: "Send",
-      slug: "api-key",
-      uses: 1234,
-    },
-    {
-      title: "Sharing your password with a coworker",
-      type: "Send",
-      slug: "api-key",
-      uses: 234,
-    },
-  ],
-  personal: [
-    {
-      title: "Sharing tax documents with your Accountant",
-      type: "Send",
-      slug: "api-key",
-      uses: 234,
-    },
-    {
-      title: "Sharing WIFI Password",
-      type: "Send",
-      slug: "api-key",
-      uses: 234,
-    },
-  ],
-};
-
 const markdown = `
   \`\`\`bash
   > 2secured-cli send-secret
@@ -114,6 +65,28 @@ export default function Index() {
   }, []);
 
   const defaultTemplate = SEND_BUILDER_TEMPLATES["new"];
+  const allTemplates = Object.entries(SEND_BUILDER_TEMPLATES);
+  const slugsToIncludeForWork = [
+    "aws-api-key",
+    "api-key",
+    "stripe-api-key",
+    "contract-agreement",
+    "background-check",
+    "google-cloud-api-key",
+    "employment-verification",
+    "credit-card-number",
+  ];
+  const slugsToIncludeForPersonal = [
+    "password",
+    "social-security-number",
+    "email-login",
+    "tax-return",
+    "marriage-certificate",
+    "birth-certificate",
+    "bank-account",
+  ];
+  const filteredWorkTemplates = allTemplates.filter(([slug]) => slugsToIncludeForWork.includes(slug));
+  const filteredPersonalTemplates = allTemplates.filter(([slug]) => slugsToIncludeForPersonal.includes(slug));
 
   return (
     <>
@@ -129,7 +102,7 @@ export default function Index() {
               <Link to="/sends/templates/new">
                 <Button className="">
                   <PaperPlaneIcon className="mr-2 h-3 w-3" />
-                  New Encrypted Send
+                  Try for yourself
                 </Button>
               </Link>
               <Link to="/sends/templates">
@@ -172,9 +145,12 @@ export default function Index() {
         <div className="sm:p-20 grid sm:grid-cols-2 grid-cols-1 gap-24 items-center">
           <div>
             <h2>2Secured helps you keep your data safe at work, and at home.</h2>
-            <p className="text-lg mt-4">
+            <p className="text-lg mt-0 mb-4">
               Perfect anytime you are sending or requesting sensitive information from someone else.
             </p>
+            <Link to="/sends/templates">
+              <Button>Browse All Templates</Button>
+            </Link>
           </div>
           <div>
             <Tabs defaultValue="business" className="min-h-[400px] bg-slate-50 p-4">
@@ -182,17 +158,27 @@ export default function Index() {
                 <TabsTrigger value="business">For Work</TabsTrigger>
                 <TabsTrigger value="personal">Personal</TabsTrigger>
               </TabsList>
-              <TabsContent value="business" className="space-y-4">
-                {useCases.work.map((item, index) => (
-                  <div key={index}>
-                    <TemplateCard show_description={false} template_slug={item.slug} name={item.title} />
+              <TabsContent value="business" className="space-y-4 overflow-y-auto h-[400px]">
+                {filteredWorkTemplates.map(([slug, template]) => (
+                  <div key={slug}>
+                    <TemplateCard
+                      show_description={false}
+                      template_slug={slug}
+                      name={template.title}
+                      number_fields={template.fields.length}
+                    />
                   </div>
                 ))}
               </TabsContent>
-              <TabsContent value="personal" className="space-y-4">
-                {useCases.personal.map((item, index) => (
-                  <div key={index}>
-                    <TemplateCard show_description={false} template_slug={item.slug} name={item.title} />
+              <TabsContent value="personal" className="space-y-4 overflow-y-auto h-[400px]">
+                {filteredPersonalTemplates.map(([slug, template]) => (
+                  <div key={slug}>
+                    <TemplateCard
+                      show_description={false}
+                      template_slug={slug}
+                      name={template.title}
+                      number_fields={template.fields.length}
+                    />
                   </div>
                 ))}
               </TabsContent>
@@ -204,10 +190,13 @@ export default function Index() {
       <section id="formEditor" className="my-12">
         <div className="sm:p-20 grid sm:grid-cols-2 grid-cols-1 sm:gap-24 items-center">
           <div>
-            <h2>Powerful form editor lets you quickly send or request encrypted files and text to anyone.</h2>
-            <p className="text-lg mt-4">
+            <h2>A powerful form editor lets you quickly send or request encrypted files and text to anyone.</h2>
+            <p className="text-lg mt-0 mb-4">
               Create your own reusable 2Secured forms and save them as templates to quickly reuse them.
             </p>
+            <Link to="/sends/templates/new">
+              <Button>Build your own form</Button>
+            </Link>
           </div>
           <div>
             <div className="border h-[500px]">sdfasdfasf</div>
@@ -219,10 +208,13 @@ export default function Index() {
         <div className="sm:p-20 grid sm:grid-cols-2 grid-cols-1 sm:gap-24 items-center">
           <div>
             <h2>Control access and set permissions to your 2Secured link.</h2>
-            <p className="text-lg mt-4">
+            <p className="text-lg mt-0 mb-4">
               Restrict the email addresses that can view your links, set how many times a link can be viewed, require a
               password and more.
             </p>
+            <Link to="/sends/templates/new">
+              <Button>Try for yourself</Button>
+            </Link>
           </div>
           <div className="border h-[500px]">sdfasdfasf</div>
         </div>

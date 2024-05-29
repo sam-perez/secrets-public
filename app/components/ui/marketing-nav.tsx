@@ -1,5 +1,9 @@
 import { Link, NavLink } from "@remix-run/react";
 import { NavigationMenu, NavigationMenuItem, NavigationMenuList, navigationMenuTriggerStyle } from "./navigation-menu";
+import { Button } from "./button";
+import { PaperPlaneIcon } from "@radix-ui/react-icons";
+import { Tooltip, TooltipProvider } from "@radix-ui/react-tooltip";
+import { TooltipContent, TooltipTrigger } from "./tooltip";
 const nav_links_left = [
   {
     name: "Browse Templates",
@@ -53,6 +57,18 @@ export default function MarketingNav() {
 
         <NavigationMenu className="hidden sm:block">
           <NavigationMenuList>
+            <Link to={"/sends/templates/new"}>
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button variant={"outline"}>
+                      <PaperPlaneIcon className="h-3 w-3" />
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent>New Encrypted Send</TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+            </Link>
             {nav_links_right.map((link, index) => (
               <NavLink key={index} to={link.href} className={navigationMenuTriggerStyle()}>
                 <NavigationMenuItem>{link.name}</NavigationMenuItem>
