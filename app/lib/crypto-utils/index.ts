@@ -13,7 +13,8 @@ export function toBase62(num: number): string {
     num = Math.floor(num / 62);
   } while (num > 0);
 
-  return result.join("");
+  // reverse the result so that the least significant digit is first
+  return result.reverse().join("");
 }
 
 /**

@@ -168,6 +168,15 @@ function UploadLargeInner() {
       <h1>Upload Large Binary Data</h1>
       <input type="file" onChange={handleFileChange} />
       <p>Progress: {progress.toFixed(2)}%</p>
+      {requestData !== null ? (
+        <>
+          <p>Send ID: {requestData.sendId}</p>
+          <a href={`/revealer/${requestData.sendId}`} target="_blank" rel="noreferrer">
+            View Send
+          </a>
+        </>
+      ) : null}
+      <br />
       {password !== null && requestData !== null ? (
         <button
           onClick={async () => {

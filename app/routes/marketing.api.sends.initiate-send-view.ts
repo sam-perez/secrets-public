@@ -29,6 +29,9 @@ export type InitiateSendViewResponse = {
 
       /** When true, the view requires confirmation. */
       requiresConfirmation: true;
+
+      /** The obscured confirmation email address. */
+      obscuredEmail: string;
     }
 );
 
@@ -109,6 +112,8 @@ export const action: ActionFunction = async ({ request }) => {
         // we don't want to give the password yet, we want to wait for the confirmation
         viewPassword: null,
         requiresConfirmation: true,
+        // TODO: obfuscate the email address
+        obscuredEmail: sendConfig.confirmationEmail,
       };
 
       const code = getRandomBase62String(6);

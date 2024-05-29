@@ -61,7 +61,7 @@ export type SendState = {
   /** The views for the send. */
   views: Array<{
     /** The id for the send view. */
-    sendViewId: string;
+    sendViewId: SendViewId;
 
     /** ISO-8601 date string when the send view was initiated. */
     viewInitiatedAt: string;

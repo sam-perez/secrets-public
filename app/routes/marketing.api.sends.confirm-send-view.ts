@@ -1,4 +1,4 @@
-import { ActionFunction } from "@remix-run/node";
+import { ActionFunction, json } from "@remix-run/node";
 import { SendId, SEND_VIEW_EXPIRATION_MS, getSendState, saveSendState } from "../lib/sends";
 
 /**
@@ -65,7 +65,11 @@ export const action: ActionFunction = async ({ request }) => {
 
     await saveSendState(sendState);
 
-    return new Response(null, { status: 204 });
+    const response: ConfirmSendViewResponse = {
+      viewPassword: view.viewPassword,
+    };
+
+    return json(response);
   } catch (error) {
     console.error(error);
     return new Response("Server error", { status: 500 });
