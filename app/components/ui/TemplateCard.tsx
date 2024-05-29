@@ -28,7 +28,8 @@ export const TemplateCard = ({
           {number_fields && (
             <span className="muted block flex items-center text-xs">
               <ReaderIcon className="h-3 w-3 mr-1" />
-              {number_fields} fields
+              {number_fields > 1 && <span>{number_fields} fields</span>}
+              {number_fields == 1 && <span>{number_fields} field</span>}
             </span>
           )}
         </div>

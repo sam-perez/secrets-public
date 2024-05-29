@@ -13,11 +13,13 @@ export default function Templates() {
     template.title.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
+  const defaultTemplate = SEND_BUILDER_TEMPLATES["new"];
+
   return (
     <>
       <section className="mx-auto max-w-5xl text-center p-20 space-y-2">
         <h1>Explore templates</h1>
-        <p className="lead pb-6">
+        <p className="lead pb-4">
           Start from one of these reusable forms to quickly send or receive encrypted information.
         </p>
         <Input placeholder="Search templates" onChange={handleSearchChange} className="max-w-lg mx-auto" />
@@ -38,17 +40,28 @@ export default function Templates() {
         ))}
       </div>
       {filteredTemplates.length == 0 && (
-        <p className="text-base mx-auto max-w-xl text-center">
-          Build your own starting from a{" "}
-          <Link to={"/sends/templates/new"} className="font-medium hover:text-slate-600">
-            blank send
-          </Link>{" "}
-          or email{" "}
-          <a href="mailto:templates@2secured.link" className="font-medium hover:text-slate-600">
-            templates@2secured.link
-          </a>{" "}
-          and we will create a private one for you within 1 day.
-        </p>
+        <div>
+          <p className="text-base mx-auto max-w-xl text-center">
+            Build your own starting from a{" "}
+            <Link to={"/sends/templates/new"} className="font-medium hover:text-slate-600">
+              blank send
+            </Link>{" "}
+            or email{" "}
+            <a href="mailto:templates@2secured.link" className="font-medium hover:text-slate-600">
+              templates@2secured.link
+            </a>{" "}
+            and we will create a private one for you within 1 day.
+          </p>
+          <div className="mt-4 mx-auto w-1/2 sm:w-1/3 md:w-1/4">
+            <TemplateCard
+              show_description={true}
+              name={defaultTemplate.title}
+              template_slug={"new"}
+              description={defaultTemplate.description}
+              number_fields={defaultTemplate.fields.length}
+            />
+          </div>
+        </div>
       )}
     </>
   );
