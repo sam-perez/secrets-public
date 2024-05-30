@@ -8,8 +8,12 @@ import { Dialog, DialogContent } from "../components/ui/dialog";
 import { INITIATE_SEND_VIEW_HEADERS, InitiateSendViewResponse } from "./marketing.api.sends.initiate-send-view";
 import { CONFIRM_SEND_VIEW_HEADERS, ConfirmSendViewResponse } from "./marketing.api.sends.confirm-send-view";
 
-// TODO: move this to an api route
-import { RevealerActionRequest, RevealerActionResponse } from "./_external.revealer.$sendId.init-data";
+import {
+  LOAD_SEND_VIEWING_STATUS_HEADERS,
+  LoadSendViewingStatusResponse,
+  NeedsToInitiateSendViewStatusResponse,
+  NeedsConfirmationCodeVerificationStatusResponse,
+} from "./marketing.api.sends.load-send-viewing-status";
 
 // TODO: REAL LOADING EXPERIENCE
 function Spinner() {
@@ -22,7 +26,23 @@ function Spinner() {
     animation: "spin 1s linear infinite",
   };
 
-  return <div style={spinnerStyle}></div>;
+  return (
+    <>
+      <style>
+        {`
+          @keyframes spin {
+            0% {
+              transform: rotate(0deg);
+            }
+            100% {
+              transform: rotate(360deg);
+            }
+          }
+        `}
+      </style>
+      <div style={spinnerStyle}></div>
+    </>
+  );
 }
 
 const setSendCheckpointInLocalStorage = ({
@@ -54,95 +74,94 @@ const getSendCheckpointFromLocalStorage = (): {
   return JSON.parse(latestSendCheckpoint);
 };
 
-export default function SendRevealer() {
-  const [showLoadingScreen, setShowLoadingScreen] = useState<boolean>(false);
-
-  const [password, setPassword] = useState("");
-  const [passwordCheckFailed, setPasswordCheckFailed] = useState<boolean | null>(null);
-  const [initiateSendViewResponse, setInitiateSendViewResponse] = useState<InitiateSendViewResponse | null>(null);
-
-  const [confirmationCode, setConfirmationCode] = useState("");
-  const [confirmationCodeCheckFailed, setConfirmationCodeCheckFailed] = useState<boolean | null>(null);
-
-  const [sendViewPassword, setSendViewPassword] = useState<string | null>(null);
-
-  const [actionData, setActionData] = useState<RevealerActionResponse | null>(null);
-
-  // get the sendId from the path
+/**
+ * Container. Responsible for pulling out the send id and fetching the send viewing status from the server.
+ */
+export default function SendRevealerContainer() {
   const { sendId } = useParams();
 
-  // get the action data by fetching it from the action
+  const [loadSendViewingStatusResponse, setLoadSendViewingStatusResponse] =
+    useState<LoadSendViewingStatusResponse | null>(null);
+
+  const [error, setError] = useState<{ message: string } | null>(null);
+
+  const [sendViewingData, setSendViewingData] = useState<{
+    sendId: SendId;
+    sendViewId: SendViewId;
+    sendViewPassword: string;
+  } | null>(null);
+
+  const alertWithErrorMessage = (message: string) => {
+    alert(message);
+    setError({ message });
+  };
+
   useEffect(() => {
     if (!sendId) {
       return;
     }
 
-    const getRevealerActionData = () =>
-      Promise.resolve()
-        .then(async () => {
-          setShowLoadingScreen(true);
+    const getRevealerActionData = async () => {
+      // TODO: get more sophisticated with the number of views we have in localStorage?
+      const latestCheckpoint = getSendCheckpointFromLocalStorage();
 
-          // TODO: get more sophisticated with the number of views we have in localStorage?
-          const latestCheckpoint = getSendCheckpointFromLocalStorage();
+      const requestHeaders = {
+        [LOAD_SEND_VIEWING_STATUS_HEADERS.SEND_ID]: sendId,
+      };
 
-          let revealerActionRequest: RevealerActionRequest;
-          if (latestCheckpoint.sendId !== sendId) {
-            clearSendCheckpointInLocalStorage();
+      if (latestCheckpoint.sendId !== sendId) {
+        clearSendCheckpointInLocalStorage();
+      } else {
+        // add in the last send view id and password if they exist
+        if (latestCheckpoint.sendViewId !== null) {
+          requestHeaders[LOAD_SEND_VIEWING_STATUS_HEADERS.LAST_SEND_VIEW_ID] = latestCheckpoint.sendViewId;
+        }
 
-            revealerActionRequest = {
-              lastSendViewId: null,
-              lastSendViewPassword: null,
-            };
-          } else {
-            revealerActionRequest = {
-              lastSendViewId: latestCheckpoint.sendViewId,
-              lastSendViewPassword: latestCheckpoint.sendViewPassword,
-            };
-          }
+        if (latestCheckpoint.sendViewPassword !== null) {
+          requestHeaders[LOAD_SEND_VIEWING_STATUS_HEADERS.LAST_SEND_VIEW_PASSWORD] = latestCheckpoint.sendViewPassword;
+        }
+      }
 
-          const getRevealerSendFetchRequest = await fetch("/revealer/" + sendId + "/init-data", {
-            method: "POST",
-            body: JSON.stringify(revealerActionRequest),
-          });
+      const getRevealerSendFetchRequest = await fetch("/marketing/api/sends/load-send-viewing-status", {
+        method: "GET",
+        headers: requestHeaders,
+      });
 
-          if (getRevealerSendFetchRequest.status !== 200) {
-            // this should not really happen ever...
-            alert("An error occurred while trying to view this send. Please try again later.");
-          } else {
-            const actionData = (await getRevealerSendFetchRequest.json()) as RevealerActionResponse;
-            setActionData(actionData);
-
-            if (actionData.viewable === true) {
-              if (actionData.stage === "viewable") {
-                // if we've gotten to the viewable stage, let's just view the send
-                setSendViewPassword(actionData.sendViewPassword);
-              }
-            }
-          }
-        })
-        .finally(() => {
-          setShowLoadingScreen(false);
-        });
+      if (getRevealerSendFetchRequest.status !== 200) {
+        // this should not really happen ever...
+        alertWithErrorMessage("An error occurred while trying to view this send. Please try again later.");
+      } else {
+        const LoadSendViewingStatusResponse =
+          (await getRevealerSendFetchRequest.json()) as LoadSendViewingStatusResponse;
+        setLoadSendViewingStatusResponse(LoadSendViewingStatusResponse);
+      }
+    };
 
     getRevealerActionData();
   }, [sendId]);
 
   if (!sendId) {
-    return <h1>SEND ID NOT FOUND</h1>;
+    return <h1>Send id not present, this link is broken.</h1>;
   }
 
-  // Hack for now to check for actionData being null as well as showLoadingScreen being true
-  if (showLoadingScreen === true || actionData === null) {
-    // TODO: add an appropriate loading spinner here
+  if (error !== null) {
     return (
-      <div style={{ display: "flex", alignItems: "center" }}>
-        <h1>THIS IS A LOADING SCREEN</h1>
-        <Spinner />
+      <div className="px-4 container max-w-5xl">
+        <h3>AN ERROR OCCURRED</h3>
+        <p className="muted mb-4">An error occurred while trying to access this send. Please try again later.</p>
+        <p>Error: {error.message}</p>
       </div>
     );
   }
 
-  if (actionData.viewable === false) {
+  if (loadSendViewingStatusResponse === null) {
+    return (
+      <div style={{ display: "flex", alignItems: "center" }}>
+        <h1>Initializing.</h1>
+        <Spinner />
+      </div>
+    );
+  } else if (loadSendViewingStatusResponse.stage === "not-viewable") {
     return (
       <div className="px-4 container max-w-5xl">
         <h3>SEND NOT FOUND</h3>
@@ -152,17 +171,124 @@ export default function SendRevealer() {
         </p>
       </div>
     );
+  } else if (loadSendViewingStatusResponse.stage === "viewable") {
+    const { sendId, sendViewId, sendViewPassword } = loadSendViewingStatusResponse;
+    return <SendViewer sendId={sendId} sendViewId={sendViewId} sendViewPassword={sendViewPassword} />;
+  } else {
+    if (sendViewingData === null) {
+      return (
+        <SendRevealerUnlocker
+          loadSendViewingStatusResponse={loadSendViewingStatusResponse}
+          onSendIsReadyToView={({ sendId, sendViewId, sendViewPassword }) => {
+            setSendViewingData({ sendId, sendViewId, sendViewPassword });
+          }}
+        />
+      );
+    } else {
+      return (
+        <div>
+          <h1>Send Is Ready To View</h1>
+          {
+            // TODO: create a component to download, decrypt then render the send
+          }
+        </div>
+      );
+    }
   }
+}
 
-  if (sendViewPassword !== null) {
+/**
+ * Work in progress. This will be the component that shows the send data.
+ */
+function SendViewer({
+  sendId,
+  sendViewId,
+  sendViewPassword,
+}: {
+  sendId: SendId;
+  sendViewId: SendViewId;
+  sendViewPassword: string;
+}) {
+  return (
+    <div className="px-4 container max-w-5xl">
+      <h3>SEND VIEWED</h3>
+      <p className="muted mb-4">The send has been successfully unlocked to view!</p>
+      <p>Send Id: {sendId}</p>
+      <p>Send View Id: {sendViewId}</p>
+      <p>Send View Password: {sendViewPassword}</p>
+    </div>
+  );
+}
+
+/**
+ * Mounted when the send needs to be unlocked. Either we need to initiate a send view or confirm a send view.
+ */
+function SendRevealerUnlocker({
+  loadSendViewingStatusResponse,
+  onSendIsReadyToView,
+}: {
+  loadSendViewingStatusResponse:
+    | NeedsToInitiateSendViewStatusResponse
+    | NeedsConfirmationCodeVerificationStatusResponse;
+
+  onSendIsReadyToView: ({
+    sendId,
+    sendViewId,
+    sendViewPassword,
+  }: {
+    sendId: SendId;
+    sendViewId: SendViewId;
+    sendViewPassword: string;
+  }) => void;
+}) {
+  const [internalUnlockerStatus, setInternalUnlockerStatus] = useState<
+    | NeedsToInitiateSendViewStatusResponse
+    | NeedsConfirmationCodeVerificationStatusResponse
+    | { stage: "send-view-unlocked"; sendId: SendId; sendViewId: SendViewId; sendViewPassword: string }
+  >(loadSendViewingStatusResponse);
+
+  const [showLoadingScreen, setShowLoadingScreen] = useState<boolean>(false);
+  const [error, setError] = useState<{ message: string } | null>(null);
+
+  const [password, setPassword] = useState("");
+  const [passwordCheckFailed, setPasswordCheckFailed] = useState<boolean | null>(null);
+
+  const [confirmationCode, setConfirmationCode] = useState("");
+  const [confirmationCodeCheckFailed, setConfirmationCodeCheckFailed] = useState<boolean | null>(null);
+
+  useEffect(() => {
+    if (internalUnlockerStatus.stage === "send-view-unlocked") {
+      onSendIsReadyToView({
+        sendId: internalUnlockerStatus.sendId,
+        sendViewId: internalUnlockerStatus.sendViewId,
+        sendViewPassword: internalUnlockerStatus.sendViewPassword,
+      });
+    }
+  }, [internalUnlockerStatus, onSendIsReadyToView]);
+
+  if (showLoadingScreen === true) {
+    // TODO: add an appropriate loading spinner here
     return (
-      <div className="px-4 container max-w-5xl">
-        <h3>SEND VIEWED</h3>
-        <p className="muted mb-4">The send has been successfully unlocked to view!</p>
-        <p>{sendViewPassword}</p>
+      <div style={{ display: "flex", alignItems: "center" }}>
+        <h1>THIS IS A LOADING SCREEN</h1>
+        <Spinner />
       </div>
     );
   }
+
+  if (error !== null) {
+    return (
+      <div className="px-4 container max-w-5xl">
+        <h3>AN ERROR OCCURRED</h3>
+        <p className="muted mb-4">An error occurred while trying to view this send. Please try again later.</p>
+        <p>Error: {error.message}</p>
+      </div>
+    );
+  }
+
+  const alertWithErrorMessage = (message: string) => {
+    setError({ message });
+  };
 
   const dialogBackground = (
     <div className="px-4 container max-w-5xl">
@@ -178,36 +304,47 @@ export default function SendRevealer() {
   );
 
   // if the send needs to initiate a send view, show the dialog
-  if (actionData.stage === "needs-to-initiate-send-view" && initiateSendViewResponse === null) {
+  if (internalUnlockerStatus.stage === "needs-to-initiate-send-view") {
     const initiateSend = () =>
       Promise.resolve()
         .then(async () => {
           setShowLoadingScreen(true);
 
+          const headers: { [key: string]: string } = {
+            [INITIATE_SEND_VIEW_HEADERS.SEND_ID]: loadSendViewingStatusResponse.sendId,
+          };
+
+          if (internalUnlockerStatus.requiresPassword === true) {
+            headers[INITIATE_SEND_VIEW_HEADERS.SEND_PASSWORD] = password;
+          }
+
           // initiate the secret send view
           const initiateSendViewResponseFetch = await fetch("/marketing/api/sends/initiate-send-view", {
             method: "PUT",
-            headers: {
-              [INITIATE_SEND_VIEW_HEADERS.SEND_ID]: actionData.sendId,
-              // only send the password if it is required
-              ...(actionData.requiresPassword === true
-                ? {
-                    [INITIATE_SEND_VIEW_HEADERS.SEND_PASSWORD]: password,
-                  }
-                : {}),
-            },
+            headers,
           });
 
           if (initiateSendViewResponseFetch.status === 200) {
             const initiateSendViewResponse = (await initiateSendViewResponseFetch.json()) as InitiateSendViewResponse;
 
-            setInitiateSendViewResponse(initiateSendViewResponse);
             if (initiateSendViewResponse.requiresConfirmation === false) {
-              setSendViewPassword(initiateSendViewResponse.viewPassword);
+              setInternalUnlockerStatus({
+                stage: "send-view-unlocked",
+                sendId: internalUnlockerStatus.sendId,
+                sendViewId: initiateSendViewResponse.sendViewId,
+                sendViewPassword: initiateSendViewResponse.viewPassword,
+              });
+            } else {
+              setInternalUnlockerStatus({
+                stage: "needs-confirmation-code-verification",
+                sendId: internalUnlockerStatus.sendId,
+                sendViewId: initiateSendViewResponse.sendViewId,
+                obscuredEmail: initiateSendViewResponse.obscuredEmail,
+              });
             }
 
             setSendCheckpointInLocalStorage({
-              sendId: actionData.sendId,
+              sendId: internalUnlockerStatus.sendId,
               sendViewId: initiateSendViewResponse.sendViewId,
               sendViewPassword:
                 initiateSendViewResponse.requiresConfirmation === false ? initiateSendViewResponse.viewPassword : null,
@@ -228,11 +365,11 @@ export default function SendRevealer() {
               // TODO: better experience here? Don't necessarily want to have a UX for every possible error
               // since some of them will imply that the send is no longer available.
               // Maybe this is just a TODO for now.
-              alert("An unknown error client error occurred. This send may no longer be available.");
+              alertWithErrorMessage("An unknown error client error occurred. This send may no longer be available.");
             }
           } else {
             // this is unexpected, we may want to notify ourselves of this error somehow
-            alert("An unknown error occurred. Please try again later.");
+            alertWithErrorMessage("An unknown error occurred. Please try again later.");
           }
         })
         .finally(() => {
@@ -244,7 +381,7 @@ export default function SendRevealer() {
         <Dialog open={true}>
           <DialogContent noClose={true} className="sm:max-w-md">
             <div className="space-y-2">
-              {actionData.requiresPassword === true ? (
+              {internalUnlockerStatus.requiresPassword === true ? (
                 <>
                   <h4>Enter Password to View</h4>
                   {
@@ -256,7 +393,7 @@ export default function SendRevealer() {
                   <p>
                     The sender has required a password to view this encrypted data. Please enter it below to continue.
                   </p>
-                  <p>Views remaining: {actionData.viewsRemaining}</p>
+                  <p>Views remaining: {internalUnlockerStatus.viewsRemaining}</p>
                   <Input
                     placeholder="Enter password"
                     value={password}
@@ -278,7 +415,7 @@ export default function SendRevealer() {
                 <>
                   <h4>Initiate View</h4>
                   <p>Would you like to view this send? This action will consume a view.</p>
-                  <p>Views remaining: {actionData.viewsRemaining}</p>
+                  <p>Views remaining: {internalUnlockerStatus.viewsRemaining}</p>
                   <Button onClick={initiateSend}>Initiate View</Button>
                 </>
               )}
@@ -290,15 +427,7 @@ export default function SendRevealer() {
     );
   }
 
-  const getConfirmationCodeDialog = ({
-    sendId,
-    sendViewId,
-    obscuredEmail,
-  }: {
-    sendId: SendId;
-    sendViewId: SendViewId;
-    obscuredEmail: string;
-  }) => {
+  if (internalUnlockerStatus.stage === "needs-confirmation-code-verification") {
     const submitConfirmationCode = () =>
       Promise.resolve()
         .then(async () => {
@@ -308,8 +437,8 @@ export default function SendRevealer() {
           const confirmSendViewResponseFetch = await fetch("/marketing/api/sends/confirm-send-view", {
             method: "PUT",
             headers: {
-              [CONFIRM_SEND_VIEW_HEADERS.SEND_ID]: sendId,
-              [CONFIRM_SEND_VIEW_HEADERS.SEND_VIEW_ID]: sendViewId,
+              [CONFIRM_SEND_VIEW_HEADERS.SEND_ID]: internalUnlockerStatus.sendId,
+              [CONFIRM_SEND_VIEW_HEADERS.SEND_VIEW_ID]: internalUnlockerStatus.sendViewId,
               [CONFIRM_SEND_VIEW_HEADERS.SEND_VIEW_CONFIRMATION_CODE]: confirmationCode,
             },
           });
@@ -317,11 +446,17 @@ export default function SendRevealer() {
           if (confirmSendViewResponseFetch.status === 200) {
             // success case
             const confirmSendViewResponse = (await confirmSendViewResponseFetch.json()) as ConfirmSendViewResponse;
-            setSendViewPassword(confirmSendViewResponse.viewPassword);
 
             setSendCheckpointInLocalStorage({
-              sendId,
-              sendViewId,
+              sendId: internalUnlockerStatus.sendId,
+              sendViewId: internalUnlockerStatus.sendViewId,
+              sendViewPassword: confirmSendViewResponse.viewPassword,
+            });
+
+            setInternalUnlockerStatus({
+              stage: "send-view-unlocked",
+              sendId: internalUnlockerStatus.sendId,
+              sendViewId: internalUnlockerStatus.sendViewId,
               sendViewPassword: confirmSendViewResponse.viewPassword,
             });
 
@@ -336,10 +471,10 @@ export default function SendRevealer() {
               // clear the password field
               setConfirmationCode("");
             } else {
-              alert("An unknown error client error occurred. This send may no longer be available.");
+              alertWithErrorMessage("An unknown error client error occurred. This send may no longer be available.");
             }
           } else if (confirmSendViewResponseFetch.status !== 200) {
-            alert("An unknown error occurred. Please try again later.");
+            alertWithErrorMessage("An unknown error occurred. Please try again later.");
           }
         })
         .finally(() => {
@@ -359,7 +494,7 @@ export default function SendRevealer() {
                 )
               }
               <p>This send requires email confirmation to unlock view. Please enter the code sent via email.</p>
-              <p>Email sent to (OBSCURE ME PLEASE): {obscuredEmail}</p>
+              <p>Email sent to (OBSCURE ME PLEASE): {internalUnlockerStatus.obscuredEmail}</p>
               <Input
                 placeholder="Enter code"
                 value={confirmationCode}
@@ -385,24 +520,20 @@ export default function SendRevealer() {
         {dialogBackground}
       </>
     );
-  };
-
-  if (actionData.stage === "needs-confirmation-code-verification") {
-    return getConfirmationCodeDialog({
-      sendId: actionData.sendId,
-      sendViewId: actionData.sendViewId,
-      obscuredEmail: actionData.obscuredEmail,
-    });
   }
 
-  if (initiateSendViewResponse !== null && initiateSendViewResponse.requiresConfirmation === true) {
-    return getConfirmationCodeDialog({
-      sendId: actionData.sendId,
-      sendViewId: initiateSendViewResponse.sendViewId,
-      obscuredEmail: initiateSendViewResponse.obscuredEmail,
-    });
+  if (internalUnlockerStatus.stage === "send-view-unlocked") {
+    // HOORAY!
+    return (
+      <div className="px-4 container max-w-5xl">
+        <h3>SEND VIEWED</h3>
+        <p className="muted mb-4">
+          The send has been successfully unlocked to view! But you really should not be seeing this!
+        </p>
+        <p>Send Id: {internalUnlockerStatus.sendId}</p>
+        <p>Send View Id: {internalUnlockerStatus.sendViewId}</p>
+        <p>Send View Password: {internalUnlockerStatus.sendViewPassword}</p>
+      </div>
+    );
   }
-
-  // This should never happen. Show an error message?
-  return <h1>{"SOMETHIN' AIN'T QUITE RIGHT..."}</h1>;
 }
