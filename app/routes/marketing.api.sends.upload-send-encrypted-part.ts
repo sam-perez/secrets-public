@@ -1,6 +1,7 @@
 import { ActionFunction } from "@remix-run/node";
 import { uploadToS3 } from "../lib/s3";
 import { getEncryptedPartKey, SendId, getSendState, saveSendState, listSendEncryptedParts } from "../lib/sends";
+import { nowIso8601DateTimeString } from "../lib/time";
 
 /**
  * The headers that we expect to be present in the request for uploading an encrypted part.
@@ -87,7 +88,7 @@ export const action: ActionFunction = async ({ request }) => {
     const actualTotalParts = encryptedParts?.length ?? 0;
 
     if (actualTotalParts === totalPartsInt) {
-      sendState.readyAt = new Date().toISOString();
+      sendState.readyAt = nowIso8601DateTimeString();
 
       // TODO: move this to the initiate-send route? would only be worthwhile if we wanted to check before
       // accepting parts.

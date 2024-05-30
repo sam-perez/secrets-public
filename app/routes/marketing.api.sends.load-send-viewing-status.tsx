@@ -109,7 +109,7 @@ export const loader: LoaderFunction = async ({ request }) => {
           return createNewView();
         }
 
-        if (matchingLastSendView.viewCompletedAt !== null) {
+        if (matchingLastSendView.viewClosedAt !== null) {
           // the view has already been completed, we should consider this a new view and start over.
           // note that we are relying on the cron job to clean up the old views.
           return createNewView();

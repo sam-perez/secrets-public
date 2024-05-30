@@ -10,6 +10,7 @@ import {
   saveSendState,
   getSendConfig,
 } from "../lib/sends";
+import { nowIso8601DateTimeString } from "../lib/time";
 
 /** The response from the initiate send view endpoint. */
 export type InitiateSendViewResponse = {
@@ -97,12 +98,14 @@ export const action: ActionFunction = async ({ request }) => {
     let initiateSendViewResponse: InitiateSendViewResponse;
     const view: SendState["views"][0] = {
       sendViewId,
-      viewInitiatedAt: new Date().toISOString(),
+      creationRequestMetadata: { headers: Object.fromEntries(request.headers) },
+      viewInitiatedAt: nowIso8601DateTimeString(),
       viewPassword: getRandomBase62String(32),
       viewReadyAt: null,
-      viewCompletedAt: null,
+      viewClosedAt: null,
+      viewClosedReason: null,
       emailConfirmationAttempts: [],
-      metadata: {},
+      emailConfirmationCodeSubmissions: [],
     };
 
     // check to see if the send requires confirmation
@@ -130,7 +133,7 @@ export const action: ActionFunction = async ({ request }) => {
       // add the email confirmation attempt to the view
       view.emailConfirmationAttempts.push({
         code,
-        sentAt: new Date().toISOString(),
+        sentAt: nowIso8601DateTimeString(),
         emailConfirmedAt: null,
         messageId: emailResponse.MessageId || "no-message-id",
         messageMetadata: { ...emailResponse.$metadata },
@@ -143,7 +146,7 @@ export const action: ActionFunction = async ({ request }) => {
       };
 
       // mark the view as ready
-      view.viewReadyAt = new Date().toISOString();
+      view.viewReadyAt = nowIso8601DateTimeString();
     }
 
     // save the view to the send state

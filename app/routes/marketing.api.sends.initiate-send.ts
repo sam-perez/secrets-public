@@ -2,6 +2,7 @@ import { ActionFunction } from "@remix-run/node";
 import { uploadToS3 } from "../lib/s3";
 import { generateSendId, SendConfig, SendState, SendId, getSendStateKey, getSendConfigKey } from "../lib/sends";
 import { getRandomBase62String } from "../lib/crypto-utils";
+import { nowIso8601DateTimeString } from "../lib/time";
 
 /** The response from the initiate send endpoint. */
 export type InitiateSendResponse = {
@@ -15,7 +16,7 @@ export type InitiateSendResponse = {
  * Will create a new send and return the send id and the password to use for encrypting the parts.
  * The config and the state of the send are written to our object store.
  */
-export const action: ActionFunction = async () => {
+export const action: ActionFunction = async ({ request }) => {
   const sendId = generateSendId();
 
   // let's make a fake request for now
@@ -30,7 +31,8 @@ export const action: ActionFunction = async () => {
   // with an initial send state
   const initialSendState: SendState = {
     sendId,
-    createdAt: new Date().toISOString(),
+    createdAt: nowIso8601DateTimeString(),
+    creationRequestMetadata: { headers: Object.fromEntries(request.headers.entries()) },
     // super secure password
     encryptedPartsPassword: getRandomBase62String(32),
     readyAt: null,

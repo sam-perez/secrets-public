@@ -177,7 +177,7 @@ export default function SendRevealerContainer() {
   } else {
     if (sendViewingData === null) {
       return (
-        <SendRevealerUnlocker
+        <SendViewUnlocker
           loadSendViewingStatusResponse={loadSendViewingStatusResponse}
           onSendIsReadyToView={({ sendId, sendViewId, sendViewPassword }) => {
             setSendViewingData({ sendId, sendViewId, sendViewPassword });
@@ -188,9 +188,11 @@ export default function SendRevealerContainer() {
       return (
         <div>
           <h1>Send Is Ready To View</h1>
-          {
-            // TODO: create a component to download, decrypt then render the send
-          }
+          <SendViewer
+            sendId={sendViewingData.sendId}
+            sendViewId={sendViewingData.sendViewId}
+            sendViewPassword={sendViewingData.sendViewPassword}
+          />
         </div>
       );
     }
@@ -198,32 +200,9 @@ export default function SendRevealerContainer() {
 }
 
 /**
- * Work in progress. This will be the component that shows the send data.
- */
-function SendViewer({
-  sendId,
-  sendViewId,
-  sendViewPassword,
-}: {
-  sendId: SendId;
-  sendViewId: SendViewId;
-  sendViewPassword: string;
-}) {
-  return (
-    <div className="px-4 container max-w-5xl">
-      <h3>SEND VIEWED</h3>
-      <p className="muted mb-4">The send has been successfully unlocked to view!</p>
-      <p>Send Id: {sendId}</p>
-      <p>Send View Id: {sendViewId}</p>
-      <p>Send View Password: {sendViewPassword}</p>
-    </div>
-  );
-}
-
-/**
  * Mounted when the send needs to be unlocked. Either we need to initiate a send view or confirm a send view.
  */
-function SendRevealerUnlocker({
+function SendViewUnlocker({
   loadSendViewingStatusResponse,
   onSendIsReadyToView,
 }: {
@@ -280,8 +259,8 @@ function SendRevealerUnlocker({
     return (
       <div className="px-4 container max-w-5xl">
         <h3>AN ERROR OCCURRED</h3>
-        <p className="muted mb-4">An error occurred while trying to view this send. Please try again later.</p>
-        <p>Error: {error.message}</p>
+        <p className="muted mb-4">An error occurred while trying to view this send.</p>
+        <p>{error.message}</p>
       </div>
     );
   }
@@ -465,11 +444,21 @@ function SendRevealerUnlocker({
 
           if (confirmSendViewResponseFetch.status === 400) {
             const confirmSendViewResponseText = await confirmSendViewResponseFetch.text();
+
+            console.log("confirmSendViewResponseText", confirmSendViewResponseText);
+
             if (confirmSendViewResponseText === "Invalid confirmation code.") {
               // the confirmation code was incorrect, we can't advance. but we can show an error message.
               setConfirmationCodeCheckFailed(true);
-              // clear the password field
+              // clear the confirmation code field
               setConfirmationCode("");
+            } else if (confirmSendViewResponseText === "View is closed.") {
+              alertWithErrorMessage(
+                [
+                  "Too many confirmation codes have been attempted.",
+                  "This view is now locked. Reload the page and if the send has views remaining, you can try again.",
+                ].join(" ")
+              );
             } else {
               alertWithErrorMessage("An unknown error client error occurred. This send may no longer be available.");
             }
@@ -524,6 +513,8 @@ function SendRevealerUnlocker({
 
   if (internalUnlockerStatus.stage === "send-view-unlocked") {
     // HOORAY!
+    // Should be emphemeral since the useEffect above will report to the parent that the send is ready to view and
+    // this component will presumably be done for.
     return (
       <div className="px-4 container max-w-5xl">
         <h3>SEND VIEWED</h3>
@@ -536,4 +527,27 @@ function SendRevealerUnlocker({
       </div>
     );
   }
+}
+
+/**
+ * Work in progress. This will be the component that shows the send data.
+ */
+function SendViewer({
+  sendId,
+  sendViewId,
+  sendViewPassword,
+}: {
+  sendId: SendId;
+  sendViewId: SendViewId;
+  sendViewPassword: string;
+}) {
+  return (
+    <div className="px-4 container max-w-5xl">
+      <h3>SEND VIEWED</h3>
+      <p className="muted mb-4">The send has been successfully unlocked to view!</p>
+      <p>Send Id: {sendId}</p>
+      <p>Send View Id: {sendViewId}</p>
+      <p>Send View Password: {sendViewPassword}</p>
+    </div>
+  );
 }

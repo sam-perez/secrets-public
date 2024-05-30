@@ -41,7 +41,7 @@ export const loader: LoaderFunction = async ({ request }) => {
     }
 
     // check to make sure the view is not marked as closed
-    if (view.viewCompletedAt !== null) {
+    if (view.viewClosedAt !== null) {
       return new Response("View is closed.", { status: 400 });
     }
 

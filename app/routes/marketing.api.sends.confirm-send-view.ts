@@ -1,5 +1,6 @@
 import { ActionFunction, json } from "@remix-run/node";
-import { SendId, SEND_VIEW_EXPIRATION_MS, getSendState, saveSendState } from "../lib/sends";
+import { SendId, getSendState, saveSendState } from "../lib/sends";
+import { nowIso8601DateTimeString } from "../lib/time";
 
 /**
  * The headers that we expect to be present in the request for confirming a send view.
@@ -39,7 +40,7 @@ export const action: ActionFunction = async ({ request }) => {
     }
 
     // check to make sure the view is not marked as closed
-    if (view.viewCompletedAt !== null) {
+    if (view.viewClosedAt !== null) {
       return new Response("View is closed.", { status: 400 });
     }
 
@@ -48,20 +49,30 @@ export const action: ActionFunction = async ({ request }) => {
       return new Response("View is already ready.", { status: 400 });
     }
 
-    // check to make sure the view has not expired
-    if (new Date().getTime() - new Date(view.viewInitiatedAt).getTime() > SEND_VIEW_EXPIRATION_MS) {
-      return new Response("View has expired.", { status: 400 });
-    }
+    view.emailConfirmationCodeSubmissions.push({
+      code: confirmationCode,
+      submittedAt: nowIso8601DateTimeString(),
+      submissionRequestMetadata: { headers: Object.fromEntries(request.headers) },
+    });
 
     // check to make sure the confirmation code matches any of the confirmation codes that we have sent out
     const matchingConfirmation = view.emailConfirmationAttempts.find((a) => a.code === confirmationCode);
     if (!matchingConfirmation) {
+      // if we have had 10 confirmation code submissions, we should close this view.
+      if (view.emailConfirmationCodeSubmissions.length === 10) {
+        view.viewClosedAt = nowIso8601DateTimeString();
+        view.viewClosedReason = "too-many-confirmation-attempts";
+      }
+
+      // either way, we need to persist the state before returning to track the attempts
+      await saveSendState(sendState);
+
       return new Response("Invalid confirmation code.", { status: 400 });
     }
 
     // mark the view as ready
-    view.viewReadyAt = new Date().toISOString();
-    matchingConfirmation.emailConfirmedAt = new Date().toISOString();
+    view.viewReadyAt = nowIso8601DateTimeString();
+    matchingConfirmation.emailConfirmedAt = nowIso8601DateTimeString();
 
     await saveSendState(sendState);
 

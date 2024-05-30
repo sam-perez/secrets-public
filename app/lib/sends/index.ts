@@ -1,5 +1,6 @@
 import { downloadFromS3, uploadToS3, listObjectsInS3 } from "../s3";
 import { BrandedId, generateUniqueId } from "../ids";
+import { Iso8601DateTimeString } from "../time";
 
 /** Send id type. */
 export type SendId = BrandedId<"s">;
@@ -26,7 +27,7 @@ export type SendConfig = {
    */
 
   /** The expiration date for the send. ISO-8601 date string. */
-  expiresAt: string | null;
+  expiresAt: Iso8601DateTimeString | null;
 
   /** Password. If set, the recipient must enter this password to view the send. */
   password: string | null;
@@ -34,6 +35,13 @@ export type SendConfig = {
 
 /** Send view id type. */
 export type SendViewId = BrandedId<"sv">;
+
+/**
+ * Recursive metadata. Deeply nested string keys of strings, numbers, or more nested metadata.
+ */
+interface RecursiveMetadata {
+  [key: string]: string | number | RecursiveMetadata;
+}
 
 /** The state of a send. Has to be tracked separately from the config. Stored in S3 for now. */
 export type SendState = {
@@ -44,19 +52,22 @@ export type SendState = {
   encryptedPartsPassword: string;
 
   /** ISO-8601 date string when the send was created. */
-  createdAt: string;
+  createdAt: Iso8601DateTimeString;
 
   /** ISO-8601 date string when the send ready. Once a send is marked ready, it will stop accepting new parts. */
-  readyAt: string | null;
+  readyAt: Iso8601DateTimeString | null;
 
   /** The total number of encrypted parts that make up the send. */
   totalEncryptedParts: number | null;
 
   /** ISO-8601 date string when the send data was deleted. */
-  dataDeletedAt: string | null;
+  dataDeletedAt: Iso8601DateTimeString | null;
 
   /** The reason the send data was deleted. */
   dataDeletedReason: "expired" | "deleted" | "viewed" | null;
+
+  /** Metadata about the request that created the send. */
+  creationRequestMetadata: RecursiveMetadata;
 
   /** The views for the send. */
   views: Array<{
@@ -64,19 +75,36 @@ export type SendState = {
     sendViewId: SendViewId;
 
     /** ISO-8601 date string when the send view was initiated. */
-    viewInitiatedAt: string;
+    viewInitiatedAt: Iso8601DateTimeString;
 
     /** ISO-8601 date string when the send view was marked as ready. */
-    viewReadyAt: string | null;
+    viewReadyAt: Iso8601DateTimeString | null;
 
-    /** ISO-8601 date string when the send view was completed. */
-    viewCompletedAt: string | null;
+    /** ISO-8601 date string when the send view was closed. */
+    viewClosedAt: Iso8601DateTimeString | null;
+
+    /** The reason the send view was completed. */
+    viewClosedReason: "expired" | "too-many-confirmation-attempts" | null;
 
     /** The password used to view the send. */
     viewPassword: string;
 
-    /** Metadata about the view. */
-    metadata: Record<string, string>;
+    /** Metadata about the request that initiated the send view. */
+    creationRequestMetadata: RecursiveMetadata;
+
+    /**
+     * Email confirmation codes that have been submitted.
+     */
+    emailConfirmationCodeSubmissions: Array<{
+      /** The confirmation code that was submitted. */
+      code: string;
+
+      /** ISO-8601 date string when the code was submitted. */
+      submittedAt: Iso8601DateTimeString;
+
+      /** Metadata about the confirmation code submission request. */
+      submissionRequestMetadata: RecursiveMetadata;
+    }>;
 
     /**
      * Email confirmation attempts.
@@ -95,16 +123,16 @@ export type SendState = {
       messageId: string;
 
       /** Metadata about the email message. */
-      messageMetadata: { [key: string]: string | number | undefined };
+      messageMetadata: RecursiveMetadata;
 
       /** The confirmation code that we sent to the email address. */
       code: string;
 
       /** ISO-8601 date string when the email was sent. */
-      sentAt: string;
+      sentAt: Iso8601DateTimeString;
 
       /** ISO-8601 date string when the email was confirmed. */
-      emailConfirmedAt: string | null;
+      emailConfirmedAt: Iso8601DateTimeString | null;
     }>;
   }>;
 };
