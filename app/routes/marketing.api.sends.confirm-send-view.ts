@@ -15,7 +15,11 @@ export const CONFIRM_SEND_VIEW_HEADERS = {
  * The response from the confirm send view endpoint.
  */
 export type ConfirmSendViewResponse = {
+  /** The password to use to view the send. */
   viewPassword: string;
+
+  /** The total number of encrypted parts. */
+  totalEncryptedParts: number;
 };
 
 /**
@@ -76,8 +80,13 @@ export const action: ActionFunction = async ({ request }) => {
 
     await saveSendState(sendState);
 
+    if (sendState.totalEncryptedParts === null) {
+      throw new Error("Total encrypted parts should not be null, something went wrong.");
+    }
+
     const response: ConfirmSendViewResponse = {
       viewPassword: view.viewPassword,
+      totalEncryptedParts: sendState.totalEncryptedParts,
     };
 
     return json(response);

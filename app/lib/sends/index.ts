@@ -84,7 +84,7 @@ export type SendState = {
     viewClosedAt: Iso8601DateTimeString | null;
 
     /** The reason the send view was completed. */
-    viewClosedReason: "expired" | "too-many-confirmation-attempts" | null;
+    viewClosedReason: "expired" | "too-many-confirmation-attempts" | "client-completed" | null;
 
     /** The password used to view the send. */
     viewPassword: string;

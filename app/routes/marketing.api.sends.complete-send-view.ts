@@ -51,6 +51,7 @@ export const action: ActionFunction = async ({ request }) => {
 
     // mark the view as closed
     view.viewClosedAt = nowIso8601DateTimeString();
+    view.viewClosedReason = "client-completed";
 
     await saveSendState(sendState);
 

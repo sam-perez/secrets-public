@@ -1,14 +1,22 @@
 import { Link, useParams } from "@remix-run/react";
 import { useState, useEffect } from "react";
-import { SendId, SendViewId } from "../lib/sends";
 
+import { SendBuilderTemplate } from "../components/sends/builder/types";
+import { parallelWithLimit } from "../lib/utils";
+import { PublicPackedSecrets, PackedSecrets, SecretResponses } from "../lib/secrets";
+import { SendId, SendViewId } from "../lib/sends";
+import {
+  useEncryptionWorker,
+  EncryptionWorkerProvider,
+} from "../components/context-providers/EncryptionWorkerContextProvider";
 import { Button } from "../components/ui/button";
 import { Input } from "../components/ui/input";
 import { Dialog, DialogContent } from "../components/ui/dialog";
 import { INITIATE_SEND_VIEW_HEADERS, InitiateSendViewResponse } from "./marketing.api.sends.initiate-send-view";
 import { CONFIRM_SEND_VIEW_HEADERS, ConfirmSendViewResponse } from "./marketing.api.sends.confirm-send-view";
 import { RETRY_CONFIRMATION_FOR_SEND_VIEW_HEADERS } from "./marketing.api.sends.retry-confirmation-for-send-view";
-
+import { DOWNLOAD_SEND_ENCRYPTED_PART_HEADERS } from "./marketing.api.sends.download-send-encrypted-part";
+import { COMPLETE_SEND_VIEW_HEADERS } from "./marketing.api.sends.complete-send-view";
 import {
   LOAD_SEND_VIEWING_STATUS_HEADERS,
   LoadSendViewingStatusResponse,
@@ -76,9 +84,21 @@ const getSendCheckpointFromLocalStorage = (): {
 };
 
 /**
- * Container. Responsible for pulling out the send id and fetching the send viewing status from the server.
+ * Default export for the send revealer container. Just wraps the send revealer in the encryption worker provider
+ * so that the send revealer can use the encryption worker if it needs to.
  */
-export default function SendRevealerContainer() {
+export default function SendRevealerRootContainer() {
+  return (
+    <EncryptionWorkerProvider>
+      <SendViewContainer />
+    </EncryptionWorkerProvider>
+  );
+}
+
+/**
+ * Responsible for pulling out the send id and fetching the send viewing status from the server.
+ */
+function SendViewContainer() {
   const { sendId } = useParams();
 
   const [loadSendViewingStatusResponse, setLoadSendViewingStatusResponse] =
@@ -90,6 +110,7 @@ export default function SendRevealerContainer() {
     sendId: SendId;
     sendViewId: SendViewId;
     sendViewPassword: string;
+    totalEncryptedParts: number;
   } | null>(null);
 
   const alertWithErrorMessage = (message: string) => {
@@ -173,15 +194,23 @@ export default function SendRevealerContainer() {
       </div>
     );
   } else if (loadSendViewingStatusResponse.stage === "viewable") {
-    const { sendId, sendViewId, sendViewPassword } = loadSendViewingStatusResponse;
-    return <SendViewer sendId={sendId} sendViewId={sendViewId} sendViewPassword={sendViewPassword} />;
+    const { sendId, sendViewId, sendViewPassword, totalEncryptedParts } = loadSendViewingStatusResponse;
+
+    return (
+      <SendViewDownloaderAndDecryptor
+        sendId={sendId}
+        sendViewId={sendViewId}
+        sendViewPassword={sendViewPassword}
+        totalEncryptedParts={totalEncryptedParts}
+      />
+    );
   } else {
     if (sendViewingData === null) {
       return (
         <SendViewUnlocker
           loadSendViewingStatusResponse={loadSendViewingStatusResponse}
-          onSendIsReadyToView={({ sendId, sendViewId, sendViewPassword }) => {
-            setSendViewingData({ sendId, sendViewId, sendViewPassword });
+          onSendIsReadyToView={({ sendId, sendViewId, sendViewPassword, totalEncryptedParts }) => {
+            setSendViewingData({ sendId, sendViewId, sendViewPassword, totalEncryptedParts });
           }}
         />
       );
@@ -189,10 +218,11 @@ export default function SendRevealerContainer() {
       return (
         <div>
           <h1>Send Is Ready To View</h1>
-          <SendViewer
+          <SendViewDownloaderAndDecryptor
             sendId={sendViewingData.sendId}
             sendViewId={sendViewingData.sendViewId}
             sendViewPassword={sendViewingData.sendViewPassword}
+            totalEncryptedParts={sendViewingData.totalEncryptedParts}
           />
         </div>
       );
@@ -215,16 +245,24 @@ function SendViewUnlocker({
     sendId,
     sendViewId,
     sendViewPassword,
+    totalEncryptedParts,
   }: {
     sendId: SendId;
     sendViewId: SendViewId;
     sendViewPassword: string;
+    totalEncryptedParts: number;
   }) => void;
 }) {
   const [internalUnlockerStatus, setInternalUnlockerStatus] = useState<
     | NeedsToInitiateSendViewStatusResponse
     | NeedsConfirmationCodeVerificationStatusResponse
-    | { stage: "send-view-unlocked"; sendId: SendId; sendViewId: SendViewId; sendViewPassword: string }
+    | {
+        stage: "send-view-unlocked";
+        sendId: SendId;
+        sendViewId: SendViewId;
+        sendViewPassword: string;
+        totalEncryptedParts: number;
+      }
   >(loadSendViewingStatusResponse);
 
   const [showLoadingScreen, setShowLoadingScreen] = useState<boolean>(false);
@@ -242,6 +280,7 @@ function SendViewUnlocker({
         sendId: internalUnlockerStatus.sendId,
         sendViewId: internalUnlockerStatus.sendViewId,
         sendViewPassword: internalUnlockerStatus.sendViewPassword,
+        totalEncryptedParts: internalUnlockerStatus.totalEncryptedParts,
       });
     }
   }, [internalUnlockerStatus, onSendIsReadyToView]);
@@ -313,6 +352,7 @@ function SendViewUnlocker({
                 sendId: internalUnlockerStatus.sendId,
                 sendViewId: initiateSendViewResponse.sendViewId,
                 sendViewPassword: initiateSendViewResponse.viewPassword,
+                totalEncryptedParts: initiateSendViewResponse.totalEncryptedParts,
               });
             } else {
               setInternalUnlockerStatus({
@@ -438,6 +478,7 @@ function SendViewUnlocker({
               sendId: internalUnlockerStatus.sendId,
               sendViewId: internalUnlockerStatus.sendViewId,
               sendViewPassword: confirmSendViewResponse.viewPassword,
+              totalEncryptedParts: confirmSendViewResponse.totalEncryptedParts,
             });
 
             return;
@@ -551,7 +592,7 @@ function SendViewUnlocker({
   if (internalUnlockerStatus.stage === "send-view-unlocked") {
     // HOORAY!
     // Should be emphemeral since the useEffect above will report to the parent that the send is ready to view and
-    // this component will presumably be done for.
+    // this component will presumably be immediately unmounted.
     return (
       <div className="px-4 container max-w-5xl">
         <h3>SEND VIEWED</h3>
@@ -567,24 +608,160 @@ function SendViewUnlocker({
 }
 
 /**
+ * Helper function to convert a utf16 array buffer to a string.
+ *
+ * Our encrypted parts are utf16 strings that are split into multiple parts. This function will convert
+ * each of those parts back into a string that can be concatenated together.
+ */
+function utf16ArrayBufferToString(arrayBuffer: ArrayBuffer) {
+  const reconstructedStringChars = [];
+  const uint16Array = new Uint16Array(arrayBuffer);
+
+  for (let i = 0; i < uint16Array.length; i++) {
+    reconstructedStringChars.push(String.fromCharCode(uint16Array[i]));
+  }
+
+  return reconstructedStringChars.join("");
+}
+
+/**
  * Work in progress. This will be the component that shows the send data.
  */
-function SendViewer({
+function SendViewDownloaderAndDecryptor({
   sendId,
   sendViewId,
   sendViewPassword,
+  totalEncryptedParts,
 }: {
   sendId: SendId;
   sendViewId: SendViewId;
   sendViewPassword: string;
+  totalEncryptedParts: number;
 }) {
-  return (
-    <div className="px-4 container max-w-5xl">
-      <h3>SEND VIEWED</h3>
-      <p className="muted mb-4">The send has been successfully unlocked to view!</p>
-      <p>Send Id: {sendId}</p>
-      <p>Send View Id: {sendViewId}</p>
-      <p>Send View Password: {sendViewPassword}</p>
-    </div>
-  );
+  const encryptionWorker = useEncryptionWorker();
+
+  const [secretResponses, setSecretResponses] = useState<SecretResponses | null>(null);
+
+  // pull out fragment from the URL
+  const password = window.location.hash.slice(1);
+
+  useEffect(() => {
+    if (password === "") {
+      return;
+    }
+
+    const fetchAndDecrypt = async () => {
+      // fetch the encrypted parts
+      const fetchEncryptedPartsPromises = Array.from({ length: totalEncryptedParts }).map((_, index) => {
+        return async () => {
+          return fetch(`/marketing/api/sends/download-send-encrypted-part`, {
+            method: "GET",
+            headers: {
+              [DOWNLOAD_SEND_ENCRYPTED_PART_HEADERS.SEND_ID]: sendId,
+              [DOWNLOAD_SEND_ENCRYPTED_PART_HEADERS.PART_NUMBER]: `${index + 1}`,
+              [DOWNLOAD_SEND_ENCRYPTED_PART_HEADERS.SEND_VIEW_ID]: sendViewId,
+              [DOWNLOAD_SEND_ENCRYPTED_PART_HEADERS.SEND_VIEW_PASSWORD]: sendViewPassword,
+            },
+          });
+        };
+      });
+
+      // get the string data out from each and then concatenate them
+      const encryptedParts = await parallelWithLimit({
+        fns: fetchEncryptedPartsPromises,
+        limit: 3,
+      });
+
+      const encryptedPartArrayBuffers = await Promise.all(encryptedParts.map((part) => part.arrayBuffer()));
+      const text = encryptedPartArrayBuffers
+        // each of these buffers should be a utf16 string and should be concatenated in order
+        .map((arrayBuffer) => utf16ArrayBufferToString(arrayBuffer))
+        .join("");
+
+      const parsedPublicPackedSecrets = JSON.parse(text) as PublicPackedSecrets;
+
+      const parsedPackedSecrets: PackedSecrets = {
+        ...parsedPublicPackedSecrets,
+        password,
+      };
+
+      const secretResponses = await encryptionWorker.sendPackedSecretsForDecryption(parsedPackedSecrets);
+      setSecretResponses(secretResponses);
+
+      console.log("Decrypted secret responses:", secretResponses);
+
+      // close the view
+      await fetch(`/marketing/api/sends/complete-send-view`, {
+        method: "POST",
+        headers: {
+          [COMPLETE_SEND_VIEW_HEADERS.SEND_ID]: sendId,
+          [COMPLETE_SEND_VIEW_HEADERS.SEND_VIEW_ID]: sendViewId,
+          [COMPLETE_SEND_VIEW_HEADERS.SEND_VIEW_PASSWORD]: sendViewPassword,
+        },
+      });
+    };
+
+    fetchAndDecrypt();
+  });
+
+  if (password === "") {
+    // can't do anything failed to load password via fragment
+    return (
+      <div className="px-4 container max-w-5xl">
+        <h3>SEND VIEWER</h3>
+        <p className="muted mb-4">Failed to load password from URL fragment. This will not work.</p>
+      </div>
+    );
+  }
+
+  if (secretResponses === null) {
+    return (
+      <div className="px-4 container max-w-5xl">
+        <h3>SEND VIEWED</h3>
+        <p className="muted mb-4">The send has been successfully unlocked to view!</p>
+        <p>Send Id: {sendId}</p>
+        <p>Send View Id: {sendViewId}</p>
+        <p>Send View Password: {sendViewPassword}</p>
+
+        {/** Can add in more fancy states here */}
+        <p>Downloading and decrypting...</p>
+        <Spinner />
+      </div>
+    );
+  } else {
+    // TODO: this is where the revealer should go. We still need to store the config for the send and
+    // send it down once the send is ready to view. For now, just hardcode the config.
+
+    const exampleConfigThatMatchesTheSend: SendBuilderTemplate = {
+      title: "Example Send",
+      description: "This is an example send.",
+      fields: [
+        {
+          title: "Secret 1",
+          type: "single-line-text",
+          placeholder: "Enter secret 1",
+        },
+        {
+          title: "Secret 2",
+          type: "multi-line-text",
+          placeholder: "Enter secret 2",
+        },
+        {
+          title: "Secret 3",
+          type: "file",
+        },
+      ],
+    };
+
+    // This should be passed down to the revealer component. It should match up with the SecretResponses.
+    console.log(exampleConfigThatMatchesTheSend);
+
+    return (
+      <div className="px-4 container max-w-5xl">
+        <h3>SEND VIEWED</h3>
+        <p className="muted mb-4">The send has been successfully unlocked to view! Here are the secrets:</p>
+        <pre>{JSON.stringify(secretResponses, null, 2)}</pre>
+      </div>
+    );
+  }
 }

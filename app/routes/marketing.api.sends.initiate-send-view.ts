@@ -23,6 +23,9 @@ export type InitiateSendViewResponse = {
 
       /** When false, the view does not require confirmation. */
       requiresConfirmation: false;
+
+      /** The total number of encrypted parts. */
+      totalEncryptedParts: number;
     }
   | {
       /** The password to use to view the send. When null, it is pending confirmation. */
@@ -110,6 +113,10 @@ export const action: ActionFunction = async ({ request }) => {
 
     // check to see if the send requires confirmation
     if (sendConfig.confirmationEmail !== null) {
+      if (sendState.totalEncryptedParts === null) {
+        throw new Error("Send does not have total encrypted parts, this should not happen.");
+      }
+
       initiateSendViewResponse = {
         sendViewId,
         // we don't want to give the password yet, we want to wait for the confirmation
@@ -139,10 +146,15 @@ export const action: ActionFunction = async ({ request }) => {
         messageMetadata: { ...emailResponse.$metadata },
       });
     } else {
+      if (sendState.totalEncryptedParts === null) {
+        throw new Error("Send does not have total encrypted parts, this should not happen.");
+      }
+
       initiateSendViewResponse = {
         sendViewId,
         requiresConfirmation: false,
         viewPassword: view.viewPassword,
+        totalEncryptedParts: sendState.totalEncryptedParts,
       };
 
       // mark the view as ready

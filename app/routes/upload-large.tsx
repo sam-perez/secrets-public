@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { PackedSecrets, SecretResponses } from "../lib/secrets";
+import { PackedSecrets, SecretResponses, PublicPackedSecrets } from "../lib/secrets";
 import {
   useEncryptionWorker,
   EncryptionWorkerProvider,
@@ -39,12 +39,6 @@ export default function UploadLarge() {
   );
 }
 
-/**
- * The parts of the secret that are considered public.
- * This is the data that is sent to the server for encryption.
- */
-type PublicPackedSecrets = Omit<PackedSecrets, "password">;
-
 function UploadLargeInner() {
   const [progress, setProgress] = useState<number>(0);
   const [password, setPassword] = useState<string | null>(null);
@@ -64,7 +58,15 @@ function UploadLargeInner() {
 
     const secretResponses: SecretResponses = [
       {
-        textValues: ["This is a large file.", "It is very large."],
+        textValues: ["SOME SECRET"],
+        files: [],
+      },
+      {
+        textValues: ["ANOTHER SECRET"],
+        files: [],
+      },
+      {
+        textValues: ["This is a large file."],
         files: [
           {
             name: "large-file.bin",
@@ -171,7 +173,7 @@ function UploadLargeInner() {
       {requestData !== null ? (
         <>
           <p>Send ID: {requestData.sendId}</p>
-          <a href={`/revealer/${requestData.sendId}`} target="_blank" rel="noreferrer">
+          <a href={`/revealer/${requestData.sendId}#${password}`} target="_blank" rel="noreferrer">
             View Send
           </a>
         </>

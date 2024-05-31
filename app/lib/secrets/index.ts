@@ -38,6 +38,12 @@ export type PackedSecrets = {
 };
 
 /**
+ * The parts of the secret that are considered public.
+ * This is the data that is sent to the server for encryption.
+ */
+export type PublicPackedSecrets = Omit<PackedSecrets, "password">;
+
+/**
  * Packs a secret response into an encrypted form.
  *
  * We do this by converting the secret values into a JSON string, then encrypting

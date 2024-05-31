@@ -36,6 +36,7 @@ export type ViewableStatusResponse = {
   sendId: SendId;
   sendViewId: SendViewId;
   sendViewPassword: string;
+  totalEncryptedParts: number;
 };
 
 /**
@@ -118,11 +119,16 @@ export const loader: LoaderFunction = async ({ request }) => {
         if (lastSendViewPassword !== null) {
           // a password was provided, we should check if it matches the view password
           if (matchingLastSendView.viewPassword === lastSendViewPassword) {
+            if (sendState.totalEncryptedParts === null) {
+              throw new Error("Total encrypted parts is null, this should not happen.");
+            }
+
             return {
               stage: "viewable",
               sendId: sendConfig.sendId,
               sendViewId: matchingLastSendView.sendViewId,
               sendViewPassword: matchingLastSendView.viewPassword,
+              totalEncryptedParts: sendState.totalEncryptedParts,
             };
           } else {
             // the password was incorrect, something has gone wrong with the password. we should just consider
