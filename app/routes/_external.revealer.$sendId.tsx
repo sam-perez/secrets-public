@@ -7,6 +7,7 @@ import { Input } from "../components/ui/input";
 import { Dialog, DialogContent } from "../components/ui/dialog";
 import { INITIATE_SEND_VIEW_HEADERS, InitiateSendViewResponse } from "./marketing.api.sends.initiate-send-view";
 import { CONFIRM_SEND_VIEW_HEADERS, ConfirmSendViewResponse } from "./marketing.api.sends.confirm-send-view";
+import { RETRY_CONFIRMATION_FOR_SEND_VIEW_HEADERS } from "./marketing.api.sends.retry-confirmation-for-send-view";
 
 import {
   LOAD_SEND_VIEWING_STATUS_HEADERS,
@@ -484,6 +485,42 @@ function SendViewUnlocker({
               }
               <p>This send requires email confirmation to unlock view. Please enter the code sent via email.</p>
               <p>Email sent to (OBSCURE ME PLEASE): {internalUnlockerStatus.obscuredEmail}</p>
+              <Button
+                variant={"link"}
+                onClick={() => {
+                  Promise.resolve()
+                    .then(async () => {
+                      setShowLoadingScreen(true);
+
+                      // initiate the secret send view
+                      const retryConfirmationForSendViewResponseFetch = await fetch(
+                        "/marketing/api/sends/retry-confirmation-for-send-view",
+                        {
+                          method: "POST",
+                          headers: {
+                            [RETRY_CONFIRMATION_FOR_SEND_VIEW_HEADERS.SEND_ID]: internalUnlockerStatus.sendId,
+                            [RETRY_CONFIRMATION_FOR_SEND_VIEW_HEADERS.SEND_VIEW_ID]: internalUnlockerStatus.sendViewId,
+                          },
+                        }
+                      );
+
+                      if (retryConfirmationForSendViewResponseFetch.status !== 204) {
+                        // this is unexpected, we may want to notify ourselves of this error somehow
+                        alertWithErrorMessage(
+                          [
+                            "An unknown error occurred while requesting a confirmation code resend.",
+                            "Please try again later.",
+                          ].join(" ")
+                        );
+                      }
+                    })
+                    .finally(() => {
+                      setShowLoadingScreen(false);
+                    });
+                }}
+              >
+                Request another confirmation code.
+              </Button>
               <Input
                 placeholder="Enter code"
                 value={confirmationCode}
