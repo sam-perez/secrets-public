@@ -56,8 +56,9 @@ export const action: ActionFunction = async ({ request }) => {
     const emailResponse = await sendEmail({
       to: sendConfig.confirmationEmail,
       from: "2Secured <noreply@2secured.link>",
-      subject: "2Secured View Confirmation",
-      body: `To confirm your view of the 2Secured send, use the following code: ${code}`,
+      subject: `2Secured Access Code is ${code}`,
+      body: `Enter this code to access the link sent to you via 2Secured: ${code}
+If you didn't request this code, you can safely ignore this email.`,
     });
 
     // add the email confirmation attempt to the view
