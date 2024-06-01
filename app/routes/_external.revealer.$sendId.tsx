@@ -25,6 +25,8 @@ import {
 } from "./marketing.api.sends.load-send-viewing-status";
 import { OpenInNewWindowIcon } from "@radix-ui/react-icons";
 
+import { DisplaySecrets } from "~/components/sends/revealer/DisplaySecrets";
+
 // TODO: REAL LOADING EXPERIENCE
 function Spinner() {
   const spinnerStyle = {
@@ -223,7 +225,13 @@ function SendViewContainer() {
     } else {
       return (
         <div>
-          <h1>Send Is Ready To View</h1>
+          <h3>View</h3>
+          <p className="muted mb-4">
+            This link was shared with end-to-end encryption via{" "}
+            <Link target="_blank" to="https://2secured.link" rel="noreferrer">
+              2Secured
+            </Link>
+          </p>
           <SendViewDownloaderAndDecryptor
             sendId={sendViewingData.sendId}
             sendViewId={sendViewingData.sendViewId}
@@ -852,7 +860,8 @@ function SendViewDownloaderAndDecryptor({
       <div className="container">
         <h3>SEND VIEWED</h3>
         <p className="muted mb-4">The send has been successfully unlocked to view! Here are the secrets:</p>
-        <pre>{JSON.stringify(secretResponses, null, 2)}</pre>
+        {/* <pre>{JSON.stringify(secretResponses, null, 2)}</pre> */}
+        <DisplaySecrets template={exampleConfigThatMatchesTheSend} responses={secretResponses} />
       </div>
     );
   }
