@@ -23,6 +23,7 @@ import {
   NeedsToInitiateSendViewStatusResponse,
   NeedsConfirmationCodeVerificationStatusResponse,
 } from "./marketing.api.sends.load-send-viewing-status";
+import { OpenInNewWindowIcon } from "@radix-ui/react-icons";
 
 // TODO: REAL LOADING EXPERIENCE
 function Spinner() {
@@ -540,6 +541,33 @@ function SendViewUnlocker({
                 To view this link, please enter the access code we just sent to the email address{" "}
                 {internalUnlockerStatus.obscuredEmail}
               </p>
+
+              <div className="flex items-center space-x-4 text-xs pb-2 text-slate-600">
+                <a
+                  href="https://mail.google.com/"
+                  target="_blank"
+                  rel="noreferrer"
+                  className="flex items-center hover:text-slate-400"
+                >
+                  Gmail <OpenInNewWindowIcon className="h-3 w-3 ml-1" />
+                </a>
+                <a
+                  href="https://www.icloud.com/mail/"
+                  target="_blank"
+                  rel="noreferrer"
+                  className="flex items-center hover:text-slate-400"
+                >
+                  Apple Mail <OpenInNewWindowIcon className="h-3 w-3 ml-1" />
+                </a>
+                <a
+                  href="https://outlook.live.com/"
+                  target="_blank"
+                  rel="noreferrer"
+                  className="flex items-center hover:text-slate-400"
+                >
+                  Outlook <OpenInNewWindowIcon className="h-3 w-3 ml-1" />
+                </a>
+              </div>
               {/* <Button
                 variant={"link"}
                 onClick={() => {
@@ -577,7 +605,9 @@ function SendViewUnlocker({
                 Request another confirmation code.
               </Button> */}
               <Input
-                placeholder="Enter code"
+                placeholder="Enter access code"
+                type="text"
+                autoComplete="off"
                 value={confirmationCode}
                 onKeyDown={(e) => {
                   // if the user presses enter, submit the confirmation code
@@ -635,7 +665,6 @@ function SendViewUnlocker({
                 >
                   resending
                 </Link>
-                .
               </p>
 
               <Button disabled={confirmationCode.length === 0} onClick={submitConfirmationCode}>
