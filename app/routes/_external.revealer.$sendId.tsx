@@ -702,7 +702,7 @@ function SendViewDownloaderAndDecryptor({
     };
 
     fetchAndDecrypt();
-  });
+  }, [encryptionWorker, sendId, sendViewId, sendViewPassword, totalEncryptedParts, password]);
 
   if (password === "") {
     // can't do anything failed to load password via fragment

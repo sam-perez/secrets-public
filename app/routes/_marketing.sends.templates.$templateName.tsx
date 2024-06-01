@@ -1,4 +1,5 @@
-import { useParams } from "react-router-dom";
+import { LoaderFunction, json } from "@remix-run/node";
+import { useLoaderData } from "@remix-run/react";
 import AboutSidenav from "~/components/about-sidenav";
 import BuilderFooter from "~/components/sends/builder/footer";
 
@@ -14,21 +15,41 @@ import {
 
 import BuilderFields from "~/components/sends/builder/fields";
 
-import { SEND_BUILDER_TEMPLATES } from "../components/sends/builder/types";
+import { SEND_BUILDER_TEMPLATES, SendBuilderTemplate } from "../components/sends/builder/types";
 
-export default function TemplateDetails() {
-  const { templateName } = useParams<{ templateName: string }>();
+type LoaderData =
+  | {
+      template: SendBuilderTemplate;
+    }
+  | { error: string };
+
+export const loader: LoaderFunction = async ({ params }) => {
+  const { templateName } = params;
+  let loaderData: LoaderData;
 
   if (!templateName) {
+    loaderData = { error: "Invalid template." };
+  } else {
+    const matchedTemplate = SEND_BUILDER_TEMPLATES[templateName];
+
+    if (!matchedTemplate) {
+      loaderData = { error: "Template not found." };
+    } else {
+      loaderData = { template: matchedTemplate };
+    }
+
+    return json<LoaderData>(loaderData);
+  }
+};
+
+export default function TemplateDetails() {
+  const data = useLoaderData<LoaderData>();
+
+  if ("error" in data) {
     return <p>Invalid template.</p>;
   }
 
-  // Retrieve the template using the slug
-  const template = SEND_BUILDER_TEMPLATES[templateName];
-
-  if (!template) {
-    return <p>Template not found.</p>;
-  }
+  const { template } = data;
 
   return (
     <div className="mx-auto px-4 max-w-5xl">
