@@ -16,7 +16,9 @@ export default function AppLayout() {
   return (
     <>
       <main className="h-auto pt-10 sm:pt-20">
-        <Outlet />
+        <div className="mx-auto max-w-5xl">
+          <Outlet />
+        </div>
       </main>
     </>
   );

@@ -23,12 +23,18 @@ import {
   NeedsToInitiateSendViewStatusResponse,
   NeedsConfirmationCodeVerificationStatusResponse,
 } from "./marketing.api.sends.load-send-viewing-status";
+import { OpenInNewWindowIcon } from "@radix-ui/react-icons";
+
+import { DisplaySecrets } from "~/components/sends/revealer/DisplaySecrets";
+import AboutSidenav from "~/components/about-sidenav";
+import { Label } from "~/components/ui/label";
+import { Alert, AlertDescription } from "~/components/ui/alert";
 
 // TODO: REAL LOADING EXPERIENCE
 function Spinner() {
   const spinnerStyle = {
-    width: "50px",
-    height: "50px",
+    width: "40px",
+    height: "40px",
     borderRadius: "50%",
     border: "5px solid #f3f3f3",
     borderTop: "5px solid #3498db",
@@ -168,7 +174,7 @@ function SendViewContainer() {
 
   if (error !== null) {
     return (
-      <div className="px-4 container max-w-5xl">
+      <div className="container">
         <h3>AN ERROR OCCURRED</h3>
         <p className="muted mb-4">An error occurred while trying to access this send. Please try again later.</p>
         <p>Error: {error.message}</p>
@@ -178,19 +184,24 @@ function SendViewContainer() {
 
   if (loadSendViewingStatusResponse === null) {
     return (
-      <div style={{ display: "flex", alignItems: "center" }}>
-        <h1>Initializing.</h1>
-        <Spinner />
+      <div className="flex justify-center">
+        <div className="flex items-center space-x-4">
+          <Spinner />
+          <h4>Initializing...</h4>
+        </div>
       </div>
     );
   } else if (loadSendViewingStatusResponse.stage === "not-viewable") {
     return (
-      <div className="px-4 container max-w-5xl">
-        <h3>SEND NOT FOUND</h3>
-        <p className="muted mb-4">
-          The send you are trying to view is not available. It may never have never existed, expired, been deleted, or
-          been viewed too many times.
+      <div className="container">
+        <h3>This secret link has expired or does not exist</h3>
+        <p className="muted mt-2 mb-4">
+          The secret link you are trying to view may have never existed, has expired, was deleted, or has been viewed
+          too many times. If it did in fact exist, there is no way to retrieve it anymore.
         </p>
+        <Link to={"https://2secured.link"}>
+          <Button>Go to 2Secured</Button>
+        </Link>
       </div>
     );
   } else if (loadSendViewingStatusResponse.stage === "viewable") {
@@ -217,7 +228,6 @@ function SendViewContainer() {
     } else {
       return (
         <div>
-          <h1>Send Is Ready To View</h1>
           <SendViewDownloaderAndDecryptor
             sendId={sendViewingData.sendId}
             sendViewId={sendViewingData.sendViewId}
@@ -288,16 +298,18 @@ function SendViewUnlocker({
   if (showLoadingScreen === true) {
     // TODO: add an appropriate loading spinner here
     return (
-      <div style={{ display: "flex", alignItems: "center" }}>
-        <h1>THIS IS A LOADING SCREEN</h1>
-        <Spinner />
+      <div className="flex justify-center">
+        <div className="flex items-center space-x-4">
+          <Spinner />
+          <h4>Loading...</h4>
+        </div>
       </div>
     );
   }
 
   if (error !== null) {
     return (
-      <div className="px-4 container max-w-5xl">
+      <div className="container">
         <h3>AN ERROR OCCURRED</h3>
         <p className="muted mb-4">An error occurred while trying to view this send.</p>
         <p>{error.message}</p>
@@ -310,14 +322,13 @@ function SendViewUnlocker({
   };
 
   const dialogBackground = (
-    <div className="px-4 container max-w-5xl">
-      <h3>LOADING REVEALER DATA</h3>
+    <div className="container">
+      <h3>Accessing encrypted data...</h3>
       <p className="muted mb-4">
-        Someone has securely shared this data with you via{" "}
+        Accessing encrypted data via{" "}
         <Link target="_blank" to="https://2secured.link" rel="noreferrer">
           2Secured
         </Link>
-        .
       </p>
     </div>
   );
@@ -403,17 +414,15 @@ function SendViewUnlocker({
             <div className="space-y-2">
               {internalUnlockerStatus.requiresPassword === true ? (
                 <>
-                  <h4>Enter Password to View</h4>
-                  {
-                    // if the password check failed, show an error message
-                    passwordCheckFailed === true && (
-                      <p className="text-red-500">The password you entered is incorrect.</p>
-                    )
-                  }
+                  <h4>Enter Password to Continue</h4>
+
                   <p>
                     The sender has required a password to view this encrypted data. Please enter it below to continue.
                   </p>
-                  <p>Views remaining: {internalUnlockerStatus.viewsRemaining}</p>
+
+                  <p>
+                    Views remaining: <b>{internalUnlockerStatus.viewsRemaining}</b>
+                  </p>
                   <Input
                     placeholder="Enter password"
                     value={password}
@@ -427,6 +436,18 @@ function SendViewUnlocker({
                     }}
                     onChange={(e) => setPassword(e.target.value)}
                   />
+                  {
+                    // if the password check failed, show an error message
+                    passwordCheckFailed === true && (
+                      <p className="text-red-400 font-medium">The password you entered is incorrect.</p>
+                    )
+                  }
+                  <div>
+                    <p className="muted text-xs">
+                      When the sender created this link, they chose to set a password. You&apos;ll need to ask them for
+                      the password.
+                    </p>
+                  </div>
                   <Button disabled={password.length === 0} onClick={initiateSend}>
                     Continue
                   </Button>
@@ -517,16 +538,40 @@ function SendViewUnlocker({
         <Dialog open={true}>
           <DialogContent className="sm:max-w-md" noClose={true}>
             <div className="space-y-2">
-              <h4>Enter Confirmation Code</h4>
-              {
-                // if the confirmation code check failed, show an error message
-                confirmationCodeCheckFailed === true && (
-                  <p className="text-red-500">The confirmation code you entered is incorrect.</p>
-                )
-              }
-              <p>This send requires email confirmation to unlock view. Please enter the code sent via email.</p>
-              <p>Email sent to (OBSCURE ME PLEASE): {internalUnlockerStatus.obscuredEmail}</p>
-              <Button
+              <h4>Check Your Email for Access Code</h4>
+
+              <p>
+                To view this link, please enter the access code we just sent to the email address{" "}
+                {internalUnlockerStatus.obscuredEmail}
+              </p>
+
+              <div className="flex items-center space-x-4 text-xs pb-2 text-slate-600">
+                <a
+                  href="https://mail.google.com/"
+                  target="_blank"
+                  rel="noreferrer"
+                  className="flex items-center hover:text-slate-400"
+                >
+                  Gmail <OpenInNewWindowIcon className="h-3 w-3 ml-1" />
+                </a>
+                <a
+                  href="https://www.icloud.com/mail/"
+                  target="_blank"
+                  rel="noreferrer"
+                  className="flex items-center hover:text-slate-400"
+                >
+                  Apple Mail <OpenInNewWindowIcon className="h-3 w-3 ml-1" />
+                </a>
+                <a
+                  href="https://outlook.live.com/"
+                  target="_blank"
+                  rel="noreferrer"
+                  className="flex items-center hover:text-slate-400"
+                >
+                  Outlook <OpenInNewWindowIcon className="h-3 w-3 ml-1" />
+                </a>
+              </div>
+              {/* <Button
                 variant={"link"}
                 onClick={() => {
                   Promise.resolve()
@@ -561,9 +606,11 @@ function SendViewUnlocker({
                 }}
               >
                 Request another confirmation code.
-              </Button>
+              </Button> */}
               <Input
-                placeholder="Enter code"
+                placeholder="Enter access code"
+                type="text"
+                autoComplete="off"
                 value={confirmationCode}
                 onKeyDown={(e) => {
                   // if the user presses enter, submit the confirmation code
@@ -575,6 +622,54 @@ function SendViewUnlocker({
                 }}
                 onChange={(e) => setConfirmationCode(e.target.value)}
               />
+              {
+                // if the confirmation code check failed, show an error message
+                confirmationCodeCheckFailed === true && (
+                  <p className="text-red-500 font-medium">The confirmation code you entered is incorrect.</p>
+                )
+              }
+              <p className="muted text-xs">
+                Didn&apos;t receive a code? Look for an email from noreply@2secured.link, check your spam, or try{" "}
+                <Link
+                  to={"#"}
+                  className="font-medium hover:text-slate-400"
+                  onClick={() => {
+                    Promise.resolve()
+                      .then(async () => {
+                        setShowLoadingScreen(true);
+
+                        // initiate the secret send view
+                        const retryConfirmationForSendViewResponseFetch = await fetch(
+                          "/marketing/api/sends/retry-confirmation-for-send-view",
+                          {
+                            method: "POST",
+                            headers: {
+                              [RETRY_CONFIRMATION_FOR_SEND_VIEW_HEADERS.SEND_ID]: internalUnlockerStatus.sendId,
+                              [RETRY_CONFIRMATION_FOR_SEND_VIEW_HEADERS.SEND_VIEW_ID]:
+                                internalUnlockerStatus.sendViewId,
+                            },
+                          }
+                        );
+
+                        if (retryConfirmationForSendViewResponseFetch.status !== 204) {
+                          // this is unexpected, we may want to notify ourselves of this error somehow
+                          alertWithErrorMessage(
+                            [
+                              "An unknown error occurred while requesting a confirmation code resend.",
+                              "Please try again later.",
+                            ].join(" ")
+                          );
+                        }
+                      })
+                      .finally(() => {
+                        setShowLoadingScreen(false);
+                      });
+                  }}
+                >
+                  resending
+                </Link>
+              </p>
+
               <Button disabled={confirmationCode.length === 0} onClick={submitConfirmationCode}>
                 Continue
               </Button>
@@ -594,8 +689,8 @@ function SendViewUnlocker({
     // Should be emphemeral since the useEffect above will report to the parent that the send is ready to view and
     // this component will presumably be immediately unmounted.
     return (
-      <div className="px-4 container max-w-5xl">
-        <h3>SEND VIEWED</h3>
+      <div className="container">
+        <h3>Unlocking...</h3>
         <p className="muted mb-4">
           The send has been successfully unlocked to view! But you really should not be seeing this!
         </p>
@@ -707,7 +802,7 @@ function SendViewDownloaderAndDecryptor({
   if (password === "") {
     // can't do anything failed to load password via fragment
     return (
-      <div className="px-4 container max-w-5xl">
+      <div className="container">
         <h3>SEND VIEWER</h3>
         <p className="muted mb-4">Failed to load password from URL fragment. This will not work.</p>
       </div>
@@ -716,7 +811,7 @@ function SendViewDownloaderAndDecryptor({
 
   if (secretResponses === null) {
     return (
-      <div className="px-4 container max-w-5xl">
+      <div className="container">
         <h3>SEND VIEWED</h3>
         <p className="muted mb-4">The send has been successfully unlocked to view!</p>
         <p>Send Id: {sendId}</p>
@@ -755,12 +850,35 @@ function SendViewDownloaderAndDecryptor({
 
     // This should be passed down to the revealer component. It should match up with the SecretResponses.
     console.log(exampleConfigThatMatchesTheSend);
-
+    // TODO
     return (
-      <div className="px-4 container max-w-5xl">
-        <h3>SEND VIEWED</h3>
-        <p className="muted mb-4">The send has been successfully unlocked to view! Here are the secrets:</p>
-        <pre>{JSON.stringify(secretResponses, null, 2)}</pre>
+      <div className="mx-auto lg:grid lg:max-w-7xl grid-cols-3 gap-8">
+        <div className="lg:col-span-2">
+          <h3 className="mb-2">{exampleConfigThatMatchesTheSend.title}</h3>
+
+          <Alert variant={"success"}>
+            <AlertDescription>The link has been successfully unlocked!</AlertDescription>
+          </Alert>
+          {/* <pre>{JSON.stringify(secretResponses, null, 2)}</pre> */}
+          <div className="mt-4">
+            <DisplaySecrets template={exampleConfigThatMatchesTheSend} responses={secretResponses} />
+          </div>
+        </div>
+
+        <aside className="space-y-4">
+          <div>
+            <Label>Created on</Label>
+            <p>TODO date</p>
+          </div>
+
+          <div>
+            <Label>Expires in</Label>
+            <p>TODO views / TODO date</p>
+          </div>
+          <div>
+            <AboutSidenav showAbout={true} />
+          </div>
+        </aside>
       </div>
     );
   }

@@ -21,8 +21,9 @@ export const action: ActionFunction = async ({ request }) => {
   // let's make a fake request for now
   const fakeSendConfig: SendConfig = {
     sendId,
-    confirmationEmail: "samuel.e.perez@gmail.com",
-    maxViews: 1,
+    //confirmationEmail: "taylorballenger@gmail.com",'
+    confirmationEmail: null,
+    maxViews: 1000,
     expiresAt: null,
     password: "asdf",
     template: {

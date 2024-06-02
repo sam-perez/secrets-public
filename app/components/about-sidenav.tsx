@@ -1,6 +1,6 @@
 import { Link } from "@remix-run/react";
-import { Alert, AlertDescription, AlertTitle } from "./ui/alert";
-import { GlobeIcon, InfoCircledIcon, LockClosedIcon, QuestionMarkCircledIcon } from "@radix-ui/react-icons";
+
+import { GlobeIcon, LockClosedIcon, QuestionMarkCircledIcon } from "@radix-ui/react-icons";
 
 interface AboutSidenavProps {
   showAbout: boolean;
@@ -13,7 +13,7 @@ const marketing = [
   },
   {
     icon: GlobeIcon,
-    text: "PCI DSS bank-level security",
+    text: "Using AES-256 Encryption Algorithm",
   },
   {
     icon: QuestionMarkCircledIcon,
@@ -23,28 +23,25 @@ const marketing = [
 
 export default function AboutSidenav({ showAbout }: AboutSidenavProps) {
   return (
-    <>
-      {showAbout && (
-        <div className="mb-8">
-          <Link to={"/"}>
-            <Alert className="bg-slate-50 hover:bg-slate-100">
-              <InfoCircledIcon className="h-4 w-4" />
-              <AlertTitle>About 2Secured</AlertTitle>
-              <AlertDescription>
-                2secured is a free, secure way to send or request sensitive information securely using end-to-end
-                encryption.
-              </AlertDescription>
-            </Alert>
-          </Link>
-        </div>
-      )}
-
+    <div className="pt-6 border-t">
       {marketing.map((item, index) => (
-        <div key={index} className="flex items-top text-sm text-slate-600 space-x-4 mb-4 mt-4">
-          <item.icon className="h-5 w-5 flex-none" />
-          <span>{item.text}</span>
+        <div key={index} className="text-sm text-slate-600">
+          <div className="flex mb-4 space-x-4">
+            <item.icon className="h-4 w-4 flex-none" />
+            <span>{item.text}</span>
+          </div>
         </div>
       ))}
-    </>
+      {showAbout && (
+        <div className="border-t pt-6 mt-6 text-slate-600">
+          <p>
+            <Link className="font-medium hover:text-slate-500" to={"/"}>
+              2Secured
+            </Link>{" "}
+            is a free, secure way to send or request sensitive info securely using end-to-end encryption.
+          </p>
+        </div>
+      )}
+    </div>
   );
 }
