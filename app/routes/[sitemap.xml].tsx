@@ -5,14 +5,16 @@ export const loader: LoaderFunction = async () => {
   const lastModifiedToday = new Date().toISOString();
 
   //loop through all send templates and add into sitemap
-  const sendTemplates = Object.entries(SEND_BUILDER_TEMPLATES).map(
-    ([slug]) => `
+  const sendTemplates = Object.entries(SEND_BUILDER_TEMPLATES)
+    .filter(([, template]) => !template.private)
+    .map(
+      ([slug]) => `
     <url>
     <loc>https://2secured.link/sends/templates/${slug}</loc>
     <lastmod>${lastModifiedToday}</lastmod>
     </url>
     `
-  );
+    );
 
   const content = `
       <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">

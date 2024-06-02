@@ -84,6 +84,9 @@ export type SendBuilderTemplate = {
 
   /** The fields for the template */
   fields: Array<Omit<SendBuilderField, "value">>;
+
+  // optional to hide from template list and sitemap
+  private?: boolean;
 };
 
 /**
@@ -784,6 +787,33 @@ export const SEND_BUILDER_TEMPLATES: { [SLUG in string]: SendBuilderTemplate } =
         title: "Bank Statement",
         type: "file",
         placeholder: "",
+      },
+    ],
+  },
+  "blox-bank-info": {
+    title: "Blox Bank Info",
+    description: "Collect banking information for properties in the Blox application.",
+    private: true,
+    fields: [
+      {
+        title: "Business Name",
+        type: "single-line-text",
+        placeholder: "Business Name",
+      },
+      {
+        title: "Routing Number",
+        type: "single-line-text",
+        placeholder: "Routing Number",
+      },
+      {
+        title: "Account Number",
+        type: "single-line-text",
+        placeholder: "Account Number",
+      },
+      {
+        title: "Address",
+        type: "multi-line-text",
+        placeholder: "Address",
       },
     ],
   },
