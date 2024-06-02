@@ -7,9 +7,7 @@ import "highlight.js/styles/tokyo-night-dark.css";
 import hljs from "highlight.js";
 import { useEffect } from "react";
 import { marked } from "marked";
-import BuilderWrapper from "~/components/sends/builder/wrapper";
-import BuilderFields from "~/components/sends/builder/fields";
-import BuilderFooter from "~/components/sends/builder/footer";
+import { SecretBuilderRoot } from "~/components/sends/builder/SecretBuilderRoot";
 import { TemplateCard } from "~/components/ui/TemplateCard";
 import { SEND_BUILDER_TEMPLATES } from "../components/sends/builder/types";
 
@@ -111,19 +109,16 @@ export default function Index() {
             </div>
           </div>
           <div>
-            <BuilderWrapper>
-              <BuilderFields
-                builderConfiguration={{
-                  title: defaultTemplate.title,
-                  password: null,
-                  expirationDate: null,
-                  confirmationEmail: null,
-                  maxViews: null,
-                  fields: defaultTemplate.fields.map((field) => ({ ...field, value: null })),
-                }}
-              />
-              <BuilderFooter />
-            </BuilderWrapper>
+            <SecretBuilderRoot
+              sendBuilderConfiguration={{
+                title: defaultTemplate.title,
+                password: null,
+                expirationDate: null,
+                confirmationEmail: null,
+                maxViews: null,
+                fields: defaultTemplate.fields.map((field) => ({ ...field, value: null })),
+              }}
+            />
           </div>
         </div>
       </section>

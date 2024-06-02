@@ -1,11 +1,20 @@
 import { useState } from "react";
 import { Input } from "../../ui/input";
 
-interface initialTextProps {
+/**
+ * The props for the EditableText component.
+ */
+interface EditableTextProps {
   initialText: string;
 }
 
-const EditableText = ({ initialText }: initialTextProps) => {
+/**
+ * An editable text component.
+ *
+ * A component used in various places in the builder to allow the user to edit text inline. Reports any changes
+ * to the parent component.
+ */
+export const EditableText = ({ initialText }: EditableTextProps) => {
   const [isEditing, setIsEditing] = useState(false);
   const [text, setText] = useState(initialText);
 
@@ -38,5 +47,3 @@ const EditableText = ({ initialText }: initialTextProps) => {
     </div>
   );
 };
-
-export default EditableText;

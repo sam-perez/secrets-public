@@ -1,5 +1,5 @@
 /** ISO 8601 date string type. */
-export type Iso8601DateTimeString = string & { __brand: "ISO_DATE_TIME_STRING" };
+export type Iso8601DateTimeString = string & { __brand: "ISO_8601_DATE_TIME_STRING" };
 
 /**
  * Get an ISO 8601 date time string from a date.

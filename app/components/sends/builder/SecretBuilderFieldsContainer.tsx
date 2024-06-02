@@ -8,7 +8,7 @@ import {
   useSensors,
 } from "@dnd-kit/core";
 
-import { Column } from "./column";
+import { SecretFieldsContainer } from "./SecretFieldsContainer";
 import { useState } from "react";
 import { arrayMove } from "@dnd-kit/sortable";
 import {
@@ -22,15 +22,23 @@ import {
 } from "../../ui/dropdown-menu";
 
 import { Button } from "../../ui/button";
-import EditableText from "./editableText";
+import { EditableText } from "./EditableText";
 import { SendBuilderConfiguration, SendBuilderField } from "./types";
 
 /** Internally used type for the builder fields, id is required to play nicely with dnd-kit */
 type SendBuilderFieldWithId = SendBuilderField & { id: number };
 
-export default function BuilderFields({ builderConfiguration }: { builderConfiguration: SendBuilderConfiguration }) {
+/**
+ * The container for the secret builder fields. It handles the rendering a component to add new fields, and
+ * renders the existing fields in a draggable list.
+ */
+export default function SecretBuilderFieldsContainer({
+  sendBuilderConfiguration: sendBuilderConfiguration,
+}: {
+  sendBuilderConfiguration: SendBuilderConfiguration;
+}) {
   const [items, setItems] = useState<Array<SendBuilderFieldWithId>>(
-    builderConfiguration.fields.map((field, index) => ({ ...field, id: index + 1 }))
+    sendBuilderConfiguration.fields.map((field, index) => ({ ...field, id: index + 1 }))
   );
 
   const addItem = (type: SendBuilderField["type"]) => {
@@ -93,9 +101,6 @@ export default function BuilderFields({ builderConfiguration }: { builderConfigu
         tolerance: 6,
       },
     })
-    // useSensor(KeyboardSensor, {
-    //   coordinateGetter: sortableKeyboardCoordinates,
-    // })
   );
 
   return (
@@ -103,7 +108,7 @@ export default function BuilderFields({ builderConfiguration }: { builderConfigu
       <div className="max-w-4xl mx-auto">
         <div className="px-4 pt-4">
           <h4 className="hover:bg-slate-50">
-            <EditableText initialText={builderConfiguration.title} />
+            <EditableText initialText={sendBuilderConfiguration.title} />
           </h4>
         </div>
 
@@ -128,8 +133,8 @@ export default function BuilderFields({ builderConfiguration }: { builderConfigu
         </div>
         {/* end menu */}
         <DndContext sensors={sensors} onDragEnd={handleDragEnd} collisionDetection={closestCorners}>
-          <Column
-            items={items.map((item) => ({
+          <SecretFieldsContainer
+            secretFields={items.map((item) => ({
               id: item.id,
               title: item.title,
               type: item.type,

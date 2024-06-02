@@ -1,6 +1,5 @@
 import { ActionFunction } from "@remix-run/node";
-import { uploadToS3 } from "../lib/s3";
-import { generateSendId, SendConfig, SendState, SendId, getSendStateKey, getSendConfigKey } from "../lib/sends";
+import { generateSendId, SendConfig, SendState, SendId, saveSendConfig, saveSendState } from "../lib/sends";
 import { getRandomBase62String } from "../lib/crypto-utils";
 import { nowIso8601DateTimeString } from "../lib/time";
 
@@ -26,6 +25,11 @@ export const action: ActionFunction = async ({ request }) => {
     maxViews: 1,
     expiresAt: null,
     password: "asdf",
+    template: {
+      title: "Test Template",
+      description: "This is a test template",
+      fields: [],
+    },
   };
 
   // with an initial send state
@@ -42,23 +46,8 @@ export const action: ActionFunction = async ({ request }) => {
     views: [],
   };
 
-  // we are going to store the send config in S3 under sends/{sendId}/config.json
-  // we will also store the send state in S3 under sends/{sendId}/state.json as well as the
-  // encrypted file parts under sends/{sendId}/encrypted/{partNumber}.bin
-
   try {
-    await Promise.all([
-      uploadToS3({
-        bucket: "MARKETING_BUCKET",
-        body: Buffer.from(JSON.stringify(fakeSendConfig)),
-        key: getSendConfigKey(sendId),
-      }),
-      uploadToS3({
-        bucket: "MARKETING_BUCKET",
-        body: Buffer.from(JSON.stringify(initialSendState)),
-        key: getSendStateKey(sendId),
-      }),
-    ]);
+    await Promise.all([saveSendConfig(fakeSendConfig), saveSendState(initialSendState)]);
 
     const initiateSendResponse: InitiateSendResponse = {
       sendId,

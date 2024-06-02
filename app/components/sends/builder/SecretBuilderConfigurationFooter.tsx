@@ -12,16 +12,30 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from ".
 import { Button } from "../../ui/button";
 import { useState } from "react";
 
-export default function BuilderFooter() {
+/**
+ * The secret builder configuration footer.
+ *
+ * This component is used to display the following configuration options as a footer
+ * in the secret builder:
+ *
+ * - Link expiration settings (includes maximum views and expiration time)
+ * - Confirmation email
+ * - Password
+ *
+ * Each of these options are rendered in their own components, which will independently report back any changes
+ * to their settings to this component. This component will then proxy those changes to the parent component.
+ */
+export default function SecretBuilderConfigurationFooter() {
+  const sharedClasses = "max-w-1/3 sm:max-w-[140px] overflow-hidden";
   return (
     <>
       <div className="border-t bg-slate-50 rounded-b-xl">
         <div className="px-4 py-2 sm:flex flex-wrap justify-between items-center text-sm overflow-hidden">
           {/* actions  */}
           <div className="flex items-center space-x-4">
-            <div className="max-w-1/3 sm:max-w-[140px] overflow-hidden truncate ">{LinkExpirationPopover()}</div>
-            <div className="max-w-1/3 sm:max-w-[140px] text-ellipsis overflow-hidden">{RestrictEmailPopover()}</div>
-            <div className="max-w-1/3 sm:max-w-[140px] text-ellipsis overflow-hidden">{AddPasswordPopover()}</div>
+            <div className={[sharedClasses, "truncate"].join(" ")}>{LinkExpirationConfigurationPopover()}</div>
+            <div className={[sharedClasses, "text-ellipsis"].join(" ")}>{ConfirmationEmailConfigurationPopover()}</div>
+            <div className={[sharedClasses, "text-ellipsis"].join(" ")}>{PasswordConfigurationPopover()}</div>
           </div>
           {/* button */}
           <div>
@@ -33,7 +47,12 @@ export default function BuilderFooter() {
   );
 }
 
-export function LinkExpirationPopover() {
+/**
+ * The link expiration configuration popover.
+ *
+ * Manages the date expiration and view count settings. Reports any changes back to the parent.
+ */
+export function LinkExpirationConfigurationPopover() {
   const [views, setViews] = useState<number | undefined>(undefined);
   const [expirationNumber, setExpirationNumber] = useState<number | undefined>(undefined);
   const [expirationUnit, setExpirationUnit] = useState<string>("");
@@ -111,7 +130,10 @@ export function LinkExpirationPopover() {
   );
 }
 
-export function RestrictEmailPopover() {
+/**
+ * The email confirmation configuration popover. Reports any changes back to the parent.
+ */
+export function ConfirmationEmailConfigurationPopover() {
   const [email, setEmail] = useState("");
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setEmail(event.target.value);
@@ -148,7 +170,10 @@ export function RestrictEmailPopover() {
   );
 }
 
-export function AddPasswordPopover() {
+/**
+ * The password configuration popover. Reports any changes back to the parent.
+ */
+export function PasswordConfigurationPopover() {
   const [password, setPassword] = useState("");
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setPassword(event.target.value);

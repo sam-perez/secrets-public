@@ -1,10 +1,10 @@
 import { Button } from "../../ui/button";
 import { CheckIcon, CopyIcon, DownloadIcon, EyeOpenIcon } from "@radix-ui/react-icons";
 import { Label } from "../../ui/label";
-import { ItemProps } from "../builder/item";
+import { SecretFieldRendererProps } from "../builder/SecretFieldRenderer";
 import { useState } from "react";
 
-export const DecryptedItem = ({ title, type, value }: ItemProps) => {
+export const DecryptedItem = ({ title, type, value }: SecretFieldRendererProps) => {
   const [isCopied, setIsCopied] = useState(false);
 
   const handleCopy = () => {

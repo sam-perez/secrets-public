@@ -5,10 +5,13 @@ import { Cross1Icon, DragHandleDots2Icon } from "@radix-ui/react-icons";
 import { Label } from "../../ui/label";
 import { Button } from "../../ui/button";
 import { Textarea } from "../../ui/textarea";
-import EditableText from "./editableText";
+import { EditableText } from "./EditableText";
 import { SendBuilderField } from "./types";
 
-export interface ItemProps {
+/**
+ * Props for the SecretFieldRenderer component.
+ */
+export interface SecretFieldRendererProps {
   id: number;
   title: string;
   type: SendBuilderField["type"];
@@ -16,7 +19,13 @@ export interface ItemProps {
   placeholder?: string;
 }
 
-export const Item = ({ id, title, type, placeholder, value }: ItemProps) => {
+/**
+ * Renders a secret field in the builder.
+ *
+ * Takes in the configuration required to render and receive the secret field, and
+ * reports back the secret field's value to the parent component.
+ */
+export const SecretFieldRenderer = ({ id, title, type, placeholder, value }: SecretFieldRendererProps) => {
   const { attributes, listeners, setNodeRef, transform, transition } = useSortable({ id });
   const style = {
     transition,

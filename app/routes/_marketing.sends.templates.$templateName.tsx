@@ -1,9 +1,8 @@
 import { LoaderFunction, json } from "@remix-run/node";
 import { useLoaderData } from "@remix-run/react";
 import AboutSidenav from "~/components/about-sidenav";
-import BuilderFooter from "~/components/sends/builder/footer";
 
-import BuilderWrapper from "~/components/sends/builder/wrapper";
+import { SecretBuilderRoot } from "~/components/sends/builder/SecretBuilderRoot";
 import { Badge } from "~/components/ui/badge";
 import {
   Breadcrumb,
@@ -12,8 +11,6 @@ import {
   BreadcrumbList,
   BreadcrumbSeparator,
 } from "~/components/ui/breadcrumb";
-
-import BuilderFields from "~/components/sends/builder/fields";
 
 import { SEND_BUILDER_TEMPLATES, SendBuilderTemplate } from "../components/sends/builder/types";
 
@@ -75,20 +72,16 @@ export default function TemplateDetails() {
       <div className="mx-auto lg:grid lg:max-w-7xl grid-cols-3 gap-8">
         <div className="lg:col-span-2">
           {/* share content  */}
-          <BuilderWrapper>
-            <BuilderFields
-              // this will have to be modified so that we can change its state
-              builderConfiguration={{
-                title: template.title,
-                password: null,
-                expirationDate: null,
-                confirmationEmail: null,
-                maxViews: null,
-                fields: template.fields.map((field) => ({ ...field, value: null })),
-              }}
-            />
-            <BuilderFooter />
-          </BuilderWrapper>
+          <SecretBuilderRoot
+            sendBuilderConfiguration={{
+              title: template.title,
+              password: null,
+              expirationDate: null,
+              confirmationEmail: null,
+              maxViews: null,
+              fields: template.fields.map((field) => ({ ...field, value: null })),
+            }}
+          />
         </div>
         <div>
           <aside className="sticky top-6">

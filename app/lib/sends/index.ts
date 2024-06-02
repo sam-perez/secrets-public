@@ -1,6 +1,8 @@
 import { downloadFromS3, uploadToS3, listObjectsInS3 } from "../s3";
 import { BrandedId, generateUniqueId } from "../ids";
 import { Iso8601DateTimeString } from "../time";
+// TODO: should we move this type to a more appropriate shared location?
+import { SendBuilderTemplate } from "../../components/sends/builder/types";
 
 /** Send id type. */
 export type SendId = BrandedId<"s">;
@@ -31,6 +33,9 @@ export type SendConfig = {
 
   /** Password. If set, the recipient must enter this password to view the send. */
   password: string | null;
+
+  /** The template of the send secrets builder. To be sent down to the revealer for display purposes. */
+  template: SendBuilderTemplate;
 };
 
 /** Send view id type. */
