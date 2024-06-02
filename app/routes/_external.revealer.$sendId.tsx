@@ -26,6 +26,9 @@ import {
 import { OpenInNewWindowIcon } from "@radix-ui/react-icons";
 
 import { DisplaySecrets } from "~/components/sends/revealer/DisplaySecrets";
+import AboutSidenav from "~/components/about-sidenav";
+import { Label } from "~/components/ui/label";
+import { Alert, AlertDescription } from "~/components/ui/alert";
 
 // TODO: REAL LOADING EXPERIENCE
 function Spinner() {
@@ -225,13 +228,6 @@ function SendViewContainer() {
     } else {
       return (
         <div>
-          <h3>View</h3>
-          <p className="muted mb-4">
-            This link was shared with end-to-end encryption via{" "}
-            <Link target="_blank" to="https://2secured.link" rel="noreferrer">
-              2Secured
-            </Link>
-          </p>
           <SendViewDownloaderAndDecryptor
             sendId={sendViewingData.sendId}
             sendViewId={sendViewingData.sendViewId}
@@ -327,13 +323,12 @@ function SendViewUnlocker({
 
   const dialogBackground = (
     <div className="container">
-      <h3>LOADING REVEALER DATA</h3>
+      <h3>Accessing encrypted data...</h3>
       <p className="muted mb-4">
-        Someone has securely shared this data with you via{" "}
+        Accessing encrypted data via{" "}
         <Link target="_blank" to="https://2secured.link" rel="noreferrer">
           2Secured
         </Link>
-        .
       </p>
     </div>
   );
@@ -695,7 +690,7 @@ function SendViewUnlocker({
     // this component will presumably be immediately unmounted.
     return (
       <div className="container">
-        <h3>SEND VIEWED</h3>
+        <h3>Unlocking...</h3>
         <p className="muted mb-4">
           The send has been successfully unlocked to view! But you really should not be seeing this!
         </p>
@@ -857,11 +852,33 @@ function SendViewDownloaderAndDecryptor({
     console.log(exampleConfigThatMatchesTheSend);
     // TODO
     return (
-      <div className="container">
-        <h3>SEND VIEWED</h3>
-        <p className="muted mb-4">The send has been successfully unlocked to view! Here are the secrets:</p>
-        {/* <pre>{JSON.stringify(secretResponses, null, 2)}</pre> */}
-        <DisplaySecrets template={exampleConfigThatMatchesTheSend} responses={secretResponses} />
+      <div className="mx-auto lg:grid lg:max-w-7xl grid-cols-3 gap-8">
+        <div className="lg:col-span-2">
+          <h3 className="mb-2">{exampleConfigThatMatchesTheSend.title}</h3>
+
+          <Alert variant={"success"}>
+            <AlertDescription>The link has been successfully unlocked!</AlertDescription>
+          </Alert>
+          {/* <pre>{JSON.stringify(secretResponses, null, 2)}</pre> */}
+          <div className="mt-4">
+            <DisplaySecrets template={exampleConfigThatMatchesTheSend} responses={secretResponses} />
+          </div>
+        </div>
+
+        <aside className="space-y-4">
+          <div>
+            <Label>Created on</Label>
+            <p>TODO date</p>
+          </div>
+
+          <div>
+            <Label>Expires in</Label>
+            <p>TODO views / TODO date</p>
+          </div>
+          <div>
+            <AboutSidenav showAbout={true} />
+          </div>
+        </aside>
       </div>
     );
   }

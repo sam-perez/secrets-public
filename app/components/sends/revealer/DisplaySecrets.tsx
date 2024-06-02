@@ -1,6 +1,9 @@
 import { SecretResponses } from "~/lib/secrets";
 import { SendBuilderTemplate } from "../builder/types";
 import { Label } from "~/components/ui/label";
+import { Button } from "~/components/ui/button";
+import { CheckIcon, CopyIcon, DownloadIcon, EyeOpenIcon } from "@radix-ui/react-icons";
+import { useState } from "react";
 
 type DisplaySecretsProps = {
   template: SendBuilderTemplate;
@@ -8,8 +11,20 @@ type DisplaySecretsProps = {
 };
 
 export const DisplaySecrets = ({ template, responses }: DisplaySecretsProps) => {
+  const [copiedIndex, setCopiedIndex] = useState<number | null>(null);
+
+  const handleCopy = (index: number) => {
+    const textToCopy = responses[index].textValues[0];
+    if (!textToCopy) return;
+    navigator.clipboard.writeText(textToCopy);
+    setCopiedIndex(index);
+    setTimeout(() => setCopiedIndex(null), 1000); // Reset copied state after 1 seconds
+  };
+
+  const isCopied = (index: number) => copiedIndex === index;
+
   return (
-    <div>
+    <div className="border p-4 rounded-lg mb-4">
       {template.fields.map((field, index) => (
         <div key={index} className="flex space-x-2 items-center mb-4">
           {field.type == "single-line-text" && (
@@ -20,7 +35,18 @@ export const DisplaySecrets = ({ template, responses }: DisplaySecretsProps) => 
                   <code>{responses[index].textValues[0]}</code>
                 </p>
               </div>
-              <div>actions</div>
+              <div className="space-x-2 flex">
+                <Button variant={"outline"} size={"icon"} onClick={() => handleCopy(index)}>
+                  {isCopied(index) ? (
+                    <CheckIcon className="text-green-500 h-4 w-4" />
+                  ) : (
+                    <CopyIcon className="h-4 w-4" />
+                  )}
+                </Button>
+                <Button variant={"outline"} size={"icon"}>
+                  <DownloadIcon className="h-4 w-4" />
+                </Button>
+              </div>
             </>
           )}
 
@@ -28,20 +54,41 @@ export const DisplaySecrets = ({ template, responses }: DisplaySecretsProps) => 
             <>
               <div className="flex-1">
                 <Label>{field.title}</Label>
-                <p className="break-all bg-slate-50 p-2 rounded">multi {responses[index].textValues[0]}</p>
+                <p className="break-all bg-slate-50 p-2 rounded">{responses[index].textValues[0]}</p>
               </div>
-              <div>actions</div>
+              <div className="space-x-2 flex">
+                <Button variant={"outline"} size={"icon"} onClick={() => handleCopy(index)}>
+                  {isCopied(index) ? (
+                    <CheckIcon className="text-green-500 h-4 w-4" />
+                  ) : (
+                    <CopyIcon className="h-4 w-4" />
+                  )}
+                </Button>
+                <Button variant={"outline"} size={"icon"}>
+                  <DownloadIcon className="h-4 w-4" />
+                </Button>
+              </div>
             </>
           )}
 
           {field.type == "file" && (
+            //TODO file download
             <>
               <div className="flex-1">
                 <Label>{field.title}</Label>
-                <p className="break-all bg-slate-50 p-2 rounded">File Name: {responses[index].files[0].name}</p>
+                <p className="break-all bg-slate-50 p-2 rounded">
+                  <code>File Name: {responses[index].files[0].name}</code>
+                </p>
                 {/* Display the file here based on responses[index].files[0].data */}
               </div>
-              <div>actions</div>
+              <div className="space-x-2 flex">
+                <Button variant={"outline"} size={"icon"}>
+                  <EyeOpenIcon className="h-4 w-4" />
+                </Button>
+                <Button variant={"outline"} size={"icon"}>
+                  <DownloadIcon className="h-4 w-4" />
+                </Button>
+              </div>
             </>
           )}
         </div>
