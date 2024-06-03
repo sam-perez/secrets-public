@@ -22,8 +22,9 @@ import {
 } from "../../ui/dropdown-menu";
 
 import { Button } from "../../ui/button";
-import { EditableText } from "./EditableText";
+
 import { SendBuilderConfiguration, SendBuilderField } from "./types";
+import { EditableText } from "./EditableText";
 
 /** Internally used type for the builder fields, id is required to play nicely with dnd-kit */
 type SendBuilderFieldWithId = SendBuilderField & { id: number };
