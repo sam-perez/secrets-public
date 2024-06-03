@@ -859,6 +859,7 @@ function SendViewDownloaderAndDecryptor({
           <Alert variant={"success"}>
             <AlertDescription>The link has been successfully unlocked!</AlertDescription>
           </Alert>
+          {/* TODO use a toast ^ */}
           {/* <pre>{JSON.stringify(secretResponses, null, 2)}</pre> */}
           <div className="mt-4">
             <DisplaySecrets template={exampleConfigThatMatchesTheSend} responses={secretResponses} />
