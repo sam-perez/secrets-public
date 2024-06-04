@@ -21,8 +21,9 @@ export const SecretFieldsContainer = ({ secretFields }: SecretFieldsContainerPro
         <SortableContext items={secretFields} strategy={verticalListSortingStrategy}>
           {secretFields.map((secretField) => (
             <SecretFieldRenderer
+              // TODO: this might not be working, check once we have state updates propogating
+              key={secretField.id + secretField.title}
               title={secretField.title}
-              key={secretField.id}
               id={secretField.id}
               type={secretField.type}
               value={secretField?.value}

@@ -7,9 +7,10 @@ import {
   useSensor,
   useSensors,
 } from "@dnd-kit/core";
+import { useState } from "react";
 
 import { SecretFieldsContainer } from "./SecretFieldsContainer";
-import { useState } from "react";
+import { useSendBuilderConfiguration } from "./SendBuilderConfigurationContextProvider";
 import { arrayMove } from "@dnd-kit/sortable";
 import {
   DropdownMenu,
@@ -23,7 +24,7 @@ import {
 
 import { Button } from "../../ui/button";
 
-import { SendBuilderConfiguration, SendBuilderField } from "./types";
+import { SendBuilderField } from "./types";
 import { EditableText } from "./EditableText";
 
 /** Internally used type for the builder fields, id is required to play nicely with dnd-kit */
@@ -33,14 +34,21 @@ type SendBuilderFieldWithId = SendBuilderField & { id: number };
  * The container for the secret builder fields. It handles the rendering a component to add new fields, and
  * renders the existing fields in a draggable list.
  */
-export default function SecretBuilderFieldsContainer({
-  sendBuilderConfiguration: sendBuilderConfiguration,
-}: {
-  sendBuilderConfiguration: SendBuilderConfiguration;
-}) {
-  const [items, setItems] = useState<Array<SendBuilderFieldWithId>>(
-    sendBuilderConfiguration.fields.map((field, index) => ({ ...field, id: index + 1 }))
-  );
+export default function SecretBuilderFieldsContainer() {
+  const { config: sendBuilderConfiguration, updateConfig } = useSendBuilderConfiguration();
+
+  const items = sendBuilderConfiguration.fields.map((field, index) => ({ ...field, id: index + 1 }));
+
+  const updateItems = (newItems: SendBuilderFieldWithId[]) => {
+    updateConfig({
+      fields: newItems.map((item) => {
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        const { id, ...rest } = item;
+
+        return rest;
+      }),
+    });
+  };
 
   const addItem = (type: SendBuilderField["type"]) => {
     const newItemId = items.length + 1;
@@ -69,7 +77,7 @@ export default function SecretBuilderFieldsContainer({
       };
     }
 
-    setItems((prevItems) => [...prevItems, newItem]);
+    updateItems([...items, newItem]);
   };
 
   const getItemPosition = (id: number) => items.findIndex((item) => item.id === id);
@@ -80,12 +88,12 @@ export default function SecretBuilderFieldsContainer({
     if (over && active.id === over.id) return; //same position; ignore
 
     if (over) {
-      setItems((items) => {
-        const originalPos = getItemPosition(active.id as number);
-        const newPos = getItemPosition(over.id as number);
+      const originalPos = getItemPosition(active.id as number);
+      const newPos = getItemPosition(over.id as number);
 
-        return arrayMove(items, originalPos, newPos);
-      });
+      const updatedItems = arrayMove(items, originalPos, newPos);
+
+      updateItems(updatedItems);
     }
   };
 

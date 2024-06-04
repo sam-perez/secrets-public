@@ -85,7 +85,7 @@ export type SendBuilderTemplate = {
   /** The fields for the template */
   fields: Array<Omit<SendBuilderField, "value">>;
 
-  // optional to hide from template list and sitemap
+  /** Optional flag. If true, the template will not be shown in the template list or sitemap. */
   private?: boolean;
 };
 
