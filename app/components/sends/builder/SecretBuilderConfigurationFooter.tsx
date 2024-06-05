@@ -30,7 +30,7 @@ import { ExpirationDateTimeUnits, EXPIRATION_DATE_TIME_UNIT_OPTIONS } from "./ty
 export default function SecretBuilderConfigurationFooter() {
   const { config: sendBuilderConfiguration, updateConfig } = useSendBuilderConfiguration();
 
-  console.log(sendBuilderConfiguration);
+  console.log(JSON.stringify(sendBuilderConfiguration, null, 4));
 
   const setExpirationConfiguration = useCallback(
     (expirationConfiguration: {
@@ -54,6 +54,22 @@ export default function SecretBuilderConfigurationFooter() {
     [sendBuilderConfiguration, updateConfig]
   );
 
+  const setConfirmationEmail = useCallback(
+    (email: string | null) => {
+      const updatedConfig = { ...sendBuilderConfiguration, confirmationEmail: email };
+      updateConfig(updatedConfig);
+    },
+    [sendBuilderConfiguration, updateConfig]
+  );
+
+  const setPassword = useCallback(
+    (password: string | null) => {
+      const updatedConfig = { ...sendBuilderConfiguration, password };
+      updateConfig(updatedConfig);
+    },
+    [sendBuilderConfiguration, updateConfig]
+  );
+
   const sharedClasses = "max-w-1/3 sm:max-w-[140px] overflow-hidden";
   return (
     <>
@@ -64,8 +80,12 @@ export default function SecretBuilderConfigurationFooter() {
             <div className={[sharedClasses, "truncate"].join(" ")}>
               {<LinkExpirationConfigurationPopover setExpirationConfiguration={setExpirationConfiguration} />}
             </div>
-            <div className={[sharedClasses, "text-ellipsis"].join(" ")}>{ConfirmationEmailConfigurationPopover()}</div>
-            <div className={[sharedClasses, "text-ellipsis"].join(" ")}>{PasswordConfigurationPopover()}</div>
+            <div className={[sharedClasses, "text-ellipsis"].join(" ")}>
+              {<ConfirmationEmailConfigurationPopover setConfirmationEmail={setConfirmationEmail} />}
+            </div>
+            <div className={[sharedClasses, "text-ellipsis"].join(" ")}>
+              {<PasswordConfigurationPopover setPassword={setPassword} />}
+            </div>
           </div>
           {/* button */}
           <div>
@@ -253,11 +273,21 @@ export function LinkExpirationConfigurationPopover({
 /**
  * The email confirmation configuration popover. Reports any changes back to the parent.
  */
-export function ConfirmationEmailConfigurationPopover() {
+export function ConfirmationEmailConfigurationPopover({
+  setConfirmationEmail,
+}: {
+  setConfirmationEmail: (email: string | null) => void;
+}) {
   const [email, setEmail] = useState("");
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setEmail(event.target.value);
+    if (event.target.value === "") {
+      setConfirmationEmail(null);
+    } else {
+      setConfirmationEmail(event.target.value);
+    }
   };
+
   return (
     <Popover>
       <PopoverTrigger asChild>
@@ -293,16 +323,23 @@ export function ConfirmationEmailConfigurationPopover() {
 /**
  * The password configuration popover. Reports any changes back to the parent.
  */
-export function PasswordConfigurationPopover() {
-  const [password, setPassword] = useState("");
+export function PasswordConfigurationPopover({ setPassword }: { setPassword: (password: string | null) => void }) {
+  const [internalPassword, setInternalPassword] = useState("");
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setPassword(event.target.value);
+    setInternalPassword(event.target.value);
+
+    if (event.target.value === "") {
+      setPassword(null);
+    } else {
+      setPassword(event.target.value);
+    }
   };
+
   return (
     <Popover>
       <PopoverTrigger asChild>
         <Button variant="link" className="px-0">
-          {password ? (
+          {internalPassword ? (
             <span className="flex items-center text-sm font-medium">
               <LockClosedIcon className="h-4 w-4 mr-1 flex-none" /> Password Set
             </span>
@@ -322,7 +359,7 @@ export function PasswordConfigurationPopover() {
 
         <small>Create Password</small>
         <div className="flex space-x-2 mt-1"></div>
-        <Input placeholder="" type="text" value={password} onChange={handleChange} />
+        <Input placeholder="" type="text" value={internalPassword} onChange={handleChange} />
       </PopoverContent>
     </Popover>
   );
