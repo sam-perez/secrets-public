@@ -7,7 +7,6 @@ import {
   useSensor,
   useSensors,
 } from "@dnd-kit/core";
-import { useState } from "react";
 
 import { SecretFieldsContainer } from "./SecretFieldsContainer";
 import { useSendBuilderConfiguration } from "./SendBuilderConfigurationContextProvider";
