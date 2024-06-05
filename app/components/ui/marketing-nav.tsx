@@ -62,7 +62,7 @@ export default function MarketingNav() {
                 <Tooltip>
                   <TooltipTrigger asChild>
                     <Button variant={"outline"}>
-                      <PaperPlaneIcon className="h-3 w-3" />
+                      <PaperPlaneIcon className="h-3 w-3 mr-2" /> New Send
                     </Button>
                   </TooltipTrigger>
                   <TooltipContent>New Encrypted Send</TooltipContent>
