@@ -135,7 +135,12 @@ export default function SecretBuilderFieldsContainer() {
       <div className="max-w-4xl mx-auto">
         <div className="px-4 pt-4">
           <h4 className="hover:bg-slate-50">
-            <EditableText value={sendBuilderConfiguration.title} />
+            <EditableText
+              value={sendBuilderConfiguration.title}
+              onChange={(newTitle) => {
+                updateConfig({ title: newTitle });
+              }}
+            />
           </h4>
         </div>
 

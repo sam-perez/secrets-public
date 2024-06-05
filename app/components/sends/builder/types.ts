@@ -49,6 +49,12 @@ export type SendBuilderField = {
   placeholder?: string;
 } & (SingleLineTextField | MultiLineTextField | FileField);
 
+/** Expiration date time unit options. */
+export const EXPIRATION_DATE_TIME_UNIT_OPTIONS = ["minutes", "hours", "days", "weeks"] as const;
+
+/** Expiration date time units. */
+export type ExpirationDateTimeUnits = (typeof EXPIRATION_DATE_TIME_UNIT_OPTIONS)[number];
+
 /**
  * The configuration for a send.
  */
@@ -59,8 +65,14 @@ export type SendBuilderConfiguration = {
   /** The password for a send. Optional. */
   password: string | null;
 
-  /** The expiration date for a send. Optional.  */
-  expirationDate: Date | null;
+  /** The expiration expression for a send. Optional.  */
+  expirationDate: {
+    /** The total time units for the send. */
+    totalTimeUnits: number;
+
+    /** The time unit for the send. */
+    timeUnit: ExpirationDateTimeUnits;
+  } | null;
 
   /** The email address for MFA. Optional. */
   confirmationEmail: string | null;

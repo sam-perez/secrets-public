@@ -60,8 +60,8 @@ export const SecretFieldRenderer = ({
               />
             )}
             {type === "file" && (
-              // We will need to render our own file input here, as the default input doesn't play nicely with dnd-kit
-              // The file that has been uploaded will be cleared on a rearrange.
+              // We will need to render our own file input here, as the default input doesn't play nicely with dnd-kit.
+              // The file that has been uploaded will be cleared on a rearrange if we use the default input.
               // eslint-disable-next-line max-len
               // eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions
               <div
@@ -73,6 +73,7 @@ export const SecretFieldRenderer = ({
               >
                 <input
                   type="file"
+                  multiple={true}
                   ref={fileInputRef} // Attach the ref to the file input
                   onChange={(event) => {
                     const files = event.target.files;
@@ -82,7 +83,11 @@ export const SecretFieldRenderer = ({
                   }}
                   style={{ display: "none" }} // Hide the actual input element
                 />
-                <div>{value !== null && value.length > 0 ? value[0].name : "Click to select a file..."}</div>
+                <div>
+                  {value !== null && value.length > 0
+                    ? value.map((f) => f.name).join(", ")
+                    : "Click to select a file..."}
+                </div>
               </div>
             )}
             {type === "multi-line-text" && (

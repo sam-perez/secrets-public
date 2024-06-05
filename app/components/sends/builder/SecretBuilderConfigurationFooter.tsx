@@ -10,7 +10,9 @@ import { Popover, PopoverContent, PopoverTrigger } from "../../ui/popover";
 import { Input } from "../../ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../../ui/select";
 import { Button } from "../../ui/button";
-import { useState } from "react";
+import { useState, useCallback } from "react";
+import { useSendBuilderConfiguration } from "./SendBuilderConfigurationContextProvider";
+import { ExpirationDateTimeUnits, EXPIRATION_DATE_TIME_UNIT_OPTIONS } from "./types";
 
 /**
  * The secret builder configuration footer.
@@ -26,6 +28,32 @@ import { useState } from "react";
  * to their settings to this component. This component will then proxy those changes to the parent component.
  */
 export default function SecretBuilderConfigurationFooter() {
+  const { config: sendBuilderConfiguration, updateConfig } = useSendBuilderConfiguration();
+
+  console.log(sendBuilderConfiguration);
+
+  const setExpirationConfiguration = useCallback(
+    (expirationConfiguration: {
+      maxViews?: number | null;
+      expirationDate?: {
+        totalTimeUnits: number;
+        timeUnit: ExpirationDateTimeUnits;
+      } | null;
+    }) => {
+      const updatedConfig = { ...sendBuilderConfiguration };
+      if (expirationConfiguration.maxViews !== undefined) {
+        updatedConfig.maxViews = expirationConfiguration.maxViews;
+      }
+
+      if (expirationConfiguration.expirationDate !== undefined) {
+        updatedConfig.expirationDate = expirationConfiguration.expirationDate;
+      }
+
+      updateConfig(updatedConfig);
+    },
+    [sendBuilderConfiguration, updateConfig]
+  );
+
   const sharedClasses = "max-w-1/3 sm:max-w-[140px] overflow-hidden";
   return (
     <>
@@ -33,7 +61,9 @@ export default function SecretBuilderConfigurationFooter() {
         <div className="px-4 py-2 sm:flex flex-wrap justify-between items-center text-sm overflow-hidden">
           {/* actions  */}
           <div className="flex items-center space-x-4">
-            <div className={[sharedClasses, "truncate"].join(" ")}>{LinkExpirationConfigurationPopover()}</div>
+            <div className={[sharedClasses, "truncate"].join(" ")}>
+              {<LinkExpirationConfigurationPopover setExpirationConfiguration={setExpirationConfiguration} />}
+            </div>
             <div className={[sharedClasses, "text-ellipsis"].join(" ")}>{ConfirmationEmailConfigurationPopover()}</div>
             <div className={[sharedClasses, "text-ellipsis"].join(" ")}>{PasswordConfigurationPopover()}</div>
           </div>
@@ -52,23 +82,95 @@ export default function SecretBuilderConfigurationFooter() {
  *
  * Manages the date expiration and view count settings. Reports any changes back to the parent.
  */
-export function LinkExpirationConfigurationPopover() {
-  const [views, setViews] = useState<number | undefined>(undefined);
-  const [expirationNumber, setExpirationNumber] = useState<number | undefined>(undefined);
-  const [expirationUnit, setExpirationUnit] = useState<string>("");
+export function LinkExpirationConfigurationPopover({
+  setExpirationConfiguration,
+}: {
+  setExpirationConfiguration: (expirationConfiguration: {
+    maxViews?: number | null;
+    expirationDate?: {
+      totalTimeUnits: number;
+      timeUnit: ExpirationDateTimeUnits;
+    } | null;
+  }) => void;
+}) {
+  const [views, setViews] = useState<number | null>(null);
+  const [expirationNumber, setExpirationNumber] = useState<number | null>(null);
+  const [expirationUnit, setExpirationUnit] = useState<ExpirationDateTimeUnits | null>(null);
 
   const handleViewChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const value = event.target.value;
-    setViews(value === "" ? undefined : parseInt(value, 10));
+    const parsedValue = parseInt(value, 10);
+
+    if (isNaN(parsedValue)) {
+      return;
+    }
+
+    if (parsedValue < 0) {
+      return;
+    }
+
+    if (parsedValue === 0) {
+      setViews(null);
+      setExpirationConfiguration({ maxViews: null });
+    } else {
+      setViews(parsedValue);
+      setExpirationConfiguration({ maxViews: parsedValue });
+    }
+  };
+
+  const reportExpirationDate = ({
+    totalTimeUnits,
+    timeUnit,
+  }: {
+    totalTimeUnits: number | null;
+    timeUnit: ExpirationDateTimeUnits | null;
+  }) => {
+    if (totalTimeUnits !== null && timeUnit !== null) {
+      setExpirationConfiguration({
+        expirationDate: {
+          timeUnit,
+          totalTimeUnits,
+        },
+      });
+    } else {
+      setExpirationConfiguration({ expirationDate: null });
+    }
   };
 
   const handleExpirationNumberChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const value = event.target.value;
-    setExpirationNumber(value === "" ? undefined : parseInt(value, 10));
+    const parsedValue = parseInt(value, 10);
+
+    if (isNaN(parsedValue)) {
+      return;
+    }
+
+    if (parsedValue < 0) {
+      return;
+    }
+
+    if (parsedValue === 0) {
+      setExpirationNumber(null);
+      reportExpirationDate({
+        totalTimeUnits: null,
+        timeUnit: expirationUnit,
+      });
+      return;
+    }
+
+    setExpirationNumber(parsedValue);
+    reportExpirationDate({
+      totalTimeUnits: parsedValue,
+      timeUnit: expirationUnit,
+    });
   };
 
   const handleExpirationUnitChange = (value: string) => {
-    setExpirationUnit(value);
+    setExpirationUnit(value as ExpirationDateTimeUnits);
+    reportExpirationDate({
+      totalTimeUnits: expirationNumber,
+      timeUnit: value as ExpirationDateTimeUnits,
+    });
   };
 
   return (
@@ -78,9 +180,9 @@ export function LinkExpirationConfigurationPopover() {
           {(expirationNumber && expirationUnit) || views ? (
             <span className="flex items-center">
               <LinkBreak2Icon className="h-4 w-4 mr-1" />
-              {expirationNumber && expirationUnit ? `${expirationNumber}${expirationUnit}` : ""}
+              {expirationNumber && expirationUnit ? `${expirationNumber}${expirationUnit[0]}` : ""}
               {expirationNumber && views ? " ·" : ""}
-              {views !== undefined ? ` ${views} views` : ""}
+              {views !== null ? ` ${views} view${views === 1 ? "" : "s"}` : ""}
             </span>
           ) : (
             <>
@@ -100,18 +202,29 @@ export function LinkExpirationConfigurationPopover() {
           <Input
             placeholder="Number"
             type="number"
-            value={expirationNumber !== undefined ? expirationNumber.toString() : ""}
+            value={expirationNumber !== null ? expirationNumber.toString() : ""}
             onChange={handleExpirationNumberChange}
+            onKeyDown={(e) => {
+              if (e.key === "Backspace" && expirationNumber !== null && expirationNumber < 10) {
+                e.preventDefault();
+                setExpirationNumber(null);
+                reportExpirationDate({
+                  totalTimeUnits: null,
+                  timeUnit: expirationUnit,
+                });
+              }
+            }}
           />
-          <Select onValueChange={handleExpirationUnitChange}>
+          <Select onValueChange={handleExpirationUnitChange} value={expirationUnit || undefined}>
             <SelectTrigger>
               <SelectValue placeholder="Choose" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="min">Minutes</SelectItem>
-              <SelectItem value="hr">Hours</SelectItem>
-              <SelectItem value="d">Days</SelectItem>
-              <SelectItem value="w">Weeks</SelectItem>
+              {EXPIRATION_DATE_TIME_UNIT_OPTIONS.map((unit, index) => (
+                <SelectItem key={index} value={unit}>
+                  {unit}
+                </SelectItem>
+              ))}
             </SelectContent>
           </Select>
         </div>
@@ -121,10 +234,17 @@ export function LinkExpirationConfigurationPopover() {
           className=""
           type="number"
           placeholder="Enter max views"
-          value={views !== undefined ? views.toString() : ""}
+          value={views !== null ? views.toString() : ""}
           onChange={handleViewChange}
+          onKeyDown={(e) => {
+            if (e.key === "Backspace" && views !== null && views < 10) {
+              e.preventDefault();
+              setViews(null);
+              setExpirationConfiguration({ maxViews: null });
+            }
+          }}
         />
-        <span className="muted text-xs">Leave blank for unlimited views</span>
+        <span className="muted text-xs">Leave blank for only a single view.</span>
       </PopoverContent>
     </Popover>
   );
