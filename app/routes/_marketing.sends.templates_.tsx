@@ -1,8 +1,19 @@
 import { Link } from "@remix-run/react";
+import type { MetaFunction } from "@remix-run/node";
 import { useState, ChangeEvent } from "react";
 import { SEND_BUILDER_TEMPLATES } from "~/components/sends/builder/types";
 import { TemplateCard } from "~/components/ui/TemplateCard";
 import { Input } from "~/components/ui/input";
+
+export const meta: MetaFunction = () => {
+  return [
+    { title: "Encrypted Templates | 2Secured" },
+    {
+      name: "description",
+      content: "Start from one of these reusable forms to quickly send or receive encrypted information.",
+    },
+  ];
+};
 
 export default function Templates() {
   const [searchQuery, setSearchQuery] = useState("");

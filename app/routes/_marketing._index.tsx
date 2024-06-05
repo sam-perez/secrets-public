@@ -3,7 +3,7 @@ import type { MetaFunction } from "@remix-run/node";
 import { Link } from "@remix-run/react";
 import { Button } from "~/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "~/components/ui/tabs";
-import "highlight.js/styles/tokyo-night-dark.css";
+import "highlight.js/styles/lightfair.css";
 import hljs from "highlight.js";
 import { useEffect } from "react";
 import { marked } from "marked";
@@ -13,22 +13,25 @@ import { SEND_BUILDER_TEMPLATES } from "../components/sends/builder/types";
 
 export const meta: MetaFunction = () => {
   return [
-    { title: "2Secure" },
-    { name: "description", content: "2Secure is a simple yet powerful way to send and receive data securely." },
+    { title: "2Secured" },
+    {
+      name: "description",
+      content: "2Secured is a simple yet powerful way to send and receive info securely using end-to-end encryption.",
+    },
   ];
 };
 
 const howItWorks = [
   {
-    title: "1. Start with a 2Secured form",
+    title: "Start with a 2Secured form",
     description: "Build a 2Secured form in seconds to send or request text and files securely. ",
   },
   {
-    title: "2. Get an encrypted link",
+    title: "Get an encrypted link",
     description: "2Secured encrypts the data using the SHA-256 algorithm and generates a link.",
   },
   {
-    title: "3. Share, decrypt and view",
+    title: "Share, decrypt and view",
     description:
       "Only you and the recipient have the decryption token, no other system or human can view it (not even us).",
   },
@@ -124,10 +127,11 @@ export default function Index() {
       </section>
 
       <section id="howItWorks">
-        <div className="grid sm:grid-cols-3 grid-cols-1 gap-8">
+        <div className="grid sm:grid-cols-3 grid-cols-1 gap-8 px-4">
           {howItWorks.map((item, index) => (
             <div className="" key={index}>
-              <div>
+              <div className="flex justify-center items-center size-12 bg-slate-100 rounded-xl">{index + 1}</div>
+              <div className="mt-4">
                 <h4>{item.title}</h4>
                 <p className="pt-2 text-base">{item.description}</p>
               </div>
@@ -137,8 +141,8 @@ export default function Index() {
       </section>
 
       <section id="useCases" className="my-24 bg-slate-50">
-        <div className="sm:p-20 grid sm:grid-cols-2 grid-cols-1 gap-24 items-center">
-          <div>
+        <div className="sm:p-20 grid sm:grid-cols-2 grid-cols-1 gap-24 items-center px-4">
+          <div className="sm:pt-0 pt-14">
             <h2>2Secured helps you keep your data safe at work, and at home.</h2>
             <p className="text-lg mt-0 mb-4">
               Perfect anytime you are sending or requesting sensitive information from someone else.
@@ -183,8 +187,8 @@ export default function Index() {
       </section>
 
       <section id="formEditor" className="my-12">
-        <div className="sm:p-20 grid sm:grid-cols-2 grid-cols-1 sm:gap-24 items-center">
-          <div>
+        <div className="sm:p-20 grid sm:grid-cols-2 grid-cols-1 sm:gap-24 items-center px-4">
+          <div className="sm:pt-0 pt-14">
             <h2>A powerful form editor lets you quickly send or request encrypted files and text to anyone.</h2>
             <p className="text-lg mt-0 mb-4">
               Create your own reusable 2Secured forms and save them as templates to quickly reuse them.
@@ -200,8 +204,8 @@ export default function Index() {
       </section>
 
       <section id="securitySettings" className="my-12 bg-slate-50">
-        <div className="sm:p-20 grid sm:grid-cols-2 grid-cols-1 sm:gap-24 items-center">
-          <div>
+        <div className="sm:p-20 grid sm:grid-cols-2 grid-cols-1 sm:gap-24 items-center px-4">
+          <div className="sm:pt-0 pt-14">
             <h2>Control access and set permissions to your 2Secured link.</h2>
             <p className="text-lg mt-0 mb-4">
               Restrict the email addresses that can view your links, set how many times a link can be viewed, require a
@@ -216,8 +220,8 @@ export default function Index() {
       </section>
 
       <section id="curlExample" className="my-12">
-        <div className="sm:p-20 grid grid-cols-1 sm:grid-cols-2 sm:gap-24 items-center">
-          <div>
+        <div className="sm:p-20 grid grid-cols-1 sm:grid-cols-2 sm:gap-24 items-center px-4">
+          <div className="sm:pt-0 pt-14">
             <h2>Built with developers in mind.</h2>
             <p className="text-lg mb-4">
               Use the web app or integrate 2Secure into your development or application workflow.

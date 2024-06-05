@@ -1,4 +1,4 @@
-import { LoaderFunction, json } from "@remix-run/node";
+import { LoaderFunction, MetaFunction, json } from "@remix-run/node";
 import { useLoaderData } from "@remix-run/react";
 import AboutSidenav from "~/components/about-sidenav";
 
@@ -37,6 +37,10 @@ export const loader: LoaderFunction = async ({ params }) => {
 
     return json<LoaderData>(loaderData);
   }
+};
+
+export const meta: MetaFunction<typeof loader> = ({ data }) => {
+  return [{ title: "Encrypted " + data.template.title + " Template | 2Secured" }];
 };
 
 export default function TemplateDetails() {
