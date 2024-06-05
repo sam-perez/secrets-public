@@ -1,14 +1,17 @@
 import { Button } from "../../ui/button";
 import { CheckIcon, CopyIcon, DownloadIcon, EyeOpenIcon } from "@radix-ui/react-icons";
 import { Label } from "../../ui/label";
-import { SecretFieldRendererProps } from "../builder/SecretFieldRenderer";
+import { SendBuilderField } from "../builder/types";
 import { useState } from "react";
 
-export const DecryptedItem = ({ title, type, value }: SecretFieldRendererProps) => {
+export const DecryptedItem = ({ senderBuildField }: { senderBuildField: SendBuilderField }) => {
   const [isCopied, setIsCopied] = useState(false);
+
+  const { title, type, value } = senderBuildField;
 
   const handleCopy = () => {
     if (!value) return;
+    if (type === "file") return; // Don't copy files to clipboard (for now)
     navigator.clipboard.writeText(value);
     setIsCopied(true);
     setTimeout(() => setIsCopied(false), 2000); // Reset copied state after 2 seconds
@@ -16,6 +19,7 @@ export const DecryptedItem = ({ title, type, value }: SecretFieldRendererProps) 
 
   const handleDownload = () => {
     if (!value) return;
+    if (type === "file") return; // Don't download files (for now
 
     const blob = new Blob([value], { type: "text/plain" });
     const url = URL.createObjectURL(blob);
@@ -31,7 +35,12 @@ export const DecryptedItem = ({ title, type, value }: SecretFieldRendererProps) 
       <div className="flex-1">
         <Label>{title}</Label>
         <p className="break-all bg-slate-50 p-2 rounded">
-          <code>{value}</code>
+          {type === "file" ? (
+            // TODO: display multiple files correctly? Are we even supporting multiple files?
+            <code>{value === null ? "No file uploaded" : value.map(({ name }) => name).join(" ")}</code>
+          ) : (
+            <code>{value}</code>
+          )}
         </p>
       </div>
       <div className="flex-none">

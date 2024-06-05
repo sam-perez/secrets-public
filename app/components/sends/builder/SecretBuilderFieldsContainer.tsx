@@ -1,3 +1,5 @@
+import { useState } from "react";
+
 import {
   DndContext,
   DragEndEvent,
@@ -10,6 +12,7 @@ import {
 
 import { SecretFieldsContainer } from "./SecretFieldsContainer";
 import { useSendBuilderConfiguration } from "./SendBuilderConfigurationContextProvider";
+import { SendBuilderFieldWithId } from "./SecretFieldRenderer";
 import { arrayMove } from "@dnd-kit/sortable";
 import {
   DropdownMenu,
@@ -26,15 +29,15 @@ import { Button } from "../../ui/button";
 import { SendBuilderField } from "./types";
 import { EditableText } from "./EditableText";
 
-/** Internally used type for the builder fields, id is required to play nicely with dnd-kit */
-type SendBuilderFieldWithId = SendBuilderField & { id: number };
-
 /**
  * The container for the secret builder fields. It handles the rendering a component to add new fields, and
  * renders the existing fields in a draggable list.
  */
 export default function SecretBuilderFieldsContainer() {
   const { config: sendBuilderConfiguration, updateConfig } = useSendBuilderConfiguration();
+  // TODO: figure out why dnd kit is flickering/transitioning incorrectly when re-ordering
+  // For now, let's just have it snap. We achieve this by just re-rendering the component.
+  const [rearrangeCount, setRearrangeCount] = useState<number>(0);
 
   const items = sendBuilderConfiguration.fields.map((field, index) => ({ ...field, id: index + 1 }));
 
@@ -93,6 +96,7 @@ export default function SecretBuilderFieldsContainer() {
       const updatedItems = arrayMove(items, originalPos, newPos);
 
       updateItems(updatedItems);
+      setRearrangeCount(rearrangeCount + 1);
     }
   };
 
@@ -111,12 +115,27 @@ export default function SecretBuilderFieldsContainer() {
     })
   );
 
+  const updateItem = (id: number, updatedField: Partial<Pick<SendBuilderField, "title" | "value">>) => {
+    const updatedItems = items.map((item) => {
+      if (item.id === id) {
+        return {
+          ...item,
+          ...updatedField,
+        } as SendBuilderFieldWithId;
+      }
+
+      return item;
+    });
+
+    updateItems(updatedItems);
+  };
+
   return (
     <>
       <div className="max-w-4xl mx-auto">
         <div className="px-4 pt-4">
           <h4 className="hover:bg-slate-50">
-            <EditableText initialText={sendBuilderConfiguration.title} />
+            <EditableText value={sendBuilderConfiguration.title} />
           </h4>
         </div>
 
@@ -141,16 +160,7 @@ export default function SecretBuilderFieldsContainer() {
         </div>
         {/* end menu */}
         <DndContext sensors={sensors} onDragEnd={handleDragEnd} collisionDetection={closestCorners}>
-          <SecretFieldsContainer
-            secretFields={items.map((item) => ({
-              id: item.id,
-              title: item.title,
-              type: item.type,
-              // TODO: handle nulls and files properly
-              value: item.value === null ? undefined : typeof item.value === "string" ? item.value : "FILES",
-              placeholder: item.placeholder,
-            }))}
-          />
+          <SecretFieldsContainer key={rearrangeCount} updateItem={updateItem} sendBuilderFields={items} />
         </DndContext>
       </div>
     </>
