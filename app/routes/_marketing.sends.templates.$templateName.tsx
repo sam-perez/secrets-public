@@ -40,7 +40,10 @@ export const loader: LoaderFunction = async ({ params }) => {
 };
 
 export const meta: MetaFunction<typeof loader> = ({ data }) => {
-  return [{ title: "Encrypted " + data.template.title + " Template | 2Secured" }];
+  return [
+    { title: "Encrypted " + data.template.title + " Template | 2Secured" },
+    { name: "description", content: data.template.description },
+  ];
 };
 
 export default function TemplateDetails() {
