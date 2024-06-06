@@ -1,3 +1,4 @@
+import { useCallback, useState } from "react";
 import {
   EnvelopeClosedIcon,
   EnvelopeOpenIcon,
@@ -7,12 +8,12 @@ import {
   LockOpen1Icon,
 } from "@radix-ui/react-icons";
 import { Popover, PopoverContent, PopoverTrigger } from "../../ui/popover";
+import { Dialog, DialogContent } from "../../../components/ui/dialog";
 import { Input } from "../../ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../../ui/select";
 import { Button } from "../../ui/button";
-import { useState, useCallback } from "react";
 import { useSendBuilderConfiguration } from "./SendBuilderConfigurationContextProvider";
-import { ExpirationDateTimeUnits, EXPIRATION_DATE_TIME_UNIT_OPTIONS } from "./types";
+import { EXPIRATION_DATE_TIME_UNIT_OPTIONS, ExpirationDateTimeUnits } from "./types";
 
 /**
  * The secret builder configuration footer.
@@ -29,6 +30,8 @@ import { ExpirationDateTimeUnits, EXPIRATION_DATE_TIME_UNIT_OPTIONS } from "./ty
  */
 export default function SecretBuilderConfigurationFooter() {
   const { config: sendBuilderConfiguration, updateConfig } = useSendBuilderConfiguration();
+
+  const [showLinkGeneration, setShowLinkGeneration] = useState<boolean>(false);
 
   console.log(JSON.stringify(sendBuilderConfiguration, null, 4));
 
@@ -94,10 +97,23 @@ export default function SecretBuilderConfigurationFooter() {
           </div>
           {/* Button to generate link. */}
           <div>
-            <Button className="w-full" disabled={!readyToGenerateLink}>
+            <Button className="w-full" disabled={!readyToGenerateLink} onClick={() => setShowLinkGeneration(true)}>
               {readyToGenerateLink ? "Generate Encrypted Link" : "Fields Incomplete"}
             </Button>
           </div>
+
+          {/* Link generation dialog. */}
+          {showLinkGeneration === false ? null : (
+            <Dialog open={true}>
+              <DialogContent noClose={true} className="sm:max-w-md">
+                <div className="space-y-2">
+                  <h4>Initiate View</h4>
+                  <p>Would you like to view this send? This action will consume a view.</p>
+                  <p>Views remaining: {internalUnlockerStatus.viewsRemaining}</p>
+                </div>
+              </DialogContent>
+            </Dialog>
+          )}
         </div>
       </div>
     </>

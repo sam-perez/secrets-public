@@ -1,5 +1,5 @@
-import { describe, it, expect } from "vitest";
-import { encryptData, decryptData } from "./index";
+import { describe, expect, it } from "vitest";
+import { decryptData, encryptData } from "./index";
 
 describe("when we encrypt and decrypt a string", async () => {
   const randomString = (length: number) => {

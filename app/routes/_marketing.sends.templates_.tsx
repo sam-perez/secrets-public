@@ -1,6 +1,6 @@
 import { Link } from "@remix-run/react";
 import type { MetaFunction } from "@remix-run/node";
-import { useState, ChangeEvent } from "react";
+import { ChangeEvent, useState } from "react";
 import { SEND_BUILDER_TEMPLATES } from "~/components/sends/builder/types";
 import { TemplateCard } from "~/components/ui/TemplateCard";
 import { Input } from "~/components/ui/input";

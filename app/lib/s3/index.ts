@@ -1,4 +1,4 @@
-import { S3Client, PutObjectCommand, GetObjectCommand, ListObjectsCommand } from "@aws-sdk/client-s3";
+import { GetObjectCommand, ListObjectsCommand, PutObjectCommand, S3Client } from "@aws-sdk/client-s3";
 
 // Create an S3 client
 const s3Client = new S3Client({

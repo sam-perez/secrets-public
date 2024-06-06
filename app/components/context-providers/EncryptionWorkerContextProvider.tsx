@@ -1,5 +1,5 @@
 import { createContext, useContext } from "react";
-import { SecretResponses, PackedSecrets } from "../../lib/secrets";
+import { PackedSecrets, SecretResponses } from "../../lib/secrets";
 
 // eslint-disable-next-line import/default
 import EncryptionWorker from "../../workers/encryptionWorker.js?worker";

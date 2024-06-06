@@ -1,5 +1,5 @@
 import { LoaderFunction } from "@remix-run/node";
-import { getSendConfig, getSendState, SendId, SendViewId } from "../lib/sends";
+import { SendId, SendViewId, getSendConfig, getSendState } from "../lib/sends";
 
 /**
  * The send is not viewable.

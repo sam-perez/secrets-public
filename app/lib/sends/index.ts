@@ -1,4 +1,4 @@
-import { downloadFromS3, uploadToS3, listObjectsInS3 } from "../s3";
+import { downloadFromS3, listObjectsInS3, uploadToS3 } from "../s3";
 import { BrandedId, generateUniqueId } from "../ids";
 import { Iso8601DateTimeString } from "../time";
 // TODO: should we move this type to a more appropriate shared location?

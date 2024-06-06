@@ -1,7 +1,7 @@
 import { ActionFunction } from "@remix-run/node";
 import { getRandomBase62String } from "../lib/crypto-utils";
 import { sendEmail } from "../lib/email";
-import { SendId, getSendState, saveSendState, getSendConfig } from "../lib/sends";
+import { SendId, getSendConfig, getSendState, saveSendState } from "../lib/sends";
 import { nowIso8601DateTimeString } from "../lib/time";
 
 /**

@@ -8,7 +8,7 @@
 module.exports = {
   root: true,
   rules: {
-    "max-len": ["error", { code: 119 }],
+    "max-len": ["error", { code: 119 }]
   },
   parserOptions: {
     ecmaVersion: "latest",

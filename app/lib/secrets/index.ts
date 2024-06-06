@@ -1,5 +1,5 @@
 // eslint-disable-next-line max-len
-import { decryptData, encryptData, uint8ArrayToString, StringifiedUint8Array, stringToUint8Array } from "../encryption";
+import { StringifiedUint8Array, decryptData, encryptData, stringToUint8Array, uint8ArrayToString } from "../encryption";
 import pako from "pako";
 
 // TODO: not sure what these names should be yet, just a placeholder for now
