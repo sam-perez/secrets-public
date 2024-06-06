@@ -70,12 +70,17 @@ export default function SecretBuilderConfigurationFooter() {
     [sendBuilderConfiguration, updateConfig]
   );
 
+  const readyToGenerateLink = sendBuilderConfiguration.fields.every((field) => {
+    // all fields are either a string or a file array, so funny enough they all have a length property.
+    return field.value !== null && field.value.length > 0;
+  });
+
   const sharedClasses = "max-w-1/3 sm:max-w-[140px] overflow-hidden";
   return (
     <>
       <div className="border-t bg-slate-50 rounded-b-xl">
         <div className="px-4 py-2 sm:flex flex-wrap justify-between items-center text-sm overflow-hidden">
-          {/* actions  */}
+          {/* Configuration popovers.  */}
           <div className="flex items-center space-x-4">
             <div className={[sharedClasses, "truncate"].join(" ")}>
               {<LinkExpirationConfigurationPopover setExpirationConfiguration={setExpirationConfiguration} />}
@@ -87,9 +92,11 @@ export default function SecretBuilderConfigurationFooter() {
               {<PasswordConfigurationPopover setPassword={setPassword} />}
             </div>
           </div>
-          {/* button */}
+          {/* Button to generate link. */}
           <div>
-            <Button className="w-full">Generate Encrypted Link</Button>
+            <Button className="w-full" disabled={!readyToGenerateLink}>
+              {readyToGenerateLink ? "Generate Encrypted Link" : "Fields Incomplete"}
+            </Button>
           </div>
         </div>
       </div>

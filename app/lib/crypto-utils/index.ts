@@ -45,3 +45,35 @@ export function getRandomBase62String(length: number) {
 
   return chars.join("");
 }
+
+/**
+ * A simple function to convert a string to a UTF16 ArrayBuffer.
+ *
+ * Prepares the string to be uploaded to the server. The string contains all or part of the encrypted data.
+ */
+export function stringToUtf16ArrayBuffer(str: string) {
+  const buf = new ArrayBuffer(str.length * 2); // 2 bytes per character
+  const bufView = new Uint16Array(buf);
+  for (let i = 0, strLen = str.length; i < strLen; i++) {
+    bufView[i] = str.charCodeAt(i);
+  }
+  return buf;
+}
+
+/**
+ * Convert an UTF16 ArrayBuffer to a string.
+ *
+ * This function is used to convert the raw octets received from the server into a string. The string contains all or
+ * part of the encrypted data, and are meant to be concatenated together to form the full encrypted data and then
+ * decrypted.
+ */
+export function utf16ArrayBufferToString(arrayBuffer: ArrayBuffer) {
+  const reconstructedStringChars = [];
+  const uint16Array = new Uint16Array(arrayBuffer);
+
+  for (let i = 0; i < uint16Array.length; i++) {
+    reconstructedStringChars.push(String.fromCharCode(uint16Array[i]));
+  }
+
+  return reconstructedStringChars.join("");
+}

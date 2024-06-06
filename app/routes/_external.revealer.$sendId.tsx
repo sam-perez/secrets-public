@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 
 import { SendBuilderTemplate } from "../components/sends/builder/types";
 import { parallelWithLimit } from "../lib/utils";
+import { utf16ArrayBufferToString } from "../lib/crypto-utils";
 import { PublicPackedSecrets, PackedSecrets, SecretResponses } from "../lib/secrets";
 import { SendId, SendViewId } from "../lib/sends";
 import {
@@ -700,23 +701,6 @@ function SendViewUnlocker({
       </div>
     );
   }
-}
-
-/**
- * Helper function to convert a utf16 array buffer to a string.
- *
- * Our encrypted parts are utf16 strings that are split into multiple parts. This function will convert
- * each of those parts back into a string that can be concatenated together.
- */
-function utf16ArrayBufferToString(arrayBuffer: ArrayBuffer) {
-  const reconstructedStringChars = [];
-  const uint16Array = new Uint16Array(arrayBuffer);
-
-  for (let i = 0; i < uint16Array.length; i++) {
-    reconstructedStringChars.push(String.fromCharCode(uint16Array[i]));
-  }
-
-  return reconstructedStringChars.join("");
 }
 
 /**
