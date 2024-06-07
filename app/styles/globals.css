@@ -106,4 +106,7 @@
   #marketing-nav .active{
     @apply bg-slate-100
   }
+  ol li{
+    @apply mt-2 list-outside list-decimal ml-4 pl-2;
+  }
 }
