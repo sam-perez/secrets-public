@@ -21,7 +21,6 @@ const nav_links = [
 
 export default function AppLayout() {
   const location = useLocation();
-  console.log(location.pathname);
 
   return (
     <>
@@ -54,7 +53,7 @@ export default function AppLayout() {
                 className={`flex mb-1 items-center ${location.pathname === item.href ? "bg-slate-100 rounded" : ""}`}
               >
                 <li
-                  className="hover:bg-slate-100 py-3 
+                  className="hover:bg-slate-100 py-3
                   px-2 rounded text-sm leading-none font-medium w-full flex items-center"
                 >
                   <item.icon className="h-4 w-4 mr-2" />

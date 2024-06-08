@@ -1,5 +1,7 @@
 import { LoaderFunction } from "@remix-run/node";
 import { SendId, SendViewId, getSendConfig, getSendState } from "../lib/sends";
+// TODO: should we move this type to a more appropriate shared location?
+import { SendBuilderTemplate } from "~/components/sends/builder/types";
 
 /**
  * The send is not viewable.
@@ -37,6 +39,7 @@ export type ViewableStatusResponse = {
   sendViewId: SendViewId;
   sendViewPassword: string;
   totalEncryptedParts: number;
+  sendBuilderTemplate: SendBuilderTemplate;
 };
 
 /**
@@ -129,6 +132,7 @@ export const loader: LoaderFunction = async ({ request }) => {
               sendViewId: matchingLastSendView.sendViewId,
               sendViewPassword: matchingLastSendView.viewPassword,
               totalEncryptedParts: sendState.totalEncryptedParts,
+              sendBuilderTemplate: sendConfig.template,
             };
           } else {
             // the password was incorrect, something has gone wrong with the password. we should just consider

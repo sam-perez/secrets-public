@@ -33,7 +33,7 @@ import { EditableText } from "./EditableText";
  * The container for the secret builder fields. It handles the rendering a component to add new fields, and
  * renders the existing fields in a draggable list.
  */
-export default function SecretBuilderFieldsContainer() {
+export default function SecretBuilderFieldsEditorContainer() {
   const { config: sendBuilderConfiguration, updateConfig } = useSendBuilderConfiguration();
   // TODO: figure out why dnd kit is flickering/transitioning incorrectly when re-ordering
   // For now, let's just have it snap. We achieve this by just re-rendering the component.

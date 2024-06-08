@@ -1,5 +1,5 @@
 import SecretBuilderConfigurationFooter from "./SecretBuilderConfigurationFooter";
-import SecretBuilderFieldsContainer from "./SecretBuilderFieldsContainer";
+import SecretBuilderFieldsEditorContainer from "./SecretBuilderFieldsEditorContainer";
 import { SendBuilderConfiguration } from "./types";
 import { SendBuilderConfigurationContextProvider } from "./SendBuilderConfigurationContextProvider";
 
@@ -16,7 +16,7 @@ export function SecretBuilderRoot({
   return (
     <SendBuilderConfigurationContextProvider initialConfig={sendBuilderConfiguration}>
       <div className="border rounded-xl mb-4 shadow-lg">
-        <SecretBuilderFieldsContainer />
+        <SecretBuilderFieldsEditorContainer />
         <SecretBuilderConfigurationFooter />
       </div>
     </SendBuilderConfigurationContextProvider>

@@ -13,6 +13,7 @@ import {
 } from "../components/context-providers/EncryptionWorkerContextProvider";
 import { Button } from "../components/ui/button";
 import { Input } from "../components/ui/input";
+import { Spinner } from "../components/ui/Spinner";
 import { Dialog, DialogContent } from "../components/ui/dialog";
 import { INITIATE_SEND_VIEW_HEADERS, InitiateSendViewResponse } from "./marketing.api.sends.initiate-send-view";
 import { CONFIRM_SEND_VIEW_HEADERS, ConfirmSendViewResponse } from "./marketing.api.sends.confirm-send-view";
@@ -31,36 +32,6 @@ import { DisplaySecrets } from "~/components/sends/revealer/DisplaySecrets";
 import AboutSidenav from "~/components/about-sidenav";
 import { Label } from "~/components/ui/label";
 import { Alert, AlertDescription } from "~/components/ui/alert";
-
-// TODO: REAL LOADING EXPERIENCE
-function Spinner() {
-  const spinnerStyle = {
-    width: "40px",
-    height: "40px",
-    borderRadius: "50%",
-    border: "5px solid #f3f3f3",
-    borderTop: "5px solid #3498db",
-    animation: "spin 1s linear infinite",
-  };
-
-  return (
-    <>
-      <style>
-        {`
-          @keyframes spin {
-            0% {
-              transform: rotate(0deg);
-            }
-            100% {
-              transform: rotate(360deg);
-            }
-          }
-        `}
-      </style>
-      <div style={spinnerStyle}></div>
-    </>
-  );
-}
 
 const setSendCheckpointInLocalStorage = ({
   sendId,
@@ -119,6 +90,7 @@ function SendViewContainer() {
     sendViewId: SendViewId;
     sendViewPassword: string;
     totalEncryptedParts: number;
+    sendBuilderTemplate: SendBuilderTemplate;
   } | null>(null);
 
   const alertWithErrorMessage = (message: string) => {
@@ -215,6 +187,7 @@ function SendViewContainer() {
         sendViewId={sendViewId}
         sendViewPassword={sendViewPassword}
         totalEncryptedParts={totalEncryptedParts}
+        sendBuilderTemplate={loadSendViewingStatusResponse.sendBuilderTemplate}
       />
     );
   } else {
@@ -222,8 +195,9 @@ function SendViewContainer() {
       return (
         <SendViewUnlocker
           loadSendViewingStatusResponse={loadSendViewingStatusResponse}
-          onSendIsReadyToView={({ sendId, sendViewId, sendViewPassword, totalEncryptedParts }) => {
-            setSendViewingData({ sendId, sendViewId, sendViewPassword, totalEncryptedParts });
+          // eslint-disable-next-line max-len
+          onSendIsReadyToView={({ sendId, sendViewId, sendViewPassword, totalEncryptedParts, sendBuilderTemplate }) => {
+            setSendViewingData({ sendId, sendViewId, sendViewPassword, totalEncryptedParts, sendBuilderTemplate });
           }}
         />
       );
@@ -235,6 +209,7 @@ function SendViewContainer() {
             sendViewId={sendViewingData.sendViewId}
             sendViewPassword={sendViewingData.sendViewPassword}
             totalEncryptedParts={sendViewingData.totalEncryptedParts}
+            sendBuilderTemplate={sendViewingData.sendBuilderTemplate}
           />
         </div>
       );
@@ -258,11 +233,13 @@ function SendViewUnlocker({
     sendViewId,
     sendViewPassword,
     totalEncryptedParts,
+    sendBuilderTemplate,
   }: {
     sendId: SendId;
     sendViewId: SendViewId;
     sendViewPassword: string;
     totalEncryptedParts: number;
+    sendBuilderTemplate: SendBuilderTemplate;
   }) => void;
 }) {
   const [internalUnlockerStatus, setInternalUnlockerStatus] = useState<
@@ -274,6 +251,7 @@ function SendViewUnlocker({
         sendViewId: SendViewId;
         sendViewPassword: string;
         totalEncryptedParts: number;
+        sendBuilderTemplate: SendBuilderTemplate;
       }
   >(loadSendViewingStatusResponse);
 
@@ -293,12 +271,12 @@ function SendViewUnlocker({
         sendViewId: internalUnlockerStatus.sendViewId,
         sendViewPassword: internalUnlockerStatus.sendViewPassword,
         totalEncryptedParts: internalUnlockerStatus.totalEncryptedParts,
+        sendBuilderTemplate: internalUnlockerStatus.sendBuilderTemplate,
       });
     }
   }, [internalUnlockerStatus, onSendIsReadyToView]);
 
   if (showLoadingScreen === true) {
-    // TODO: add an appropriate loading spinner here
     return (
       <div className="flex justify-center">
         <div className="flex items-center space-x-4">
@@ -366,6 +344,7 @@ function SendViewUnlocker({
                 sendViewId: initiateSendViewResponse.sendViewId,
                 sendViewPassword: initiateSendViewResponse.viewPassword,
                 totalEncryptedParts: initiateSendViewResponse.totalEncryptedParts,
+                sendBuilderTemplate: initiateSendViewResponse.sendBuilderTemplate,
               });
             } else {
               setInternalUnlockerStatus({
@@ -502,6 +481,7 @@ function SendViewUnlocker({
               sendViewId: internalUnlockerStatus.sendViewId,
               sendViewPassword: confirmSendViewResponse.viewPassword,
               totalEncryptedParts: confirmSendViewResponse.totalEncryptedParts,
+              sendBuilderTemplate: confirmSendViewResponse.sendBuilderTemplate,
             });
 
             return;
@@ -509,8 +489,6 @@ function SendViewUnlocker({
 
           if (confirmSendViewResponseFetch.status === 400) {
             const confirmSendViewResponseText = await confirmSendViewResponseFetch.text();
-
-            console.log("confirmSendViewResponseText", confirmSendViewResponseText);
 
             if (confirmSendViewResponseText === "Invalid confirmation code.") {
               // the confirmation code was incorrect, we can't advance. but we can show an error message.
@@ -712,11 +690,13 @@ function SendViewDownloaderAndDecryptor({
   sendViewId,
   sendViewPassword,
   totalEncryptedParts,
+  sendBuilderTemplate,
 }: {
   sendId: SendId;
   sendViewId: SendViewId;
   sendViewPassword: string;
   totalEncryptedParts: number;
+  sendBuilderTemplate: SendBuilderTemplate;
 }) {
   const encryptionWorker = useEncryptionWorker();
 
@@ -768,8 +748,6 @@ function SendViewDownloaderAndDecryptor({
       const secretResponses = await encryptionWorker.sendPackedSecretsForDecryption(parsedPackedSecrets);
       setSecretResponses(secretResponses);
 
-      console.log("Decrypted secret responses:", secretResponses);
-
       // close the view
       await fetch(`/marketing/api/sends/complete-send-view`, {
         method: "POST",
@@ -812,34 +790,11 @@ function SendViewDownloaderAndDecryptor({
     // TODO: this is where the revealer should go. We still need to store the config for the send and
     // send it down once the send is ready to view. For now, just hardcode the config.
 
-    const exampleConfigThatMatchesTheSend: SendBuilderTemplate = {
-      title: "Example Send",
-      description: "This is an example send.",
-      fields: [
-        {
-          title: "Secret 1",
-          type: "single-line-text",
-          placeholder: "Enter secret 1",
-        },
-        {
-          title: "Secret 2",
-          type: "multi-line-text",
-          placeholder: "Enter secret 2",
-        },
-        {
-          title: "Secret 3",
-          type: "file",
-        },
-      ],
-    };
-
-    // This should be passed down to the revealer component. It should match up with the SecretResponses.
-    console.log(exampleConfigThatMatchesTheSend);
     // TODO
     return (
       <div className="mx-auto lg:grid lg:max-w-7xl grid-cols-3 gap-8">
         <div className="lg:col-span-2">
-          <h3 className="mb-2">{exampleConfigThatMatchesTheSend.title}</h3>
+          <h3 className="mb-2">{sendBuilderTemplate.title}</h3>
 
           <Alert variant={"success"}>
             <AlertDescription>The link has been successfully unlocked!</AlertDescription>
@@ -847,7 +802,7 @@ function SendViewDownloaderAndDecryptor({
           {/* TODO use a toast ^ */}
           {/* <pre>{JSON.stringify(secretResponses, null, 2)}</pre> */}
           <div className="mt-4">
-            <DisplaySecrets template={exampleConfigThatMatchesTheSend} responses={secretResponses} />
+            <DisplaySecrets template={sendBuilderTemplate} responses={secretResponses} />
           </div>
         </div>
 

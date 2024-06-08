@@ -11,6 +11,7 @@ import {
   saveSendState,
 } from "../lib/sends";
 import { nowIso8601DateTimeString } from "../lib/time";
+import { SendBuilderTemplate } from "~/components/sends/builder/types";
 
 /** The response from the initiate send view endpoint. */
 export type InitiateSendViewResponse = {
@@ -26,6 +27,9 @@ export type InitiateSendViewResponse = {
 
       /** The total number of encrypted parts. */
       totalEncryptedParts: number;
+
+      /** The send builder template. */
+      sendBuilderTemplate: SendBuilderTemplate;
     }
   | {
       /** The password to use to view the send. When null, it is pending confirmation. */
@@ -134,7 +138,7 @@ export const action: ActionFunction = async ({ request }) => {
         to: sendConfig.confirmationEmail,
         from: "2Secured <noreply@2secured.link>",
         subject: `2Secured Access Code is ${code}`,
-        body: `Enter this code to access the link sent to you via 2Secured: ${code} 
+        body: `Enter this code to access the link sent to you via 2Secured: ${code}
 If you didn't request this code, you can safely ignore this email.
         `,
       });
@@ -157,6 +161,7 @@ If you didn't request this code, you can safely ignore this email.
         requiresConfirmation: false,
         viewPassword: view.viewPassword,
         totalEncryptedParts: sendState.totalEncryptedParts,
+        sendBuilderTemplate: sendConfig.template,
       };
 
       // mark the view as ready

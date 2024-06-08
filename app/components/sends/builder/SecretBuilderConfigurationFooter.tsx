@@ -8,12 +8,12 @@ import {
   LockOpen1Icon,
 } from "@radix-ui/react-icons";
 import { Popover, PopoverContent, PopoverTrigger } from "../../ui/popover";
-import { Dialog, DialogContent } from "../../../components/ui/dialog";
 import { Input } from "../../ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../../ui/select";
 import { Button } from "../../ui/button";
 import { useSendBuilderConfiguration } from "./SendBuilderConfigurationContextProvider";
 import { EXPIRATION_DATE_TIME_UNIT_OPTIONS, ExpirationDateTimeUnits } from "./types";
+import { SecretSender } from "./SecretSender";
 
 /**
  * The secret builder configuration footer.
@@ -32,8 +32,6 @@ export default function SecretBuilderConfigurationFooter() {
   const { config: sendBuilderConfiguration, updateConfig } = useSendBuilderConfiguration();
 
   const [showLinkGeneration, setShowLinkGeneration] = useState<boolean>(false);
-
-  console.log(JSON.stringify(sendBuilderConfiguration, null, 4));
 
   const setExpirationConfiguration = useCallback(
     (expirationConfiguration: {
@@ -103,17 +101,7 @@ export default function SecretBuilderConfigurationFooter() {
           </div>
 
           {/* Link generation dialog. */}
-          {showLinkGeneration === false ? null : (
-            <Dialog open={true}>
-              <DialogContent noClose={true} className="sm:max-w-md">
-                <div className="space-y-2">
-                  <h4>Initiate View</h4>
-                  <p>Would you like to view this send? This action will consume a view.</p>
-                  <p>Views remaining: {internalUnlockerStatus.viewsRemaining}</p>
-                </div>
-              </DialogContent>
-            </Dialog>
-          )}
+          {showLinkGeneration === false ? null : <SecretSender sendBuilderConfiguration={sendBuilderConfiguration} />}
         </div>
       </div>
     </>

@@ -1,6 +1,7 @@
 import { ActionFunction, json } from "@remix-run/node";
-import { SendId, getSendState, saveSendState } from "../lib/sends";
+import { SendId, getSendState, saveSendState, getSendConfig } from "../lib/sends";
 import { nowIso8601DateTimeString } from "../lib/time";
+import { SendBuilderTemplate } from "~/components/sends/builder/types";
 
 /**
  * The headers that we expect to be present in the request for confirming a send view.
@@ -20,6 +21,9 @@ export type ConfirmSendViewResponse = {
 
   /** The total number of encrypted parts. */
   totalEncryptedParts: number;
+
+  /** The send builder template. */
+  sendBuilderTemplate: SendBuilderTemplate;
 };
 
 /**
@@ -84,9 +88,12 @@ export const action: ActionFunction = async ({ request }) => {
       throw new Error("Total encrypted parts should not be null, something went wrong.");
     }
 
+    const sendConfig = await getSendConfig(sendId as SendId);
+
     const response: ConfirmSendViewResponse = {
       viewPassword: view.viewPassword,
       totalEncryptedParts: sendState.totalEncryptedParts,
+      sendBuilderTemplate: sendConfig.template,
     };
 
     return json(response);
