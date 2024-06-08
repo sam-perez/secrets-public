@@ -125,9 +125,9 @@ export function LinkExpirationConfigurationPopover({
     } | null;
   }) => void;
 }) {
-  const [views, setViews] = useState<number | null>(null);
-  const [expirationNumber, setExpirationNumber] = useState<number | null>(null);
-  const [expirationUnit, setExpirationUnit] = useState<ExpirationDateTimeUnits | null>(null);
+  const [views, setViews] = useState<number | null>(10); //default to 10 views
+  const [expirationNumber, setExpirationNumber] = useState<number | null>(4); //default to 5
+  const [expirationUnit, setExpirationUnit] = useState<ExpirationDateTimeUnits | null>("days"); //days
 
   const handleViewChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const value = event.target.value;
@@ -324,7 +324,7 @@ export function ConfirmationEmailConfigurationPopover({
         <Button variant="link" className="px-0">
           {email ? (
             <span className="flex items-center font-medium text-sm">
-              <EnvelopeOpenIcon className="h-4 w-4 mr-1" /> {email}
+              <EnvelopeOpenIcon className="h-4 w-4 mr-1" /> Email Set
             </span>
           ) : (
             <>
