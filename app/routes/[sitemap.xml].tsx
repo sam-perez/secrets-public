@@ -1,4 +1,5 @@
 import { LoaderFunction } from "@remix-run/node";
+
 import { SEND_BUILDER_TEMPLATES } from "~/components/sends/builder/types";
 
 export const loader: LoaderFunction = async () => {

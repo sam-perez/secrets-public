@@ -1,9 +1,10 @@
-import { Link } from "@remix-run/react";
 import type { MetaFunction } from "@remix-run/node";
+import { Link } from "@remix-run/react";
 import { ChangeEvent, useState } from "react";
+
 import { SEND_BUILDER_TEMPLATES } from "~/components/sends/builder/types";
-import { TemplateCard } from "~/components/ui/TemplateCard";
 import { Input } from "~/components/ui/input";
+import { TemplateCard } from "~/components/ui/TemplateCard";
 
 export const meta: MetaFunction = () => {
   return [

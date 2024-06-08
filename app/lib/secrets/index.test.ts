@@ -1,4 +1,5 @@
 import { describe, expect, it } from "vitest";
+
 import { packSecrets, unpackSecrets } from "./index";
 
 describe("when we pack some secrets and then unpack some secrets", async () => {

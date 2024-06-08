@@ -1,6 +1,5 @@
-import { Link } from "@remix-run/react";
-
 import { GlobeIcon, LockClosedIcon, QuestionMarkCircledIcon } from "@radix-ui/react-icons";
+import { Link } from "@remix-run/react";
 
 interface AboutSidenavProps {
   showAbout: boolean;

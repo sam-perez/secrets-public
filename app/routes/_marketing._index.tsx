@@ -1,14 +1,17 @@
+import "highlight.js/styles/lightfair.css";
+
 import { PaperPlaneIcon } from "@radix-ui/react-icons";
 import type { MetaFunction } from "@remix-run/node";
 import { Link } from "@remix-run/react";
+import hljs from "highlight.js";
+import { marked } from "marked";
+import { useEffect } from "react";
+
+import { SecretBuilderRoot } from "~/components/sends/builder/SecretBuilderRoot";
 import { Button } from "~/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "~/components/ui/tabs";
-import "highlight.js/styles/lightfair.css";
-import hljs from "highlight.js";
-import { useEffect } from "react";
-import { marked } from "marked";
-import { SecretBuilderRoot } from "~/components/sends/builder/SecretBuilderRoot";
 import { TemplateCard } from "~/components/ui/TemplateCard";
+
 import { SEND_BUILDER_TEMPLATES } from "../components/sends/builder/types";
 
 export const meta: MetaFunction = () => {

@@ -1,4 +1,3 @@
-import { useCallback, useState } from "react";
 import {
   EnvelopeClosedIcon,
   EnvelopeOpenIcon,
@@ -7,13 +6,15 @@ import {
   LockClosedIcon,
   LockOpen1Icon,
 } from "@radix-ui/react-icons";
-import { Popover, PopoverContent, PopoverTrigger } from "../../ui/popover";
-import { Input } from "../../ui/input";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../../ui/select";
+import { useCallback, useState } from "react";
+
 import { Button } from "../../ui/button";
+import { Input } from "../../ui/input";
+import { Popover, PopoverContent, PopoverTrigger } from "../../ui/popover";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../../ui/select";
+import { SecretSender } from "./SecretSender";
 import { useSendBuilderConfiguration } from "./SendBuilderConfigurationContextProvider";
 import { EXPIRATION_DATE_TIME_UNIT_OPTIONS, ExpirationDateTimeUnits } from "./types";
-import { SecretSender } from "./SecretSender";
 
 /**
  * The secret builder configuration footer.

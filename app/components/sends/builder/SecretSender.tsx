@@ -1,15 +1,16 @@
 import { useEffect, useState } from "react";
-import { SendBuilderConfiguration } from "./types";
-import { Dialog, DialogContent } from "../../ui/dialog";
-import { Spinner } from "../../ui/Spinner";
-import { InitiateSendResponse, InitiateSendBody } from "../../../routes/marketing.api.sends.initiate-send";
-import { UPLOAD_SEND_ENCRYPTED_PART_HEADERS } from "../../../routes/marketing.api.sends.upload-send-encrypted-part";
-import { PublicPackedSecrets, SecretResponses } from "../../../lib/secrets";
-import { parallelWithLimit } from "../../../lib/utils";
-import { stringToUtf16ArrayBuffer } from "../../../lib/crypto-utils";
+
+import { stringToUtf16ArrayBuffer } from "~/lib/crypto-utils";
+import { PublicPackedSecrets, SecretResponses } from "~/lib/secrets";
+import { parallelWithLimit } from "~/lib/utils";
+import { InitiateSendBody, InitiateSendResponse } from "~/routes/marketing.api.sends.initiate-send";
+import { UPLOAD_SEND_ENCRYPTED_PART_HEADERS } from "~/routes/marketing.api.sends.upload-send-encrypted-part";
 
 // eslint-disable-next-line max-len
 import { EncryptionWorkerProvider, useEncryptionWorker } from "../../context-providers/EncryptionWorkerContextProvider";
+import { Dialog, DialogContent } from "../../ui/dialog";
+import { Spinner } from "../../ui/Spinner";
+import { SendBuilderConfiguration } from "./types";
 
 /**
  * The component that sends the secret. Accepts a completed secret builder configuration, massages the data into the

@@ -1,37 +1,36 @@
+import { OpenInNewWindowIcon } from "@radix-ui/react-icons";
 import { Link, useParams } from "@remix-run/react";
 import { useEffect, useState } from "react";
 
-import { SendBuilderTemplate } from "../components/sends/builder/types";
-import { parallelWithLimit } from "../lib/utils";
-import { utf16ArrayBufferToString } from "../lib/crypto-utils";
+import AboutSidenav from "~/components/about-sidenav";
+import { DisplaySecrets } from "~/components/sends/revealer/DisplaySecrets";
+import { Alert, AlertDescription } from "~/components/ui/alert";
+import { Label } from "~/components/ui/label";
 
-import { PackedSecrets, PublicPackedSecrets, SecretResponses } from "../lib/secrets";
-import { SendId, SendViewId } from "../lib/sends";
 import {
   EncryptionWorkerProvider,
   useEncryptionWorker,
 } from "../components/context-providers/EncryptionWorkerContextProvider";
+import { SendBuilderTemplate } from "../components/sends/builder/types";
 import { Button } from "../components/ui/button";
+import { Dialog, DialogContent } from "../components/ui/dialog";
 import { Input } from "../components/ui/input";
 import { Spinner } from "../components/ui/Spinner";
-import { Dialog, DialogContent } from "../components/ui/dialog";
-import { INITIATE_SEND_VIEW_HEADERS, InitiateSendViewResponse } from "./marketing.api.sends.initiate-send-view";
-import { CONFIRM_SEND_VIEW_HEADERS, ConfirmSendViewResponse } from "./marketing.api.sends.confirm-send-view";
-import { RETRY_CONFIRMATION_FOR_SEND_VIEW_HEADERS } from "./marketing.api.sends.retry-confirmation-for-send-view";
-import { DOWNLOAD_SEND_ENCRYPTED_PART_HEADERS } from "./marketing.api.sends.download-send-encrypted-part";
+import { utf16ArrayBufferToString } from "../lib/crypto-utils";
+import { PackedSecrets, PublicPackedSecrets, SecretResponses } from "../lib/secrets";
+import { SendId, SendViewId } from "../lib/sends";
+import { parallelWithLimit } from "../lib/utils";
 import { COMPLETE_SEND_VIEW_HEADERS } from "./marketing.api.sends.complete-send-view";
+import { CONFIRM_SEND_VIEW_HEADERS, ConfirmSendViewResponse } from "./marketing.api.sends.confirm-send-view";
+import { DOWNLOAD_SEND_ENCRYPTED_PART_HEADERS } from "./marketing.api.sends.download-send-encrypted-part";
+import { INITIATE_SEND_VIEW_HEADERS, InitiateSendViewResponse } from "./marketing.api.sends.initiate-send-view";
 import {
   LOAD_SEND_VIEWING_STATUS_HEADERS,
   LoadSendViewingStatusResponse,
   NeedsConfirmationCodeVerificationStatusResponse,
   NeedsToInitiateSendViewStatusResponse,
 } from "./marketing.api.sends.load-send-viewing-status";
-import { OpenInNewWindowIcon } from "@radix-ui/react-icons";
-
-import { DisplaySecrets } from "~/components/sends/revealer/DisplaySecrets";
-import AboutSidenav from "~/components/about-sidenav";
-import { Label } from "~/components/ui/label";
-import { Alert, AlertDescription } from "~/components/ui/alert";
+import { RETRY_CONFIRMATION_FOR_SEND_VIEW_HEADERS } from "./marketing.api.sends.retry-confirmation-for-send-view";
 
 const setSendCheckpointInLocalStorage = ({
   sendId,

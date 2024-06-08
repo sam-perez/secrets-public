@@ -1,10 +1,11 @@
-import { useRef } from "react";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
-import { Input } from "../../ui/input";
 import { Cross1Icon, DragHandleDots2Icon } from "@radix-ui/react-icons";
-import { Label } from "../../ui/label";
+import { useRef } from "react";
+
 import { Button } from "../../ui/button";
+import { Input } from "../../ui/input";
+import { Label } from "../../ui/label";
 import { Textarea } from "../../ui/textarea";
 import { EditableText } from "./EditableText";
 import { SendBuilderField } from "./types";

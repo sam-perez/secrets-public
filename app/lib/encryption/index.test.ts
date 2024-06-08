@@ -1,4 +1,5 @@
 import { describe, expect, it } from "vitest";
+
 import { decryptData, encryptData } from "./index";
 
 describe("when we encrypt and decrypt a string", async () => {

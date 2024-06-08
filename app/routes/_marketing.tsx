@@ -1,5 +1,6 @@
-import { useEffect, useState } from "react";
 import { Outlet } from "@remix-run/react";
+import { useEffect, useState } from "react";
+
 import Footer from "~/components/ui/footer";
 import MarketingNav from "~/components/ui/marketing-nav";
 import { Toaster } from "~/components/ui/toaster";
