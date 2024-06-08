@@ -130,6 +130,14 @@ export function LinkExpirationConfigurationPopover({
 
   const handleViewChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const value = event.target.value;
+
+    // if we are going from some value to an empty string, we should clear the expiration date.
+    if (value === "" && views !== null) {
+      setViews(null);
+      setExpirationConfiguration({ maxViews: null });
+      return;
+    }
+
     const parsedValue = parseInt(value, 10);
 
     if (isNaN(parsedValue)) {
@@ -170,8 +178,18 @@ export function LinkExpirationConfigurationPopover({
 
   const handleExpirationNumberChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const value = event.target.value;
-    const parsedValue = parseInt(value, 10);
 
+    // if we are going from some value to an empty string, we should clear the expiration date.
+    if (value === "" && expirationNumber !== null) {
+      setExpirationNumber(null);
+      reportExpirationDate({
+        totalTimeUnits: null,
+        timeUnit: expirationUnit,
+      });
+      return;
+    }
+
+    const parsedValue = parseInt(value, 10);
     if (isNaN(parsedValue)) {
       return;
     }

@@ -57,7 +57,15 @@ function SecretSenderInner({ sendBuilderConfiguration }: { sendBuilderConfigurat
           expirationDate: sendBuilderConfiguration.expirationDate,
           maxViews: sendBuilderConfiguration.maxViews,
           password: sendBuilderConfiguration.password,
-          fields: sendBuilderConfiguration.fields,
+          fields: sendBuilderConfiguration.fields.map((field) => {
+            // VERY IMPORTANT: we omit the value from the fields because we don't want to store the value
+            // in the send state. If you forget this, you will leak the secret values to the server.
+
+            // eslint-disable-next-line @typescript-eslint/no-unused-vars
+            const { value, ...rest } = field;
+
+            return rest;
+          }),
         };
 
         // initiate the secret send

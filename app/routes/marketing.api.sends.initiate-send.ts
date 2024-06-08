@@ -2,7 +2,7 @@ import { ActionFunction } from "@remix-run/node";
 import { SendConfig, SendId, SendState, generateSendId, saveSendConfig, saveSendState } from "../lib/sends";
 import { getRandomBase62String } from "../lib/crypto-utils";
 import { nowIso8601DateTimeString, getIso8601DateTimeString } from "../lib/time";
-import { SendBuilderConfiguration, ExpirationDateTimeUnits } from "~/components/sends/builder/types";
+import { SendBuilderConfiguration, SendBuilderField, ExpirationDateTimeUnits } from "~/components/sends/builder/types";
 
 /** The response from the initiate send endpoint. */
 export type InitiateSendResponse = {
@@ -15,8 +15,12 @@ export type InitiateSendResponse = {
  *
  * For now, reuse the send builder configuration. We do some massaging of the data in the route to make it
  * compatible with the send state and send config.
+ *
+ * We omit the value from the fields because we don't want to store the value in the send state.
  */
-export type InitiateSendBody = SendBuilderConfiguration;
+export type InitiateSendBody = Omit<SendBuilderConfiguration, "fields"> & {
+  fields: Array<Omit<SendBuilderField, "value">>;
+};
 
 /**
  * Action for initiating a send.
@@ -70,6 +74,8 @@ export const action: ActionFunction = async ({ request }) => {
     dataDeletedReason: null,
     views: [],
   };
+
+  console.log("Initiating send", JSON.stringify({ sendId, sendConfig, initialSendState }, null, 4));
 
   try {
     await Promise.all([saveSendConfig(sendConfig), saveSendState(initialSendState)]);
