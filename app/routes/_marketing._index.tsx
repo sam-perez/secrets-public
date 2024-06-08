@@ -103,7 +103,7 @@ export default function Index() {
               <Link to="/sends/templates/new">
                 <Button className="">
                   <PaperPlaneIcon className="mr-2 h-3 w-3" />
-                  Try for yourself
+                  Start with Blank
                 </Button>
               </Link>
               <Link to="/sends/templates">

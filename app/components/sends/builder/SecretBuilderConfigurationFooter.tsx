@@ -96,7 +96,7 @@ export default function SecretBuilderConfigurationFooter() {
           {/* Button to generate link. */}
           <div>
             <Button className="w-full" disabled={!readyToGenerateLink} onClick={() => setShowLinkGeneration(true)}>
-              {readyToGenerateLink ? "Generate Encrypted Link" : "Fields Incomplete"}
+              {readyToGenerateLink ? "Generate Encrypted Link" : "Generate Encrypted Link"}
             </Button>
           </div>
 

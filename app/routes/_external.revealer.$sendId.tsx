@@ -168,9 +168,9 @@ function SendViewContainer() {
   } else if (loadSendViewingStatusResponse.stage === "not-viewable") {
     return (
       <div className="container">
-        <h3>This secret link has expired or does not exist</h3>
+        <h3>🤔 This link has expired or does not exist</h3>
         <p className="muted mt-2 mb-4">
-          The secret link you are trying to view may have never existed, has expired, was deleted, or has been viewed
+          The secret link you are trying to view has expired, may have never existed, was deleted, or has been viewed
           too many times. If it did in fact exist, there is no way to retrieve it anymore.
         </p>
         <Link to={"https://2secured.link"}>

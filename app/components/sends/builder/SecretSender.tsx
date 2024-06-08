@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { SendBuilderConfiguration } from "./types";
-import { Dialog, DialogContent } from "../../ui/dialog";
+import { Dialog, DialogClose, DialogContent, DialogFooter } from "../../ui/dialog";
 import { Spinner } from "../../ui/Spinner";
 import { InitiateSendResponse, InitiateSendBody } from "../../../routes/marketing.api.sends.initiate-send";
 import { UPLOAD_SEND_ENCRYPTED_PART_HEADERS } from "../../../routes/marketing.api.sends.upload-send-encrypted-part";
@@ -10,6 +10,10 @@ import { stringToUtf16ArrayBuffer } from "../../../lib/crypto-utils";
 
 // eslint-disable-next-line max-len
 import { EncryptionWorkerProvider, useEncryptionWorker } from "../../context-providers/EncryptionWorkerContextProvider";
+import { Input } from "~/components/ui/input";
+import { Label } from "~/components/ui/label";
+import { Button } from "~/components/ui/button";
+import { CopyIcon, EnvelopeClosedIcon, LinkBreak2Icon, LockClosedIcon } from "@radix-ui/react-icons";
 
 /**
  * The component that sends the secret. Accepts a completed secret builder configuration, massages the data into the
@@ -45,6 +49,8 @@ function SecretSenderInner({ sendBuilderConfiguration }: { sendBuilderConfigurat
   const [progress, setProgress] = useState<
     "mounted" | "initializing-send" | "encrypting" | "sending-parts" | "done" | "error"
   >("mounted");
+
+  const [isCopied, setIsCopied] = useState(false);
 
   useEffect(() => {
     const sendSecret = async () => {
@@ -206,35 +212,94 @@ function SecretSenderInner({ sendBuilderConfiguration }: { sendBuilderConfigurat
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  //copy function to copy the secret link
+  const getShareLink = () => {
+    if (secretLinkData === null) return "";
+    return `/revealer/${secretLinkData.sendId}#${secretLinkData.encryptedPartsPassword}`;
+  };
+  const handleCopy = () => {
+    if (secretLinkData === null) return;
+    const shareLink = getShareLink();
+    navigator.clipboard.writeText(shareLink);
+    setIsCopied(true);
+    setTimeout(() => setIsCopied(false), 2000); // Reset copied state after 2 seconds
+  };
+
   return (
     <>
       <Dialog open={true}>
-        <DialogContent noClose={true} className="sm:max-w-md">
+        <DialogContent noClose={true} className="sm:max-w-xl">
           {secretLinkData === null ? (
             <div className="flex justify-center">
               <div className="flex items-center space-x-4">
                 <Spinner />
-                <h4>{progress}</h4>
-                {
-                  // show the progress if we have it
+                {["initializing-send", "mounted", "encrypting"].includes(progress) ? (
+                  <h4>Encrypting...</h4>
+                ) : (
                   progress === "sending-parts" && (
-                    <p>
-                      {uploadedParts.finishedParts}/{uploadedParts.totalParts} parts uploaded
-                    </p>
+                    <>
+                      <h4>
+                        {uploadedParts.finishedParts}/{uploadedParts.totalParts} parts encrypted
+                      </h4>
+                    </>
                   )
-                }
+                )}
               </div>
             </div>
           ) : (
             <>
-              <p>Send ID: {secretLinkData.sendId}</p>
-              <a
-                href={`/revealer/${secretLinkData.sendId}#${secretLinkData.encryptedPartsPassword}`}
-                target="_blank"
-                rel="noreferrer"
-              >
-                View Send
-              </a>
+              <h4 className="flex items-center">
+                <LockClosedIcon className="w-4 h-4 mr-2" />
+                Your data has been encrypted
+              </h4>
+
+              <div>
+                <Label>Secret Link</Label>
+                <div className="flex items-start space-x-2 mt-2">
+                  <Input className="bg-slate-50 font-medium" type="text" value={getShareLink()} />
+                  <Button variant={"outline"} onClick={handleCopy}>
+                    <CopyIcon className="h-3 w-3 mr-1" />
+                    Copy
+                  </Button>
+                </div>
+                <p className="text-xs muted py-1">Only this link will be able to decrypt the information or files</p>
+
+                <div className="flex items-center mt-2">
+                  <LinkBreak2Icon className="w-4 h-4 text-slate-500 mr-3" />
+                  <div>
+                    <small>Link Expiration</small>
+                    <p>
+                      This link will expire in <b>2 days</b> or <b>4 views</b>, whichever comes first
+                    </p>
+                  </div>
+                </div>
+                <div className="flex items-center mt-2">
+                  <EnvelopeClosedIcon className="w-4 h-4 text-slate-500 mr-3" />
+                  <div>
+                    <small>Email Restriction</small>
+                    <p>
+                      The recipient will need to enter a code emailed to <b>taylor@test.com</b> to view
+                    </p>
+                  </div>
+                </div>
+                <div className="flex items-center mt-2">
+                  <LockClosedIcon className="w-4 h-4 text-slate-500 mr-3" />
+
+                  <div>
+                    <small>Password</small>
+                    <p>
+                      The recipient must enter the password <b>password123</b> to view
+                    </p>
+                  </div>
+                </div>
+              </div>
+              <DialogFooter className="!justify-start">
+                <DialogClose asChild>
+                  <Button type="button" variant="outline" onClick={handleCopy}>
+                    Copy Link & Close
+                  </Button>
+                </DialogClose>
+              </DialogFooter>
             </>
           )}
         </DialogContent>
