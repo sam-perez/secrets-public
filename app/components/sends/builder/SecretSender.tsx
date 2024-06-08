@@ -1,19 +1,20 @@
 import { useEffect, useState } from "react";
+
+import { stringToUtf16ArrayBuffer } from "~/lib/crypto-utils";
+import { PublicPackedSecrets, SecretResponses } from "~/lib/secrets";
+import { parallelWithLimit } from "~/lib/utils";
+import { InitiateSendBody, InitiateSendResponse } from "~/routes/marketing.api.sends.initiate-send";
+import { UPLOAD_SEND_ENCRYPTED_PART_HEADERS } from "~/routes/marketing.api.sends.upload-send-encrypted-part";
 import { SendBuilderConfiguration } from "./types";
 import { Dialog, DialogClose, DialogContent, DialogFooter } from "../../ui/dialog";
-import { Spinner } from "../../ui/Spinner";
-import { InitiateSendResponse, InitiateSendBody } from "../../../routes/marketing.api.sends.initiate-send";
-import { UPLOAD_SEND_ENCRYPTED_PART_HEADERS } from "../../../routes/marketing.api.sends.upload-send-encrypted-part";
-import { PublicPackedSecrets, SecretResponses } from "../../../lib/secrets";
-import { parallelWithLimit } from "../../../lib/utils";
-import { stringToUtf16ArrayBuffer } from "../../../lib/crypto-utils";
 
 // eslint-disable-next-line max-len
 import { EncryptionWorkerProvider, useEncryptionWorker } from "../../context-providers/EncryptionWorkerContextProvider";
 import { Input } from "~/components/ui/input";
 import { Label } from "~/components/ui/label";
 import { Button } from "~/components/ui/button";
-import { CopyIcon, EnvelopeClosedIcon, LinkBreak2Icon, LockClosedIcon } from "@radix-ui/react-icons";
+import { CheckIcon, CopyIcon, EnvelopeClosedIcon, LinkBreak2Icon, LockClosedIcon } from "@radix-ui/react-icons";
+import { Spinner } from "../../ui/Spinner";
 
 /**
  * The component that sends the secret. Accepts a completed secret builder configuration, massages the data into the
@@ -258,8 +259,7 @@ function SecretSenderInner({ sendBuilderConfiguration }: { sendBuilderConfigurat
                 <div className="flex items-start space-x-2 mt-2">
                   <Input className="bg-slate-50 font-medium" type="text" value={getShareLink()} />
                   <Button variant={"outline"} onClick={handleCopy}>
-                    <CopyIcon className="h-3 w-3 mr-1" />
-                    Copy
+                    {isCopied ? <CheckIcon className="text-green-500 h-4 w-4" /> : <CopyIcon className="h-4 w-4" />}
                   </Button>
                 </div>
                 <p className="text-xs muted py-1">Only this link will be able to decrypt the information or files</p>

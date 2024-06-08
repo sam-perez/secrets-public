@@ -1,8 +1,8 @@
-// eslint-disable-next-line max-len
-import { StringifiedUint8Array, decryptData, encryptData, stringToUint8Array, uint8ArrayToString } from "../encryption";
 import pako from "pako";
 
-// TODO: not sure what these names should be yet, just a placeholder for now
+// eslint-disable-next-line max-len
+import { decryptData, encryptData, StringifiedUint8Array, stringToUint8Array, uint8ArrayToString } from "../encryption";
+
 /**
  * Represents a secret value. Is a response to a secret prompt within a send
  * or receive operation.

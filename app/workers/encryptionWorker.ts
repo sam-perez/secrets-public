@@ -1,4 +1,4 @@
-import { PackedSecrets, SecretResponses, packSecrets, unpackSecrets } from "../lib/secrets";
+import { PackedSecrets, packSecrets, SecretResponses, unpackSecrets } from "../lib/secrets";
 
 if (typeof window !== "undefined" || typeof self !== "undefined") {
   // Listen for messages from the main thread

@@ -1,19 +1,16 @@
-import { useState } from "react";
-
 import {
+  closestCorners,
   DndContext,
   DragEndEvent,
   PointerSensor,
   TouchSensor,
-  closestCorners,
   useSensor,
   useSensors,
 } from "@dnd-kit/core";
-
-import { SecretFieldsContainer } from "./SecretFieldsContainer";
-import { useSendBuilderConfiguration } from "./SendBuilderConfigurationContextProvider";
-import { SendBuilderFieldWithId } from "./SecretFieldRenderer";
 import { arrayMove } from "@dnd-kit/sortable";
+import { useState } from "react";
+
+import { Button } from "../../ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -23,11 +20,11 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "../../ui/dropdown-menu";
-
-import { Button } from "../../ui/button";
-
-import { SendBuilderField } from "./types";
 import { EditableText } from "./EditableText";
+import { SendBuilderFieldWithId } from "./SecretFieldRenderer";
+import { SecretFieldsContainer } from "./SecretFieldsContainer";
+import { useSendBuilderConfiguration } from "./SendBuilderConfigurationContextProvider";
+import { SendBuilderField } from "./types";
 
 /**
  * The container for the secret builder fields. It handles the rendering a component to add new fields, and

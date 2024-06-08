@@ -1,7 +1,7 @@
 import SecretBuilderConfigurationFooter from "./SecretBuilderConfigurationFooter";
 import SecretBuilderFieldsEditorContainer from "./SecretBuilderFieldsEditorContainer";
-import { SendBuilderConfiguration } from "./types";
 import { SendBuilderConfigurationContextProvider } from "./SendBuilderConfigurationContextProvider";
+import { SendBuilderConfiguration } from "./types";
 
 /**
  * The root component for the secret builder.

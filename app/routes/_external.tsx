@@ -1,5 +1,5 @@
-import { useEffect, useState } from "react";
 import { Outlet } from "@remix-run/react";
+import { useEffect, useState } from "react";
 
 export default function AppLayout() {
   const [isClient, setIsClient] = useState(false);

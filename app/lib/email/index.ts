@@ -1,4 +1,4 @@
-import { SESClient, SendEmailCommand } from "@aws-sdk/client-ses";
+import { SendEmailCommand,SESClient } from "@aws-sdk/client-ses";
 
 // Create an SES client
 const s3Client = new SESClient({

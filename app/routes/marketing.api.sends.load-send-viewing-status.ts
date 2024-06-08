@@ -1,7 +1,9 @@
 import { LoaderFunction } from "@remix-run/node";
-import { SendId, SendViewId, getSendConfig, getSendState } from "../lib/sends";
+
 // TODO: should we move this type to a more appropriate shared location?
 import { SendBuilderTemplate } from "~/components/sends/builder/types";
+
+import { getSendConfig, getSendState,SendId, SendViewId } from "../lib/sends";
 
 /**
  * The send is not viewable.

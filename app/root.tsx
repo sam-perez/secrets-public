@@ -1,4 +1,5 @@
 import { Links, Meta, Outlet, Scripts, ScrollRestoration } from "@remix-run/react";
+
 import styles from "~/styles/globals.css?url";
 
 export function links() {

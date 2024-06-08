@@ -7,8 +7,11 @@
 /** @type {import('eslint').Linter.Config} */
 module.exports = {
   root: true,
+  plugins: ["simple-import-sort"],
   rules: {
-    "max-len": ["error", { code: 119 }]
+    "max-len": ["error", { code: 119 }],
+    "simple-import-sort/imports": "error",
+    "simple-import-sort/exports": "error"
   },
   parserOptions: {
     ecmaVersion: "latest",
