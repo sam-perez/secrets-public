@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 
 import { Input } from "../../ui/input";
+import { Pencil1Icon } from "@radix-ui/react-icons";
 
 /**
  * The props for the EditableText component.
@@ -55,7 +56,12 @@ export const EditableText = ({ defaultValue, value, onChange }: EditableTextProp
       {isEditing ? (
         <Input type="text" value={text} onChange={handleChange} onBlur={handleBlur} onKeyDown={handleKeyDown} />
       ) : (
-        <span>{text || "Untitled"}</span>
+        <div className="group/item flex items-center">
+          <span>{text || "Untitled"}</span>
+          <span className="group/edit invisible text-slate-500 group-hover/item:visible">
+            <Pencil1Icon className="w-4 h-4 ml-1" />
+          </span>
+        </div>
       )}
     </div>
   );
