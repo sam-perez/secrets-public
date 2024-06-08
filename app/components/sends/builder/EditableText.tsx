@@ -29,7 +29,7 @@ export const EditableText = ({ defaultValue, value, onChange }: EditableTextProp
     setText(value);
   }, [value]);
 
-  const handleDoubleClick = () => {
+  const handleClick = () => {
     setIsEditing(true);
   };
 
@@ -51,7 +51,7 @@ export const EditableText = ({ defaultValue, value, onChange }: EditableTextProp
   };
 
   return (
-    <div onDoubleClick={handleDoubleClick} className="cursor-pointer">
+    <div onClick={handleClick} className="cursor-pointer">
       {isEditing ? (
         <Input type="text" value={text} onChange={handleChange} onBlur={handleBlur} onKeyDown={handleKeyDown} />
       ) : (
