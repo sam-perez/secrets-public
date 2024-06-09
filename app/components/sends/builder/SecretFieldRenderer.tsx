@@ -28,10 +28,25 @@ export const SecretFieldRenderer = ({
 }) => {
   const { title, type, placeholder, value, id } = sendBuilderField;
 
-  const { listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id, transition: null });
+  const { listeners, setNodeRef, transform, transition, isDragging } = useSortable({
+    id,
+    transition: null,
+  });
+
+  const computedTransform =
+    transform !== null
+      ? {
+          x: transform.x,
+          y: transform.y,
+          scaleX: transform.scaleX,
+          // No y scaling when dragging please
+          scaleY: 1,
+        }
+      : null;
+
   const style = {
     transition,
-    transform: CSS.Transform.toString(transform),
+    transform: CSS.Transform.toString(computedTransform),
   };
 
   const fileInputRef = useRef<HTMLInputElement | null>(null); // Create a ref for the file input
