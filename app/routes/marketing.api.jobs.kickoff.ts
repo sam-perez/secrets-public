@@ -24,8 +24,6 @@ export const action: ActionFunction = async ({ request }) => {
   try {
     const jobsKickoffAuthKey = request.headers.get(JOBS_KICKOFF_EXPECTED_HEADERS.JOBS_KICKOFF_AUTH_KEY);
 
-    console.log(process.env);
-
     if (!jobsKickoffAuthKey) {
       return new Response("Missing required headers.", { status: 400 });
     }
