@@ -1,6 +1,6 @@
 import { ActionFunction } from "@remix-run/node";
 
-import { getSendState, saveSendState,SendId } from "../lib/sends";
+import { deleteSendEncryptedParts, getSendConfig, getSendState, saveSendState, SendId } from "../lib/sends";
 import { nowIso8601DateTimeString } from "../lib/time";
 
 /**
@@ -27,7 +27,10 @@ export const action: ActionFunction = async ({ request }) => {
       return new Response("Missing required headers.", { status: 400 });
     }
 
-    const sendState = await getSendState(sendId as SendId);
+    const [sendState, sendConfig] = await Promise.all([
+      getSendState(sendId as SendId),
+      getSendConfig(sendId as SendId),
+    ]);
 
     // find the matching view
     const view = sendState.views.find((v) => v.sendViewId === sendViewId);
@@ -53,6 +56,14 @@ export const action: ActionFunction = async ({ request }) => {
     // mark the view as closed
     view.viewClosedAt = nowIso8601DateTimeString();
     view.viewClosedReason = "client-completed";
+
+    // check to see if all views are closed and if the send has been viewed the maximum number of times
+    if (sendState.views.every((v) => v.viewClosedAt !== null) && sendState.views.length >= sendConfig.maxViews) {
+      sendState.dataDeletedAt = nowIso8601DateTimeString();
+      sendState.dataDeletedReason = "max-views";
+
+      await deleteSendEncryptedParts(sendState.sendId);
+    }
 
     await saveSendState(sendState);
 

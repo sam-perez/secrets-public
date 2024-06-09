@@ -1,4 +1,10 @@
-import { GetObjectCommand, ListObjectsCommand, PutObjectCommand, S3Client } from "@aws-sdk/client-s3";
+import {
+  DeleteObjectCommand,
+  GetObjectCommand,
+  ListObjectsCommand,
+  PutObjectCommand,
+  S3Client,
+} from "@aws-sdk/client-s3";
 
 // Create an S3 client
 const s3Client = new S3Client({
@@ -60,6 +66,18 @@ export async function listObjectsInS3({ bucket, prefix }: { bucket: BUCKET_OPTIO
   const command = new ListObjectsCommand({
     Bucket: BUCKETS[bucket],
     Prefix: prefix,
+  });
+
+  return await s3Client.send(command);
+}
+
+/**
+ * Deletes an object from an S3 bucket.
+ */
+export async function deleteObjectInS3({ bucket, key }: { bucket: BUCKET_OPTIONS; key: string }) {
+  const command = new DeleteObjectCommand({
+    Bucket: BUCKETS[bucket],
+    Key: key,
   });
 
   return await s3Client.send(command);

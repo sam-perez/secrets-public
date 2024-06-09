@@ -1,7 +1,7 @@
 // TODO: should we move this type to a more appropriate shared location?
 import { SendBuilderTemplate } from "../../components/sends/builder/types";
 import { BrandedId, generateUniqueId } from "../ids";
-import { downloadFromS3, listObjectsInS3, uploadToS3 } from "../s3";
+import { deleteObjectInS3, downloadFromS3, listObjectsInS3, uploadToS3 } from "../s3";
 import { Iso8601DateTimeString } from "../time";
 
 /** Send id type. */
@@ -69,7 +69,7 @@ export type SendState = {
   dataDeletedAt: Iso8601DateTimeString | null;
 
   /** The reason the send data was deleted. */
-  dataDeletedReason: "expired" | "deleted" | "viewed" | null;
+  dataDeletedReason: "expired" | "max-views" | null;
 
   /** Metadata about the request that created the send. */
   creationRequestMetadata: RecursiveMetadata;
@@ -189,6 +189,19 @@ export const writeSendExpirationRecord = async (sendId: SendId, expiresAt: Iso86
 };
 
 /**
+ * Get the next page of entries from the send expiration records in s3.
+ */
+export const listNextPageOfSendExpirationRecords = async () => {
+  const expiredSendsPrefix = `sends/expirations/sends/`;
+  const { Contents: expiredSends } = await listObjectsInS3({
+    bucket: "MARKETING_BUCKET",
+    prefix: expiredSendsPrefix,
+  });
+
+  return expiredSends;
+};
+
+/**
  * Get the key for send view expiration info in s3.
  */
 export const getSendViewExpirationKey = (sendId: SendId, sendViewId: SendViewId, expiration: string): string =>
@@ -206,6 +219,19 @@ export const writeSendViewExpirationRecord = async (sendId: SendId, sendViewId: 
     body: Buffer.from(""),
     key: sendViewExpirationKey,
   });
+};
+
+/**
+ * Get the next page of entries from the send view expiration records in s3.
+ */
+export const listNextPageOfSendViewExpirationRecords = async () => {
+  const expiredSendViewsPrefix = `sends/expirations/views/`;
+  const { Contents: expiredSendViews } = await listObjectsInS3({
+    bucket: "MARKETING_BUCKET",
+    prefix: expiredSendViewsPrefix,
+  });
+
+  return expiredSendViews;
 };
 
 /**
@@ -280,4 +306,21 @@ export const listSendEncryptedParts = async (sendId: SendId) => {
   });
 
   return encryptedParts;
+};
+
+/**
+ * Deletes a send's encrypted parts from s3.
+ */
+export const deleteSendEncryptedParts = async (sendId: SendId) => {
+  const encryptedParts = await listSendEncryptedParts(sendId);
+
+  // just delete them all serially for now
+  for (const part of encryptedParts || []) {
+    if (part.Key !== undefined) {
+      await deleteObjectInS3({
+        bucket: "MARKETING_BUCKET",
+        key: part.Key,
+      });
+    }
+  }
 };
