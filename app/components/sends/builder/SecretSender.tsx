@@ -262,7 +262,7 @@ function SecretSenderInner({ sendBuilderConfiguration }: { sendBuilderConfigurat
             <>
               <div>
                 <h4 className="flex items-center">
-                  <LockClosedIcon className="w-4 h-4 mr-2" />
+                  <LockClosedIcon className="w-4 h-4 mr-1" />
                   Your data has been encrypted
                 </h4>
                 <p className="text-xs muted py-0">Only this link will be able to decrypt the information or files</p>

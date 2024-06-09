@@ -809,7 +809,7 @@ function SendViewDownloaderAndDecryptor({
     return (
       <div className="mx-auto lg:grid lg:max-w-7xl grid-cols-3 gap-8">
         <div className="lg:col-span-2">
-          <h3 className="mb-2">View: {sendBuilderTemplate.title}</h3>
+          <h3 className="mb-2">Viewing: {sendBuilderTemplate.title}</h3>
 
           {/* <pre>{JSON.stringify(secretResponses, null, 2)}</pre> */}
           <div className="mt-4">
