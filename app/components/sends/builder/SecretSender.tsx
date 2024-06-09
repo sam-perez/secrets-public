@@ -157,12 +157,12 @@ function SecretSenderInner({ sendBuilderConfiguration }: { sendBuilderConfigurat
 
         const totalParts = chunks.length;
 
+        let finishedParts = 0;
+
         setUploadedParts({
           totalParts,
-          finishedParts: 0,
+          finishedParts,
         });
-
-        let finishedParts = 0;
 
         const uploadPromiseGenerators = chunks.map((chunk, index) => {
           return async () => {
@@ -220,8 +220,14 @@ function SecretSenderInner({ sendBuilderConfiguration }: { sendBuilderConfigurat
 
   //copy function to copy the secret link
   const getShareLink = () => {
-    if (secretLinkData === null) return "";
-    return `/revealer/${secretLinkData.sendId}#${secretLinkData.encryptedPartsPassword}`;
+    if (secretLinkData === null) {
+      return "";
+    }
+
+    // extract the host from the current URL
+    const host = window.location.host;
+
+    return `http://${host}/revealer/${secretLinkData.sendId}#${secretLinkData.encryptedPartsPassword}`;
   };
   const handleCopy = () => {
     if (secretLinkData === null) return;
@@ -264,7 +270,7 @@ function SecretSenderInner({ sendBuilderConfiguration }: { sendBuilderConfigurat
               <div>
                 <Label>Secret Link</Label>
                 <div className="flex items-start space-x-2 mt-2">
-                  <Input className="bg-slate-50 font-medium" type="text" value={getShareLink()} />
+                  <Input className="bg-slate-50 font-medium" type="text" value={getShareLink()} readOnly={true} />
                   <Button variant={"outline"} onClick={handleCopy}>
                     {isCopied ? <CheckIcon className="text-green-500 h-4 w-4" /> : <CopyIcon className="h-4 w-4" />}
                   </Button>
