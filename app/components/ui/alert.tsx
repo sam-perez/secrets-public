@@ -1,4 +1,4 @@
-import { cva,type VariantProps } from "class-variance-authority";
+import { cva, type VariantProps } from "class-variance-authority";
 import * as React from "react";
 
 import { cn } from "~/lib/utils";
@@ -24,6 +24,7 @@ const alertVariants = cva(
       variant: {
         default: "bg-background text-foreground",
         success: "bg-green-50 text-green-700 border-green-100",
+        info: "bg-blue-50 text-blue-800 border-blue-100",
         destructive: "border-destructive/50 text-destructive dark:border-destructive [&>svg]:text-destructive",
       },
     },
@@ -55,4 +56,4 @@ const AlertDescription = React.forwardRef<HTMLParagraphElement, React.HTMLAttrib
 );
 AlertDescription.displayName = "AlertDescription";
 
-export { Alert, AlertDescription,AlertTitle };
+export { Alert, AlertDescription, AlertTitle };
