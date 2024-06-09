@@ -215,8 +215,9 @@ function SecretSenderInner({ sendBuilderConfiguration }: { sendBuilderConfigurat
 
   //copy function to copy the secret link
   const getShareLink = () => {
+    const domain = window.location.origin;
     if (secretLinkData === null) return "";
-    return `/revealer/${secretLinkData.sendId}#${secretLinkData.encryptedPartsPassword}`;
+    return `${domain}/revealer/${secretLinkData.sendId}#${secretLinkData.encryptedPartsPassword}`;
   };
   const handleCopy = () => {
     if (secretLinkData === null) return;
@@ -251,7 +252,7 @@ function SecretSenderInner({ sendBuilderConfiguration }: { sendBuilderConfigurat
             <>
               <div>
                 <h4 className="flex items-center">
-                  <LockClosedIcon className="w-4 h-4 mr-2" />
+                  <LockClosedIcon className="w-4 h-4 mr-1" />
                   Your data has been encrypted
                 </h4>
                 <p className="text-xs muted py-0">Only this link will be able to decrypt the information or files</p>
