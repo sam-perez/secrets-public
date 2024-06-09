@@ -1,19 +1,12 @@
-import { json,LoaderFunction, MetaFunction } from "@remix-run/node";
+import { json, LoaderFunction, MetaFunction } from "@remix-run/node";
 import { useLoaderData } from "@remix-run/react";
 
 import AboutSidenav from "~/components/about-sidenav";
 import { SecretBuilderRoot } from "~/components/sends/builder/SecretBuilderRoot";
 import { Badge } from "~/components/ui/badge";
-import {
-  Breadcrumb,
-  BreadcrumbItem,
-  BreadcrumbLink,
-  BreadcrumbList,
-  BreadcrumbSeparator,
-} from "~/components/ui/breadcrumb";
+import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList } from "~/components/ui/breadcrumb";
 
 import { SEND_BUILDER_TEMPLATES, SendBuilderTemplate } from "../components/sends/builder/types";
-
 
 type LoaderData =
   | {
@@ -58,23 +51,15 @@ export default function TemplateDetails() {
 
   return (
     <div className="mx-auto px-4 max-w-5xl">
-      <div>
+      <div className="flex items-center">
         {template.private ? (
           <Badge className="mb-2">Private Template</Badge>
         ) : (
           <Breadcrumb className="flex items-center mb-2">
             <BreadcrumbList>
               <BreadcrumbItem>
-                <Badge variant={"secondary"} className="">
-                  Send
-                </Badge>
+                <BreadcrumbLink href="/sends/templates">Templates /</BreadcrumbLink>
               </BreadcrumbItem>
-              <BreadcrumbSeparator />
-              <BreadcrumbItem>
-                <BreadcrumbLink href="/sends/templates">Templates</BreadcrumbLink>
-              </BreadcrumbItem>
-
-              <BreadcrumbSeparator />
             </BreadcrumbList>
           </Breadcrumb>
         )}

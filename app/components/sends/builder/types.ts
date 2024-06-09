@@ -481,19 +481,25 @@ export const SEND_BUILDER_TEMPLATES: { [SLUG in string]: SendBuilderTemplate } =
         placeholder: "2023",
       },
       {
-        title: "Year",
-        type: "single-line-text",
-        placeholder: "2023",
-      },
-      {
-        title: "Year",
-        type: "single-line-text",
-        placeholder: "2023",
-      },
-      {
         title: "Upload Tax Return",
         type: "file",
         placeholder: "",
+      },
+    ],
+  },
+  "bitcoin-wallet-address": {
+    title: "Bitcoin Wallet",
+    description: "Use this template to securely send tax return documents.",
+    fields: [
+      {
+        title: "Type",
+        type: "single-line-text",
+        placeholder: "Bitcoin",
+      },
+      {
+        title: "Wallet Address",
+        type: "single-line-text",
+        placeholder: "1Lbcfr7sAHTD9CgdQo3HTMTkV8LK4ZnX71",
       },
     ],
   },

@@ -237,7 +237,7 @@ export function LinkExpirationConfigurationPopover({
           ) : (
             <>
               <LinkNone2Icon className="h-4 w-4 mr-1" />
-              <span className="hidden sm:block text-slate-500 text-xs">Link Expiration</span>
+              <span className="text-slate-500 text-xs">Link Expiration</span>
             </>
           )}
         </Button>
@@ -329,7 +329,7 @@ export function ConfirmationEmailConfigurationPopover({
           ) : (
             <>
               <EnvelopeClosedIcon className="h-4 w-4 mr-1" />
-              <span className="hidden sm:block text-slate-500 text-xs">Restrict Email</span>
+              <span className="text-slate-500 text-xs">Restrict Email</span>
             </>
           )}
         </Button>
@@ -375,8 +375,7 @@ export function PasswordConfigurationPopover({ setPassword }: { setPassword: (pa
             </span>
           ) : (
             <>
-              <LockOpen1Icon className="h-4 w-4 mr-1" />{" "}
-              <span className="hidden sm:block text-slate-500 text-xs">Add Password</span>
+              <LockOpen1Icon className="h-4 w-4 mr-1" /> <span className="text-slate-500 text-xs">Add Password</span>
             </>
           )}
         </Button>
