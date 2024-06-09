@@ -17,7 +17,7 @@ export const handleExpiredSends = async () => {
   const expiredSends = await listNextPageOfSendExpirationRecords();
 
   if (expiredSends === undefined) {
-    console.log("No expired sends found.");
+    console.log("No send expiration records found.");
     return;
   }
 

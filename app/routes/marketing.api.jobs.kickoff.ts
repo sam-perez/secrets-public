@@ -1,6 +1,6 @@
 import { ActionFunction } from "@remix-run/node";
 
-import { handleExpiredSends } from "~/jobs";
+import { handleExpiredSends, handleExpiredSendViews } from "~/jobs";
 
 /**
  * The headers that we expect to be present in the request for kicking off jobs.
@@ -34,7 +34,9 @@ export const action: ActionFunction = async ({ request }) => {
 
     console.log("Kicking off jobs...");
 
+    // just fire them off serially for now
     await handleExpiredSends();
+    await handleExpiredSendViews();
 
     console.log("Jobs completed.");
 
