@@ -249,11 +249,13 @@ function SecretSenderInner({ sendBuilderConfiguration }: { sendBuilderConfigurat
             </div>
           ) : (
             <>
-              <h4 className="flex items-center">
-                <LockClosedIcon className="w-4 h-4 mr-2" />
-                Your data has been encrypted
-              </h4>
-
+              <div>
+                <h4 className="flex items-center">
+                  <LockClosedIcon className="w-4 h-4 mr-2" />
+                  Your data has been encrypted
+                </h4>
+                <p className="text-xs muted py-0">Only this link will be able to decrypt the information or files</p>
+              </div>
               <div>
                 <Label>Secret Link</Label>
                 <div className="flex items-start space-x-2 mt-2">
@@ -262,36 +264,49 @@ function SecretSenderInner({ sendBuilderConfiguration }: { sendBuilderConfigurat
                     {isCopied ? <CheckIcon className="text-green-500 h-4 w-4" /> : <CopyIcon className="h-4 w-4" />}
                   </Button>
                 </div>
-                <p className="text-xs muted py-1">Only this link will be able to decrypt the information or files</p>
 
-                <div className="flex items-center mt-2">
-                  <LinkBreak2Icon className="w-4 h-4 text-slate-500 mr-3" />
-                  <div>
-                    <small>Link Expiration</small>
-                    <p className="text-xs">
-                      This link will expire in <b>2 days</b> or <b>4 views</b>, whichever comes first
-                    </p>
+                {(sendBuilderConfiguration.maxViews || sendBuilderConfiguration.expirationDate) && (
+                  <div className="flex items-center mt-2">
+                    <LinkBreak2Icon className="w-4 h-4 text-slate-500 mr-3" />
+                    <div>
+                      <small>Link Expiration</small>
+                      <p className="text-xs">
+                        This link will expire in{" "}
+                        <b>
+                          {sendBuilderConfiguration.expirationDate?.totalTimeUnits}{" "}
+                          {sendBuilderConfiguration.expirationDate?.timeUnit}
+                        </b>{" "}
+                        {sendBuilderConfiguration.maxViews && sendBuilderConfiguration.expirationDate ? "or " : ""}
+                        <b>{sendBuilderConfiguration.maxViews} views</b>
+                      </p>
+                    </div>
                   </div>
-                </div>
-                <div className="flex items-center mt-2">
-                  <EnvelopeClosedIcon className="w-4 h-4 text-slate-500 mr-3" />
-                  <div>
-                    <small>Email Restriction</small>
-                    <p className="text-xs">
-                      The recipient will need to enter a code emailed to <b>taylor@test.com</b> to view
-                    </p>
-                  </div>
-                </div>
-                <div className="flex items-center mt-2">
-                  <LockClosedIcon className="w-4 h-4 text-slate-500 mr-3" />
+                )}
 
-                  <div>
-                    <small>Password</small>
-                    <p className="text-xs">
-                      The recipient must enter the password <b>password123</b> to view
-                    </p>
+                {sendBuilderConfiguration.confirmationEmail && (
+                  <div className="flex items-center mt-2">
+                    <EnvelopeClosedIcon className="w-4 h-4 text-slate-500 mr-3" />
+                    <div>
+                      <small>Email Restriction</small>
+                      <p className="text-xs">
+                        The recipient will need to enter a code emailed to{" "}
+                        <b>{sendBuilderConfiguration.confirmationEmail}</b> to view
+                      </p>
+                    </div>
                   </div>
-                </div>
+                )}
+
+                {sendBuilderConfiguration.password && (
+                  <div className="flex items-center mt-2">
+                    <LockClosedIcon className="w-4 h-4 text-slate-500 mr-3" />
+                    <div>
+                      <small>Password</small>
+                      <p className="text-xs">
+                        The recipient must enter the password <b>{sendBuilderConfiguration.password}</b> to view
+                      </p>
+                    </div>
+                  </div>
+                )}
               </div>
               <DialogFooter className="!justify-start">
                 <DialogClose asChild>
