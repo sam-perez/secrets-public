@@ -1,7 +1,7 @@
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import { Cross1Icon, DragHandleDots2Icon } from "@radix-ui/react-icons";
-import { useRef } from "react";
+import { useEffect, useRef } from "react";
 
 import { Button } from "../../ui/button";
 import { Input } from "../../ui/input";
@@ -28,7 +28,7 @@ export const SecretFieldRenderer = ({
 }) => {
   const { title, type, placeholder, value, id } = sendBuilderField;
 
-  const { attributes, listeners, setNodeRef, transform, transition } = useSortable({ id });
+  const { listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id, transition: null });
   const style = {
     transition,
     transform: CSS.Transform.toString(transform),
@@ -36,10 +36,29 @@ export const SecretFieldRenderer = ({
 
   const fileInputRef = useRef<HTMLInputElement | null>(null); // Create a ref for the file input
 
+  useEffect(() => {
+    if (isDragging) {
+      document.body.style.cursor = "grabbing";
+    } else {
+      document.body.style.cursor = "auto";
+    }
+  }, [isDragging]);
+
   return (
-    <div ref={setNodeRef} {...attributes} {...listeners} className="block" style={style}>
+    <div ref={setNodeRef} className={"block"} style={style}>
       <div className="flex items-center p-2">
-        <DragHandleDots2Icon className="h-4 w-4 flex-none mr-2 text-slate-400 hover:text-slate-800" />
+        <DragHandleDots2Icon
+          {...listeners}
+          className={[
+            "h-4",
+            "w-4",
+            "flex-none",
+            "mr-2",
+            "text-slate-400",
+            "hover:text-slate-800",
+            ...(isDragging ? ["hover:cursor-grabbing"] : ["hover:cursor-grab"]),
+          ].join(" ")}
+        />
         <div className="w-full space-y-2">
           <Label className="hover:text-slate-600 w-full">
             <EditableText
