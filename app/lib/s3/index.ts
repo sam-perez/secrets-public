@@ -25,11 +25,24 @@ const BUCKETS = {
 export type BUCKET_OPTIONS = keyof typeof BUCKETS;
 
 /**
+ * Helper function to get the bucket based on the environment.
+ */
+const getBucket = (bucket: BUCKET_OPTIONS) => {
+  const bucketPrefix = BUCKETS[bucket];
+
+  if (process.env.NODE_ENV === "production") {
+    return bucketPrefix;
+  } else {
+    return `${bucketPrefix}-dev`;
+  }
+};
+
+/**
  * Uploads a buffer to S3.
  */
 export async function uploadToS3({ bucket, key, body }: { bucket: BUCKET_OPTIONS; key: string; body: Buffer }) {
   const command = new PutObjectCommand({
-    Bucket: BUCKETS[bucket],
+    Bucket: getBucket(bucket),
     Key: key,
     Body: body,
   });
@@ -42,7 +55,7 @@ export async function uploadToS3({ bucket, key, body }: { bucket: BUCKET_OPTIONS
  */
 export async function downloadFromS3({ bucket, key }: { bucket: BUCKET_OPTIONS; key: string }) {
   const command = new GetObjectCommand({
-    Bucket: BUCKETS[bucket],
+    Bucket: getBucket(bucket),
     Key: key,
   });
 
@@ -64,7 +77,7 @@ export async function downloadFromS3({ bucket, key }: { bucket: BUCKET_OPTIONS; 
  */
 export async function listObjectsInS3({ bucket, prefix }: { bucket: BUCKET_OPTIONS; prefix?: string }) {
   const command = new ListObjectsCommand({
-    Bucket: BUCKETS[bucket],
+    Bucket: getBucket(bucket),
     Prefix: prefix,
   });
 
@@ -76,7 +89,7 @@ export async function listObjectsInS3({ bucket, prefix }: { bucket: BUCKET_OPTIO
  */
 export async function deleteObjectInS3({ bucket, key }: { bucket: BUCKET_OPTIONS; key: string }) {
   const command = new DeleteObjectCommand({
-    Bucket: BUCKETS[bucket],
+    Bucket: getBucket(bucket),
     Key: key,
   });
 

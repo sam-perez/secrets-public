@@ -12,7 +12,7 @@ export const JOBS_KICKOFF_EXPECTED_HEADERS = {
 /*
 Helpful command for testing this route:
 
-curl -X POST https://your-domain.com/routes/marketing/api/jobs/kickoff \
+curl -X POST http://localhost:5173/marketing/api/jobs/kickoff \
   -H "X-2SECURED-JOBS-KICKOFF-AUTH-KEY: 123456" \
   -i
 */
@@ -23,6 +23,8 @@ curl -X POST https://your-domain.com/routes/marketing/api/jobs/kickoff \
 export const action: ActionFunction = async ({ request }) => {
   try {
     const jobsKickoffAuthKey = request.headers.get(JOBS_KICKOFF_EXPECTED_HEADERS.JOBS_KICKOFF_AUTH_KEY);
+
+    console.log(process.env);
 
     if (!jobsKickoffAuthKey) {
       return new Response("Missing required headers.", { status: 400 });
