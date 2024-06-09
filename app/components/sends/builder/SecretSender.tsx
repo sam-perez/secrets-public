@@ -226,8 +226,10 @@ function SecretSenderInner({ sendBuilderConfiguration }: { sendBuilderConfigurat
 
     // extract the host from the current URL
     const host = window.location.host;
+    // also extract the https or http from the current URL
+    const protocol = window.location.protocol;
 
-    return `http://${host}/revealer/${secretLinkData.sendId}#${secretLinkData.encryptedPartsPassword}`;
+    return `${protocol}//${host}/revealer/${secretLinkData.sendId}#${secretLinkData.encryptedPartsPassword}`;
   };
   const handleCopy = () => {
     if (secretLinkData === null) return;
