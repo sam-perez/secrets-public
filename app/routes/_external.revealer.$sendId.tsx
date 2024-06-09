@@ -1,11 +1,11 @@
-import { OpenInNewWindowIcon } from "@radix-ui/react-icons";
+import { LockOpen1Icon, OpenInNewWindowIcon } from "@radix-ui/react-icons";
+import { MetaFunction } from "@remix-run/node";
 import { Link, useParams } from "@remix-run/react";
 import { useEffect, useState } from "react";
 
 import AboutSidenav from "~/components/about-sidenav";
 import { DisplaySecrets } from "~/components/sends/revealer/DisplaySecrets";
-import { Alert, AlertDescription } from "~/components/ui/alert";
-import { Label } from "~/components/ui/label";
+import { Alert, AlertDescription, AlertTitle } from "~/components/ui/alert";
 
 import {
   EncryptionWorkerProvider,
@@ -31,6 +31,17 @@ import {
   NeedsToInitiateSendViewStatusResponse,
 } from "./marketing.api.sends.load-send-viewing-status";
 import { RETRY_CONFIRMATION_FOR_SEND_VIEW_HEADERS } from "./marketing.api.sends.retry-confirmation-for-send-view";
+
+//set page title
+export const meta: MetaFunction = () => {
+  return [
+    { title: "View Encrypted Link | 2Secure" },
+    {
+      name: "description",
+      content: "This end-to-end encrypted data was shared with you via 2Secured.link",
+    },
+  ];
+};
 
 const setSendCheckpointInLocalStorage = ({
   sendId,
@@ -173,7 +184,7 @@ function SendViewContainer() {
           too many times. If it did in fact exist, there is no way to retrieve it anymore.
         </p>
         <Link to={"https://2secured.link"}>
-          <Button>Go to 2Secured</Button>
+          <Button>Back to 2Secured</Button>
         </Link>
       </div>
     );
@@ -434,10 +445,15 @@ function SendViewUnlocker({
                 </>
               ) : (
                 <>
-                  <h4>Initiate View</h4>
-                  <p>Would you like to view this send? This action will consume a view.</p>
+                  <h4>View Encrypted Data</h4>
+                  <p>Would you like to view this link&apos;s encrypted data? This action will use a view.</p>
                   <p>Views remaining: {internalUnlockerStatus.viewsRemaining}</p>
-                  <Button onClick={initiateSend}>Initiate View</Button>
+                  <div className="flex justify-between">
+                    <Button onClick={initiateSend}>Yes, view data</Button>
+                    <Link to={"https://2secured.link"}>
+                      <Button variant={"outline"}>Cancel</Button>
+                    </Link>
+                  </div>
                 </>
               )}
             </div>
@@ -793,12 +809,8 @@ function SendViewDownloaderAndDecryptor({
     return (
       <div className="mx-auto lg:grid lg:max-w-7xl grid-cols-3 gap-8">
         <div className="lg:col-span-2">
-          <h3 className="mb-2">{sendBuilderTemplate.title}</h3>
+          <h3 className="mb-2">View: {sendBuilderTemplate.title}</h3>
 
-          <Alert variant={"success"}>
-            <AlertDescription>The link has been successfully unlocked!</AlertDescription>
-          </Alert>
-          {/* TODO use a toast ^ */}
           {/* <pre>{JSON.stringify(secretResponses, null, 2)}</pre> */}
           <div className="mt-4">
             <DisplaySecrets template={sendBuilderTemplate} responses={secretResponses} />
@@ -806,16 +818,22 @@ function SendViewDownloaderAndDecryptor({
         </div>
 
         <aside className="space-y-4">
-          <div>
+          {/* <div>
             <Label>Created on</Label>
             <p>TODO date</p>
-          </div>
+          </div> */}
 
-          <div>
+          {/* <div>
             <Label>Expires in</Label>
             <p>TODO views / TODO date</p>
-          </div>
+          </div> */}
           <div>
+            <Alert variant={"info"} className="mb-4">
+              <LockOpen1Icon className="h-4 w-4 text-green-500" />
+              <AlertTitle>Unlocked</AlertTitle>
+              <AlertDescription>The link has been successfully unlocked and decrypted</AlertDescription>
+            </Alert>
+            {/* TODO use a toast ^ */}
             <AboutSidenav showAbout={true} />
           </div>
         </aside>

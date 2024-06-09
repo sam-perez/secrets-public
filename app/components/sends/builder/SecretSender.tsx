@@ -268,7 +268,7 @@ function SecretSenderInner({ sendBuilderConfiguration }: { sendBuilderConfigurat
                   <LinkBreak2Icon className="w-4 h-4 text-slate-500 mr-3" />
                   <div>
                     <small>Link Expiration</small>
-                    <p>
+                    <p className="text-xs">
                       This link will expire in <b>2 days</b> or <b>4 views</b>, whichever comes first
                     </p>
                   </div>
@@ -277,7 +277,7 @@ function SecretSenderInner({ sendBuilderConfiguration }: { sendBuilderConfigurat
                   <EnvelopeClosedIcon className="w-4 h-4 text-slate-500 mr-3" />
                   <div>
                     <small>Email Restriction</small>
-                    <p>
+                    <p className="text-xs">
                       The recipient will need to enter a code emailed to <b>taylor@test.com</b> to view
                     </p>
                   </div>
@@ -287,7 +287,7 @@ function SecretSenderInner({ sendBuilderConfiguration }: { sendBuilderConfigurat
 
                   <div>
                     <small>Password</small>
-                    <p>
+                    <p className="text-xs">
                       The recipient must enter the password <b>password123</b> to view
                     </p>
                   </div>

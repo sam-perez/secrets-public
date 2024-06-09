@@ -1,6 +1,8 @@
 import { Outlet } from "@remix-run/react";
 import { useEffect, useState } from "react";
 
+import MarketingNav from "~/components/ui/marketing-nav";
+
 export default function AppLayout() {
   const [isClient, setIsClient] = useState(false);
 
@@ -15,6 +17,7 @@ export default function AppLayout() {
   }
   return (
     <>
+      <MarketingNav hide_links={true} />
       <main className="h-auto pt-10 sm:pt-20">
         <div className="mx-auto max-w-5xl">
           <Outlet />

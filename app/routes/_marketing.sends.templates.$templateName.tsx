@@ -1,10 +1,11 @@
+import { ChevronRightIcon } from "@radix-ui/react-icons";
 import { json, LoaderFunction, MetaFunction } from "@remix-run/node";
-import { useLoaderData } from "@remix-run/react";
+import { Link, useLoaderData } from "@remix-run/react";
 
 import AboutSidenav from "~/components/about-sidenav";
 import { SecretBuilderRoot } from "~/components/sends/builder/SecretBuilderRoot";
+import { Alert } from "~/components/ui/alert";
 import { Badge } from "~/components/ui/badge";
-import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList } from "~/components/ui/breadcrumb";
 
 import { SEND_BUILDER_TEMPLATES, SendBuilderTemplate } from "../components/sends/builder/types";
 
@@ -55,13 +56,9 @@ export default function TemplateDetails() {
         {template.private ? (
           <Badge className="mb-2">Private Template</Badge>
         ) : (
-          <Breadcrumb className="flex items-center mb-2">
-            <BreadcrumbList>
-              <BreadcrumbItem>
-                <BreadcrumbLink href="/sends/templates">Templates /</BreadcrumbLink>
-              </BreadcrumbItem>
-            </BreadcrumbList>
-          </Breadcrumb>
+          <Link to="/sends/templates" className="mb-2 text-sm hover:text-slate-500 flex items-center">
+            Templates <ChevronRightIcon />
+          </Link>
         )}
       </div>
 
@@ -85,6 +82,14 @@ export default function TemplateDetails() {
         <div>
           <aside className="sticky top-6">
             <div className="space-y-4 pb-10 mb-10">
+              {!template.private && (
+                <Link to={"https://tally.so/r/w7D9oz"} target="_blank" rel="noreferrer">
+                  <Alert variant={"info"}>
+                    Want to save your edits to this template? <span className="font-medium">Join our waitlist!</span>
+                  </Alert>
+                </Link>
+              )}
+
               <AboutSidenav showAbout={true} />
             </div>
           </aside>
