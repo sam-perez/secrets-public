@@ -129,35 +129,6 @@ export function LinkExpirationConfigurationPopover({
   const [expirationNumber, setExpirationNumber] = useState<number | null>(4); //default to 5
   const [expirationUnit, setExpirationUnit] = useState<ExpirationDateTimeUnits | null>("days"); //days
 
-  const handleViewChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const value = event.target.value;
-
-    // if we are going from some value to an empty string, we should clear the expiration date.
-    if (value === "" && views !== null) {
-      setViews(null);
-      setExpirationConfiguration({ maxViews: null });
-      return;
-    }
-
-    const parsedValue = parseInt(value, 10);
-
-    if (isNaN(parsedValue)) {
-      return;
-    }
-
-    if (parsedValue < 0) {
-      return;
-    }
-
-    if (parsedValue === 0) {
-      setViews(null);
-      setExpirationConfiguration({ maxViews: null });
-    } else {
-      setViews(parsedValue);
-      setExpirationConfiguration({ maxViews: parsedValue });
-    }
-  };
-
   const reportExpirationDate = ({
     totalTimeUnits,
     timeUnit,
@@ -175,52 +146,6 @@ export function LinkExpirationConfigurationPopover({
     } else {
       setExpirationConfiguration({ expirationDate: null });
     }
-  };
-
-  const handleExpirationNumberChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const value = event.target.value;
-
-    // if we are going from some value to an empty string, we should clear the expiration date.
-    if (value === "" && expirationNumber !== null) {
-      setExpirationNumber(null);
-      reportExpirationDate({
-        totalTimeUnits: null,
-        timeUnit: expirationUnit,
-      });
-      return;
-    }
-
-    const parsedValue = parseInt(value, 10);
-    if (isNaN(parsedValue)) {
-      return;
-    }
-
-    if (parsedValue < 0) {
-      return;
-    }
-
-    if (parsedValue === 0) {
-      setExpirationNumber(null);
-      reportExpirationDate({
-        totalTimeUnits: null,
-        timeUnit: expirationUnit,
-      });
-      return;
-    }
-
-    setExpirationNumber(parsedValue);
-    reportExpirationDate({
-      totalTimeUnits: parsedValue,
-      timeUnit: expirationUnit,
-    });
-  };
-
-  const handleExpirationUnitChange = (value: string) => {
-    setExpirationUnit(value as ExpirationDateTimeUnits);
-    reportExpirationDate({
-      totalTimeUnits: expirationNumber,
-      timeUnit: value as ExpirationDateTimeUnits,
-    });
   };
 
   return (
@@ -249,23 +174,79 @@ export function LinkExpirationConfigurationPopover({
         </div>
         <small>Time</small>
         <div className="flex space-x-2 mt-1 mb-3">
-          <Input
-            placeholder="Number"
-            type="number"
-            value={expirationNumber !== null ? expirationNumber.toString() : ""}
-            onChange={handleExpirationNumberChange}
-            onKeyDown={(e) => {
-              if (e.key === "Backspace" && expirationNumber !== null && expirationNumber < 10) {
-                e.preventDefault();
-                setExpirationNumber(null);
-                reportExpirationDate({
-                  totalTimeUnits: null,
-                  timeUnit: expirationUnit,
-                });
-              }
+          {(() => {
+            // a hack using scoping to determine if the backspace key was pressed.
+            let hasBackspaceBeenPressedInExpirationNumberInput = false;
+
+            return (
+              <Input
+                placeholder="Number"
+                type="number"
+                value={expirationNumber !== null ? expirationNumber.toString() : ""}
+                onChange={(e) => {
+                  const value = e.target.value;
+
+                  // if we are going from some value to an empty string, we should clear the expiration date.
+                  if (hasBackspaceBeenPressedInExpirationNumberInput && value.length === 0 && views !== null) {
+                    setExpirationNumber(null);
+                    reportExpirationDate({
+                      totalTimeUnits: null,
+                      timeUnit: expirationUnit,
+                    });
+                    return;
+                  }
+
+                  const parsedValue = parseInt(value, 10);
+                  if (isNaN(parsedValue)) {
+                    return;
+                  }
+
+                  if (parsedValue < 0) {
+                    return;
+                  }
+
+                  if (parsedValue === 0) {
+                    setExpirationNumber(null);
+                    reportExpirationDate({
+                      totalTimeUnits: null,
+                      timeUnit: expirationUnit,
+                    });
+                    return;
+                  }
+
+                  setExpirationNumber(parsedValue);
+                  reportExpirationDate({
+                    totalTimeUnits: parsedValue,
+                    timeUnit: expirationUnit,
+                  });
+                }}
+                onKeyDown={(e) => {
+                  if (e.key === "Backspace") {
+                    hasBackspaceBeenPressedInExpirationNumberInput = true;
+
+                    if (expirationNumber !== null && expirationNumber < 10) {
+                      e.preventDefault();
+                      setExpirationNumber(null);
+                      reportExpirationDate({
+                        totalTimeUnits: null,
+                        timeUnit: expirationUnit,
+                      });
+                    }
+                  }
+                }}
+              />
+            );
+          })()}
+          <Select
+            onValueChange={(value) => {
+              setExpirationUnit(value as ExpirationDateTimeUnits);
+              reportExpirationDate({
+                totalTimeUnits: expirationNumber,
+                timeUnit: value as ExpirationDateTimeUnits,
+              });
             }}
-          />
-          <Select onValueChange={handleExpirationUnitChange} value={expirationUnit || undefined}>
+            value={expirationUnit || undefined}
+          >
             <SelectTrigger>
               <SelectValue placeholder="Choose" />
             </SelectTrigger>
@@ -280,20 +261,59 @@ export function LinkExpirationConfigurationPopover({
         </div>
         <small>Total View Count</small>
         <div className="flex space-x-2 mt-1"></div>
-        <Input
-          className=""
-          type="number"
-          placeholder="Enter max views"
-          value={views !== null ? views.toString() : ""}
-          onChange={handleViewChange}
-          onKeyDown={(e) => {
-            if (e.key === "Backspace" && views !== null && views < 10) {
-              e.preventDefault();
-              setViews(null);
-              setExpirationConfiguration({ maxViews: null });
-            }
-          }}
-        />
+        {(() => {
+          // a hack using scoping to determine if the backspace key was pressed.
+          let hasBackspaceBeenPressedInViewInput = false;
+
+          return (
+            <Input
+              className=""
+              type="number"
+              placeholder="Enter max views"
+              value={views !== null ? views.toString() : ""}
+              onKeyDown={(e) => {
+                if (e.key === "Backspace") {
+                  hasBackspaceBeenPressedInViewInput = true;
+
+                  // if we are going from some value to an empty string, we should clear the views.
+                  if (views !== null && views < 10) {
+                    e.preventDefault();
+                    setViews(null);
+                    setExpirationConfiguration({ maxViews: null });
+                  }
+                }
+              }}
+              onChange={(e) => {
+                const value = e.target.value;
+
+                // if we are going from some value to an empty string, we should clear the expiration date.
+                if (hasBackspaceBeenPressedInViewInput && value.length === 0 && views !== null) {
+                  setViews(null);
+                  setExpirationConfiguration({ maxViews: null });
+                  return;
+                }
+
+                const parsedValue = parseInt(value, 10);
+
+                if (isNaN(parsedValue)) {
+                  return;
+                }
+
+                if (parsedValue < 0) {
+                  return;
+                }
+
+                if (parsedValue === 0) {
+                  setViews(null);
+                  setExpirationConfiguration({ maxViews: null });
+                } else {
+                  setViews(parsedValue);
+                  setExpirationConfiguration({ maxViews: parsedValue });
+                }
+              }}
+            />
+          );
+        })()}
         <span className="muted text-xs">Leave blank for only a single view.</span>
       </PopoverContent>
     </Popover>
