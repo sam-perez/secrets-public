@@ -97,7 +97,7 @@ export default function SecretBuilderConfigurationFooter() {
           {/* Button to generate link. */}
           <div>
             <Button className="w-full" disabled={!readyToGenerateLink} onClick={() => setShowLinkGeneration(true)}>
-              {readyToGenerateLink ? "Generate Encrypted Link" : "Generate Encrypted Link"}
+              {readyToGenerateLink ? "Get Encrypted Link" : "Get Encrypted Link"}
             </Button>
           </div>
 
@@ -226,7 +226,7 @@ export function LinkExpirationConfigurationPopover({
   return (
     <Popover>
       <PopoverTrigger asChild>
-        <Button variant="link" className="px-0">
+        <Button variant="ghost" className="px-2">
           {(expirationNumber && expirationUnit) || views ? (
             <span className="flex items-center">
               <LinkBreak2Icon className="h-4 w-4 mr-1" />
@@ -321,7 +321,7 @@ export function ConfirmationEmailConfigurationPopover({
   return (
     <Popover>
       <PopoverTrigger asChild>
-        <Button variant="link" className="px-0">
+        <Button variant="ghost" className="px-2">
           {email ? (
             <span className="flex items-center font-medium text-sm">
               <EnvelopeOpenIcon className="h-4 w-4 mr-1" /> Email Set
@@ -368,7 +368,7 @@ export function PasswordConfigurationPopover({ setPassword }: { setPassword: (pa
   return (
     <Popover>
       <PopoverTrigger asChild>
-        <Button variant="link" className="px-0">
+        <Button variant="ghost" className="px-2">
           {internalPassword ? (
             <span className="flex items-center text-sm font-medium">
               <LockClosedIcon className="h-4 w-4 mr-1 flex-none" /> Password Set

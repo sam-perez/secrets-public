@@ -95,7 +95,7 @@ export default function Index() {
   return (
     <>
       <section className="py-14 mb-24">
-        <div className="sm:p-2 grid sm:grid-cols-2 grid-cols-1 sm:gap-24 items-center">
+        <div className="sm:p-2 grid md:grid-cols-2 grid-cols-1 sm:gap-24 items-center">
           <div className="p-4">
             <h1 className="mb-4">Send and receive sensitive data with end-to-end encryption</h1>
             <p className="lead">
