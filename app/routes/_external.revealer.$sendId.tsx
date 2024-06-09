@@ -711,7 +711,7 @@ function SendViewDownloaderAndDecryptor({
 
     const fetchAndDecrypt = async () => {
       // fetch the encrypted parts
-      const fetchEncryptedPartsPromises = Array.from({ length: totalEncryptedParts }).map((_, index) => {
+      const fetchEncryptedPartsPromiseGenerators = Array.from({ length: totalEncryptedParts }).map((_, index) => {
         return async () => {
           return fetch(`/marketing/api/sends/download-send-encrypted-part`, {
             method: "GET",
@@ -727,7 +727,7 @@ function SendViewDownloaderAndDecryptor({
 
       // get the string data out from each and then concatenate them
       const encryptedParts = await parallelWithLimit({
-        fns: fetchEncryptedPartsPromises,
+        promiseGenerators: fetchEncryptedPartsPromiseGenerators,
         limit: 3,
       });
 

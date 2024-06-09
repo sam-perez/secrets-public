@@ -1,20 +1,20 @@
+import { CheckIcon, CopyIcon, EnvelopeClosedIcon, LinkBreak2Icon, LockClosedIcon } from "@radix-ui/react-icons";
 import { useEffect, useState } from "react";
 
+import { Button } from "~/components/ui/button";
+import { Input } from "~/components/ui/input";
+import { Label } from "~/components/ui/label";
 import { stringToUtf16ArrayBuffer } from "~/lib/crypto-utils";
 import { PublicPackedSecrets, SecretResponses } from "~/lib/secrets";
 import { parallelWithLimit } from "~/lib/utils";
 import { InitiateSendBody, InitiateSendResponse } from "~/routes/marketing.api.sends.initiate-send";
 import { UPLOAD_SEND_ENCRYPTED_PART_HEADERS } from "~/routes/marketing.api.sends.upload-send-encrypted-part";
-import { SendBuilderConfiguration } from "./types";
-import { Dialog, DialogClose, DialogContent, DialogFooter } from "../../ui/dialog";
 
 // eslint-disable-next-line max-len
 import { EncryptionWorkerProvider, useEncryptionWorker } from "../../context-providers/EncryptionWorkerContextProvider";
-import { Input } from "~/components/ui/input";
-import { Label } from "~/components/ui/label";
-import { Button } from "~/components/ui/button";
-import { CheckIcon, CopyIcon, EnvelopeClosedIcon, LinkBreak2Icon, LockClosedIcon } from "@radix-ui/react-icons";
+import { Dialog, DialogClose, DialogContent, DialogFooter } from "../../ui/dialog";
 import { Spinner } from "../../ui/Spinner";
+import { SendBuilderConfiguration } from "./types";
 
 /**
  * The component that sends the secret. Accepts a completed secret builder configuration, massages the data into the
@@ -58,21 +58,26 @@ function SecretSenderInner({ sendBuilderConfiguration }: { sendBuilderConfigurat
       try {
         setProgress("initializing-send");
 
+        // We break out this initialization step so that if we add in any unknown properties to each field,
+        // typescript will complain because "Object literal may only specify known properties". This is a
+        // measure we're taking to make sure we don't accidentally include the `value` property in the fields.
+        const initiateSendBodyFields: InitiateSendBody["fields"] = [];
+        for (const field of sendBuilderConfiguration.fields) {
+          // VERY IMPORTANT: we omit the value from the fields because we don't want to store the value
+          // in the send state. If you forget this, you will leak the secret values to the server.
+          initiateSendBodyFields.push({
+            title: field.title,
+            type: field.type,
+          });
+        }
+
         const initiateSendBody: InitiateSendBody = {
           title: sendBuilderConfiguration.title,
           confirmationEmail: sendBuilderConfiguration.confirmationEmail,
           expirationDate: sendBuilderConfiguration.expirationDate,
           maxViews: sendBuilderConfiguration.maxViews,
           password: sendBuilderConfiguration.password,
-          fields: sendBuilderConfiguration.fields.map((field) => {
-            // VERY IMPORTANT: we omit the value from the fields because we don't want to store the value
-            // in the send state. If you forget this, you will leak the secret values to the server.
-
-            // eslint-disable-next-line @typescript-eslint/no-unused-vars
-            const { value, ...rest } = field;
-
-            return rest;
-          }),
+          fields: initiateSendBodyFields,
         };
 
         // initiate the secret send
@@ -159,7 +164,7 @@ function SecretSenderInner({ sendBuilderConfiguration }: { sendBuilderConfigurat
 
         let finishedParts = 0;
 
-        const uploadPromises = chunks.map((chunk, index) => {
+        const uploadPromiseGenerators = chunks.map((chunk, index) => {
           return async () => {
             const fetchPromise = fetch(`/marketing/api/sends/upload-send-encrypted-part`, {
               method: "POST",
@@ -185,7 +190,7 @@ function SecretSenderInner({ sendBuilderConfiguration }: { sendBuilderConfigurat
         });
 
         const uploadEncryptedPartResults = await parallelWithLimit({
-          fns: uploadPromises,
+          promiseGenerators: uploadPromiseGenerators,
           limit: 3,
         });
 

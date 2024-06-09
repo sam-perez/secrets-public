@@ -1,7 +1,14 @@
 import pako from "pako";
 
 // eslint-disable-next-line max-len
-import { decryptData, encryptData, StringifiedUint8Array, stringToUint8Array, uint8ArrayToString } from "../encryption";
+import {
+  decryptData,
+  encryptData,
+  generateRandomPassword,
+  StringifiedUint8Array,
+  stringToUint8Array,
+  uint8ArrayToString,
+} from "../encryption";
 
 /**
  * Represents a secret value. Is a response to a secret prompt within a send
@@ -70,9 +77,7 @@ export const packSecrets = async (secretResponse: SecretResponses): Promise<Pack
   // generate a random password using the character set [A-Za-z0-9]
   // we are going with 20 characters for now, which is a good balance between security and usability.
   // we will have 62^20 possible passwords, which should take "forever" to brute force.
-  const alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-  const getRandomChar = () => alphabet.charAt(Math.floor(Math.random() * alphabet.length));
-  const password = Array.from({ length: 20 }, getRandomChar).join("");
+  const password = generateRandomPassword(20);
 
   const { iv, ciphertext, salt } = await encryptData(compressedJsonSecretValues, password);
 

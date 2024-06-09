@@ -1,7 +1,7 @@
+import { Pencil1Icon } from "@radix-ui/react-icons";
 import { useEffect, useState } from "react";
 
 import { Input } from "../../ui/input";
-import { Pencil1Icon } from "@radix-ui/react-icons";
 
 /**
  * The props for the EditableText component.
@@ -52,6 +52,7 @@ export const EditableText = ({ defaultValue, value, onChange }: EditableTextProp
   };
 
   return (
+    // eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions
     <div onClick={handleClick} className="cursor-pointer">
       {isEditing ? (
         <Input type="text" value={text} onChange={handleChange} onBlur={handleBlur} onKeyDown={handleKeyDown} />

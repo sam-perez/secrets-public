@@ -9,11 +9,13 @@ import {
   getSendConfig,
   getSendState,
   saveSendState,
+  SEND_VIEW_EXPIRATION_MS,
   SendId,
   SendState,
   SendViewId,
+  writeSendViewExpirationRecord,
 } from "../lib/sends";
-import { nowIso8601DateTimeString } from "../lib/time";
+import { getIso8601DateTimeString, nowIso8601DateTimeString } from "../lib/time";
 
 /** The response from the initiate send view endpoint. */
 export type InitiateSendViewResponse = {
@@ -172,7 +174,12 @@ If you didn't request this code, you can safely ignore this email.
 
     // save the view to the send state
     sendState.views.push(view);
-    await saveSendState(sendState);
+    const sendViewExpiresAt = new Date(new Date().getTime() + SEND_VIEW_EXPIRATION_MS);
+
+    await Promise.all([
+      saveSendState(sendState),
+      writeSendViewExpirationRecord(sendState.sendId, sendViewId, getIso8601DateTimeString(sendViewExpiresAt)),
+    ]);
 
     return new Response(JSON.stringify(initiateSendViewResponse), {
       headers: {

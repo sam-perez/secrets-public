@@ -1,10 +1,18 @@
 import { ActionFunction } from "@remix-run/node";
 
-import { ExpirationDateTimeUnits,SendBuilderConfiguration, SendBuilderField } from "~/components/sends/builder/types";
+import { ExpirationDateTimeUnits, SendBuilderConfiguration, SendBuilderField } from "~/components/sends/builder/types";
 
 import { getRandomBase62String } from "../lib/crypto-utils";
-import { generateSendId, saveSendConfig, saveSendState,SendConfig, SendId, SendState } from "../lib/sends";
-import { getIso8601DateTimeString,nowIso8601DateTimeString } from "../lib/time";
+import {
+  generateSendId,
+  saveSendConfig,
+  saveSendState,
+  SendConfig,
+  SendId,
+  SendState,
+  writeSendExpirationRecord,
+} from "../lib/sends";
+import { getIso8601DateTimeString, nowIso8601DateTimeString } from "../lib/time";
 
 /** The response from the initiate send endpoint. */
 export type InitiateSendResponse = {
@@ -18,7 +26,9 @@ export type InitiateSendResponse = {
  * For now, reuse the send builder configuration. We do some massaging of the data in the route to make it
  * compatible with the send state and send config.
  *
- * We omit the value from the fields because we don't want to store the value in the send state.
+ * We omit the value from the fields because we don't want to store the value in the send state. This is a critical
+ * security measure, please do not ever store the value in the send state or transmit the value to the server in
+ * any way.
  */
 export type InitiateSendBody = Omit<SendBuilderConfiguration, "fields"> & {
   fields: Array<Omit<SendBuilderField, "value">>;
@@ -80,7 +90,17 @@ export const action: ActionFunction = async ({ request }) => {
   console.log("Initiating send", JSON.stringify({ sendId, sendConfig, initialSendState }, null, 4));
 
   try {
-    await Promise.all([saveSendConfig(sendConfig), saveSendState(initialSendState)]);
+    await Promise.all([
+      saveSendConfig(sendConfig),
+      saveSendState(initialSendState),
+      (async () => {
+        if (sendConfig.expiresAt === null) {
+          // no expiration date, don't write a record
+        } else {
+          await writeSendExpirationRecord(sendId, sendConfig.expiresAt);
+        }
+      })(),
+    ]);
 
     const initiateSendResponse: InitiateSendResponse = {
       sendId,

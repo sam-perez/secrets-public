@@ -163,7 +163,7 @@ export const getSendConfigKey = (sendId: SendId): string => `sends/instance-data
 export const getSendStateKey = (sendId: SendId): string => `sends/instance-data/${sendId}/state.json`;
 
 /**
- *  Get the key for and encrypted part in s3.
+ *  Get the key for an encrypted part in s3.
  */
 export const getEncryptedPartKey = (sendId: SendId, partNumber: number): string =>
   `sends/instance-data/${sendId}/encrypted-parts/${partNumber}.bin`;
@@ -171,8 +171,22 @@ export const getEncryptedPartKey = (sendId: SendId, partNumber: number): string 
 /**
  * Get the key for send expiration info in s3.
  */
-export const getSendExpirationKey = (sendId: SendId, expiration: string): string =>
-  `sends/expirations/sends/${expiration}/${sendId}`;
+export const getSendExpirationKey = (sendId: SendId, expiresAt: Iso8601DateTimeString): string =>
+  `sends/expirations/sends/${expiresAt}/${sendId}`;
+
+/**
+ * Writes a send expiration record to s3.
+ */
+export const writeSendExpirationRecord = async (sendId: SendId, expiresAt: Iso8601DateTimeString) => {
+  const sendExpirationKey = getSendExpirationKey(sendId, expiresAt);
+
+  await uploadToS3({
+    bucket: "MARKETING_BUCKET",
+    // We don't need to store any data in the expiration record, just the key is enough
+    body: Buffer.from(""),
+    key: sendExpirationKey,
+  });
+};
 
 /**
  * Get the key for send view expiration info in s3.
@@ -181,8 +195,22 @@ export const getSendViewExpirationKey = (sendId: SendId, sendViewId: SendViewId,
   `sends/expirations/views/${expiration}/${sendId}/${sendViewId}`;
 
 /**
+ * Writes a send view expiration record to s3.
+ */
+export const writeSendViewExpirationRecord = async (sendId: SendId, sendViewId: SendViewId, expiration: string) => {
+  const sendViewExpirationKey = getSendViewExpirationKey(sendId, sendViewId, expiration);
+
+  await uploadToS3({
+    bucket: "MARKETING_BUCKET",
+    // We don't need to store any data in the expiration record, just the key is enough
+    body: Buffer.from(""),
+    key: sendViewExpirationKey,
+  });
+};
+
+/**
  * The amount of time we are willing to wait after a view is initiated before we consider it too old
- * and reject further requests to download parts.
+ * and reject further requests to download parts or interact with it in any way further.
  */
 export const SEND_VIEW_EXPIRATION_MS = 60 * 60 * 1000; // 1 hour
 
