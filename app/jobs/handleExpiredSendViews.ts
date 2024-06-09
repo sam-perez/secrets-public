@@ -15,29 +15,31 @@ import { nowIso8601DateTimeString } from "~/lib/time";
 export const handleExpiredSendViews = async () => {
   console.log("Starting job to handle expired sends views...");
 
-  const expiredSendViews = await listNextPageOfSendViewExpirationRecords();
+  const sendViewExpirationRecords = await listNextPageOfSendViewExpirationRecords();
 
-  if (expiredSendViews === undefined) {
+  if (sendViewExpirationRecords === undefined) {
     console.log("No send view expiration records found.");
     return;
   }
 
-  console.log(`Found ${expiredSendViews.length} expired send view records, processing any that have expired.`);
+  console.log(
+    `Found ${sendViewExpirationRecords.length} send view expiration records, processing any that have expired.`
+  );
 
   const now = new Date();
   console.log(`Current time is ${now.toISOString()}.`);
 
-  for (const expiredSendView of expiredSendViews) {
-    if (expiredSendView.Key === undefined) {
-      console.error("Expired send view has no key, skipping.");
+  for (const sendViewExpirationRecord of sendViewExpirationRecords) {
+    if (sendViewExpirationRecord.Key === undefined) {
+      console.error("Send view expiration record has no key, skipping.");
       continue;
     }
 
     // the key is in the format `sends/expirations/views/${expiresAt}/${sendId}/${sendViewId}`
-    const [, , , expiresAtIsoString, sendId, sendViewId] = expiredSendView.Key.split("/");
+    const [, , , expiresAtIsoString, sendId, sendViewId] = sendViewExpirationRecord.Key.split("/");
     const expiresAt = new Date(expiresAtIsoString);
 
-    console.log(`Processing expired send view with key ${expiredSendView.Key}.`, {
+    console.log(`Processing send view expiration record with key ${sendViewExpirationRecord.Key}.`, {
       expiresAt,
       sendId,
       sendViewId,
@@ -59,7 +61,7 @@ export const handleExpiredSendViews = async () => {
           console.log(`Send view ${sendViewId} has already been closed, deleting this record and skipping.`);
           await deleteObjectInS3({
             bucket: "MARKETING_BUCKET",
-            key: expiredSendView.Key,
+            key: sendViewExpirationRecord.Key,
           });
 
           continue;
@@ -85,11 +87,11 @@ export const handleExpiredSendViews = async () => {
           saveSendState(sendState),
           deleteObjectInS3({
             bucket: "MARKETING_BUCKET",
-            key: expiredSendView.Key,
+            key: sendViewExpirationRecord.Key,
           }),
         ]);
       } catch (error) {
-        console.error(`Error processing expired send view with key ${expiredSendView.Key}.`, error);
+        console.error(`Error processing send view expiration record with key ${sendViewExpirationRecord.Key}.`, error);
       }
     } else {
       console.log("We have reached first non-expired send view, stopping processing.");

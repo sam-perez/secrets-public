@@ -14,29 +14,29 @@ import { nowIso8601DateTimeString } from "~/lib/time";
 export const handleExpiredSends = async () => {
   console.log("Starting job to handle expired sends...");
 
-  const expiredSends = await listNextPageOfSendExpirationRecords();
+  const sendExpirationRecords = await listNextPageOfSendExpirationRecords();
 
-  if (expiredSends === undefined) {
+  if (sendExpirationRecords === undefined) {
     console.log("No send expiration records found.");
     return;
   }
 
-  console.log(`Found ${expiredSends.length} expired send records, processing any that have expired.`);
+  console.log(`Found ${sendExpirationRecords.length} expired send records, processing any that have expired.`);
 
   const now = new Date();
   console.log(`Current time is ${now.toISOString()}.`);
 
-  for (const expiredSend of expiredSends) {
-    if (expiredSend.Key === undefined) {
+  for (const sendExpirationRecord of sendExpirationRecords) {
+    if (sendExpirationRecord.Key === undefined) {
       console.error("Expired send has no key, skipping.");
       continue;
     }
 
     // the key is in the format `sends/expirations/sends/${expiresAt}/${sendId}`
-    const [, , , expiresAtIsoString, sendId] = expiredSend.Key.split("/");
+    const [, , , expiresAtIsoString, sendId] = sendExpirationRecord.Key.split("/");
     const expiresAt = new Date(expiresAtIsoString);
 
-    console.log(`Processing expired send with key ${expiredSend.Key}.`, {
+    console.log(`Processing send expiration record with key ${sendExpirationRecord.Key}.`, {
       sendId,
       expiresAt,
     });
@@ -59,11 +59,11 @@ export const handleExpiredSends = async () => {
           saveSendState(sendState),
           deleteObjectInS3({
             bucket: "MARKETING_BUCKET",
-            key: expiredSend.Key,
+            key: sendExpirationRecord.Key,
           }),
         ]);
       } catch (error) {
-        console.error(`Error processing expired send with key ${expiredSend.Key}.`, error);
+        console.error(`Error processing send expiration record with key ${sendExpirationRecord.Key}.`, error);
       }
     } else {
       console.log("We have reached first non-expired send, stopping processing.");
