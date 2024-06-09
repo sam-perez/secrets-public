@@ -18,7 +18,7 @@ export default function AppLayout() {
   return (
     <>
       <MarketingNav hide_links={true} />
-      <main className="h-auto pt-10 sm:pt-20">
+      <main className="h-auto pt-4 sm:pt-10 px-4">
         <div className="mx-auto max-w-5xl">
           <Outlet />
         </div>

@@ -1,4 +1,4 @@
-import { GlobeIcon, LockClosedIcon, QuestionMarkCircledIcon } from "@radix-ui/react-icons";
+import { GlobeIcon, LockClosedIcon, StackIcon } from "@radix-ui/react-icons";
 import { Link } from "@remix-run/react";
 
 interface AboutSidenavProps {
@@ -8,15 +8,15 @@ interface AboutSidenavProps {
 const marketing = [
   {
     icon: LockClosedIcon,
-    text: "All of your information is end-to-end encrypted; only you have the decryption token.",
+    text: "All of your information is end-to-end encrypted; only you have the decryption token in the link.",
   },
   {
     icon: GlobeIcon,
-    text: "Using AES-256 Encryption Algorithm",
+    text: "Secured using AES-256 Encryption Algorithm",
   },
   {
-    icon: QuestionMarkCircledIcon,
-    text: "Have more questions?",
+    icon: StackIcon,
+    text: "Data is encrypted on the sender's device and decrypted only on the recipient's device",
   },
 ];
 
@@ -25,7 +25,7 @@ export default function AboutSidenav({ showAbout }: AboutSidenavProps) {
     <div className="pt-6 border-t">
       {marketing.map((item, index) => (
         <div key={index} className="text-sm text-slate-600">
-          <div className="flex mb-4 space-x-4">
+          <div className="flex mb-4 items-center space-x-4">
             <item.icon className="h-4 w-4 flex-none" />
             <span>{item.text}</span>
           </div>
