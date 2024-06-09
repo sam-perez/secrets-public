@@ -17,17 +17,13 @@ const nav_links_left = [
   },
 ];
 const nav_links_right = [
-  // {
-  //   name: "Pricing",
-  //   href: "/pricing",
-  // },
-  {
-    name: "Documentation",
-    href: "https://github.com/",
-  },
   {
     name: "Security",
     href: "/security",
+  },
+  {
+    name: "Github",
+    href: "https://github.com/2Secured",
   },
 ];
 
