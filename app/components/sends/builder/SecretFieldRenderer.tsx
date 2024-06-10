@@ -22,9 +22,11 @@ export type SendBuilderFieldWithId = SendBuilderField & { id: number };
 export const SecretFieldRenderer = ({
   sendBuilderField,
   updateItem,
+  deleteItem,
 }: {
   sendBuilderField: SendBuilderFieldWithId;
   updateItem: (itemIndex: number, newItem: Partial<Pick<SendBuilderField, "title" | "value">>) => void;
+  deleteItem: (id: number) => void;
 }) => {
   const { title, type, placeholder, value, id } = sendBuilderField;
 
@@ -153,7 +155,8 @@ export const SecretFieldRenderer = ({
                 })()}
               />
             )}
-            <Button variant="outline" size="icon">
+
+            <Button variant="outline" size="icon" onClick={() => deleteItem(id)}>
               <Cross1Icon className="h-3 w-3 flex-none" />
             </Button>
           </div>

@@ -72,10 +72,12 @@ export default function SecretBuilderConfigurationFooter() {
     [sendBuilderConfiguration, updateConfig]
   );
 
-  const readyToGenerateLink = sendBuilderConfiguration.fields.every((field) => {
-    // all fields are either a string or a file array, so funny enough they all have a length property.
-    return field.value !== null && field.value.length > 0;
-  });
+  const readyToGenerateLink =
+    sendBuilderConfiguration.fields.length > 0 &&
+    sendBuilderConfiguration.fields.every((field) => {
+      // all fields are either a string or a file array, so funny enough they all have a length property.
+      return field.value !== null && field.value.length > 0;
+    });
 
   const sharedClasses = "max-w-1/3 sm:max-w-[140px] overflow-hidden";
   return (
@@ -152,19 +154,15 @@ export function LinkExpirationConfigurationPopover({
     <Popover>
       <PopoverTrigger asChild>
         <Button variant="ghost" className="px-2">
-          {(expirationNumber && expirationUnit) || views ? (
+          {
             <span className="flex items-center">
               <LinkBreak2Icon className="h-4 w-4 mr-1" />
               {expirationNumber && expirationUnit ? `${expirationNumber}${expirationUnit[0]}` : ""}
-              {expirationNumber && views ? " ·" : ""}
-              {views !== null ? ` ${views} view${views === 1 ? "" : "s"}` : ""}
+              {expirationNumber ? " · " : ""}
+              {/* 1 view is the default, so always render that here. */}
+              {views !== null ? `${views} view${views === 1 ? "" : "s"}` : "1 view"}
             </span>
-          ) : (
-            <>
-              <LinkNone2Icon className="h-4 w-4 mr-1" />
-              <span className="text-slate-500 text-xs">Link Expiration</span>
-            </>
-          )}
+          }
         </Button>
       </PopoverTrigger>
       <PopoverContent>
@@ -378,7 +376,13 @@ export function ConfirmationEmailConfigurationPopover({
           </p>
         </div>
 
-        <small>Enter Email</small>
+        {emailInputTextValue.length > 0 && validateEmail(emailInputTextValue) === false ? (
+          <small className="text-red-500">Email not set until email is valid</small>
+        ) : emailInputTextValue.length > 0 && validateEmail(emailInputTextValue) === true ? (
+          <small className="text-green-500">Email Set</small>
+        ) : (
+          <small>Enter Email</small>
+        )}
         <div className="flex space-x-2 mt-1"></div>
         <Input placeholder="example@test.com" type="email" value={emailInputTextValue} onChange={handleChange} />
       </PopoverContent>

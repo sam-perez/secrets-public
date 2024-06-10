@@ -32,7 +32,6 @@ import { SendBuilderField } from "./types";
  */
 export default function SecretBuilderFieldsEditorContainer() {
   const { config: sendBuilderConfiguration, updateConfig } = useSendBuilderConfiguration();
-  // TODO: figure out why dnd kit is flickering/transitioning incorrectly when re-ordering
   // For now, let's just have it snap. We achieve this by just re-rendering the component.
   const [rearrangeCount, setRearrangeCount] = useState<number>(0);
 
@@ -127,6 +126,12 @@ export default function SecretBuilderFieldsEditorContainer() {
     updateItems(updatedItems);
   };
 
+  const deleteItem = (id: number) => {
+    const updatedItems = items.filter((item) => item.id !== id);
+
+    updateItems(updatedItems);
+  };
+
   return (
     <>
       <div className="max-w-4xl mx-auto">
@@ -162,7 +167,12 @@ export default function SecretBuilderFieldsEditorContainer() {
         </div>
         {/* end menu */}
         <DndContext sensors={sensors} onDragEnd={handleDragEnd} collisionDetection={closestCorners}>
-          <SecretFieldsContainer key={rearrangeCount} updateItem={updateItem} sendBuilderFields={items} />
+          <SecretFieldsContainer
+            key={rearrangeCount}
+            updateItem={updateItem}
+            deleteItem={deleteItem}
+            sendBuilderFields={items}
+          />
         </DndContext>
       </div>
     </>

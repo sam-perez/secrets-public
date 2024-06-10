@@ -668,9 +668,6 @@ function SendViewUnlocker({
               <Button disabled={confirmationCode.length === 0} onClick={submitConfirmationCode}>
                 Continue
               </Button>
-              {
-                // TODO: add a resend confirmation code button
-              }
             </div>
           </DialogContent>
         </Dialog>
@@ -802,10 +799,6 @@ function SendViewDownloaderAndDecryptor({
       </div>
     );
   } else {
-    // TODO: this is where the revealer should go. We still need to store the config for the send and
-    // send it down once the send is ready to view. For now, just hardcode the config.
-
-    // TODO
     return (
       <div className="mx-auto lg:grid lg:max-w-7xl grid-cols-3 gap-8">
         <div className="lg:col-span-2">
@@ -818,15 +811,6 @@ function SendViewDownloaderAndDecryptor({
         </div>
 
         <aside className="space-y-4">
-          {/* <div>
-            <Label>Created on</Label>
-            <p>TODO date</p>
-          </div> */}
-
-          {/* <div>
-            <Label>Expires in</Label>
-            <p>TODO views / TODO date</p>
-          </div> */}
           <div>
             <Alert variant={"info"} className="mb-4">
               <LockOpen1Icon className="h-4 w-4 text-green-500" />
