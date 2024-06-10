@@ -127,11 +127,13 @@ export const SecretFieldRenderer = ({
             )}
             {type === "multi-line-text" && (
               <Textarea
+                style={{ resize: "none" }}
                 placeholder={placeholder}
                 value={value || ""}
                 onChange={(event) => {
                   updateItem(sendBuilderField.id, { value: event.target.value });
                 }}
+                rows={Math.min(20, Math.max(4, (value || "").split("\n").length))}
               />
             )}
             <Button variant="outline" size="icon">
