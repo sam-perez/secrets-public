@@ -133,7 +133,24 @@ export const SecretFieldRenderer = ({
                 onChange={(event) => {
                   updateItem(sendBuilderField.id, { value: event.target.value });
                 }}
-                rows={Math.min(20, Math.max(4, (value || "").split("\n").length))}
+                rows={(() => {
+                  // Base number of rows is 4. We will resize automatically based on the number of lines in the text
+                  // up to a maximum of 20 rows.
+                  const MAX_ROWS = 20;
+                  const MIN_ROWS = 4;
+
+                  const rowsRequiredByText = (value || "").split("\n").length;
+
+                  if (rowsRequiredByText < MIN_ROWS) {
+                    return MIN_ROWS;
+                  }
+
+                  if (rowsRequiredByText > MAX_ROWS) {
+                    return MAX_ROWS;
+                  }
+
+                  return rowsRequiredByText;
+                })()}
               />
             )}
             <Button variant="outline" size="icon">
