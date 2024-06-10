@@ -321,6 +321,14 @@ export function LinkExpirationConfigurationPopover({
 }
 
 /**
+ * Helper function to validate an email address.
+ */
+function validateEmail(email: string) {
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  return emailRegex.test(email);
+}
+
+/**
  * The email confirmation configuration popover. Reports any changes back to the parent.
  */
 export function ConfirmationEmailConfigurationPopover({
@@ -328,13 +336,21 @@ export function ConfirmationEmailConfigurationPopover({
 }: {
   setConfirmationEmail: (email: string | null) => void;
 }) {
-  const [email, setEmail] = useState("");
+  const [emailInputTextValue, setEmailInputTextValue] = useState("");
+
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setEmail(event.target.value);
+    setEmailInputTextValue(event.target.value);
+
     if (event.target.value === "") {
       setConfirmationEmail(null);
     } else {
-      setConfirmationEmail(event.target.value);
+      // check if the email is valid
+      if (validateEmail(event.target.value)) {
+        setConfirmationEmail(event.target.value);
+      } else {
+        // if the email is not valid, clear the email
+        setConfirmationEmail(null);
+      }
     }
   };
 
@@ -342,7 +358,7 @@ export function ConfirmationEmailConfigurationPopover({
     <Popover>
       <PopoverTrigger asChild>
         <Button variant="ghost" className="px-2">
-          {email ? (
+          {validateEmail(emailInputTextValue) === true ? (
             <span className="flex items-center font-medium text-sm">
               <EnvelopeOpenIcon className="h-4 w-4 mr-1" /> Email Set
             </span>
@@ -364,7 +380,7 @@ export function ConfirmationEmailConfigurationPopover({
 
         <small>Enter Email</small>
         <div className="flex space-x-2 mt-1"></div>
-        <Input placeholder="example@test.com" type="email" value={email} onChange={handleChange} />
+        <Input placeholder="example@test.com" type="email" value={emailInputTextValue} onChange={handleChange} />
       </PopoverContent>
     </Popover>
   );

@@ -60,7 +60,7 @@ export const SecretFieldRenderer = ({
   }, [isDragging]);
 
   return (
-    <div ref={setNodeRef} className={"block"} style={style}>
+    <div ref={setNodeRef} className={"block"} style={{ ...style, opacity: isDragging ? 0.5 : 1 }}>
       <div className="flex items-center p-2">
         <DragHandleDots2Icon
           {...listeners}
