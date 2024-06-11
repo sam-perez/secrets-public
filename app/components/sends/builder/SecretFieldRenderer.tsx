@@ -9,6 +9,7 @@ import { Label } from "../../ui/label";
 import { Textarea } from "../../ui/textarea";
 import { EditableText } from "./EditableText";
 import { SendBuilderField } from "./types";
+import { Badge } from "~/components/ui/badge";
 
 /** Internally used type for the builder fields, id is required to play nicely with dnd-kit */
 export type SendBuilderFieldWithId = SendBuilderField & { id: number };
@@ -85,7 +86,7 @@ export const SecretFieldRenderer = ({
               }}
             />
           </Label>
-          <div className="flex items-center space-x-2" data-no-dnd="true">
+          <div className="flex items-center space-x-2 justify-between" data-no-dnd="true">
             {type === "single-line-text" && (
               <Input
                 type="text"
@@ -121,9 +122,15 @@ export const SecretFieldRenderer = ({
                   style={{ display: "none" }} // Hide the actual input element
                 />
                 <div>
-                  {value !== null && value.length > 0
-                    ? value.map((f) => f.name).join(", ")
-                    : "Click to select a file..."}
+                  {value !== null && value.length > 0 ? (
+                    value.map((f) => (
+                      <Badge key={f.name} variant={"secondary"} className="mr-2">
+                        {f.name}
+                      </Badge>
+                    ))
+                  ) : (
+                    <Button variant={"secondary"}>Choose files</Button>
+                  )}
                 </div>
               </div>
             )}
