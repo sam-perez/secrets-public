@@ -362,6 +362,7 @@ export function ConfirmationEmailConfigurationPopover({
   return (
     <Popover>
       <PopoverTrigger asChild>
+        {/* TODO: Show something obvious when the email is in error state! */}
         <Button variant="ghost" className="px-2">
           {validateEmail(emailInputTextValue) === true ? (
             <span className="flex items-center font-medium text-sm">
