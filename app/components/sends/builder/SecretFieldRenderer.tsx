@@ -3,13 +3,14 @@ import { CSS } from "@dnd-kit/utilities";
 import { Cross1Icon, DragHandleDots2Icon, TrashIcon } from "@radix-ui/react-icons";
 import { useEffect, useRef } from "react";
 
+import { Badge } from "~/components/ui/badge";
+
 import { Button } from "../../ui/button";
 import { Input } from "../../ui/input";
 import { Label } from "../../ui/label";
 import { Textarea } from "../../ui/textarea";
 import { EditableText } from "./EditableText";
 import { SendBuilderField } from "./types";
-import { Badge } from "~/components/ui/badge";
 
 /** Internally used type for the builder fields, id is required to play nicely with dnd-kit */
 export type SendBuilderFieldWithId = SendBuilderField & { id: number };
