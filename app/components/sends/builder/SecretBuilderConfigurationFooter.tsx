@@ -357,6 +357,8 @@ export function ConfirmationEmailConfigurationPopover({
     }
   };
 
+  const isInEmailErrorState = emailInputTextValue.length > 0 && validateEmail(emailInputTextValue) === false;
+
   return (
     <Popover>
       <PopoverTrigger asChild>
@@ -381,15 +383,23 @@ export function ConfirmationEmailConfigurationPopover({
           </p>
         </div>
 
-        {emailInputTextValue.length > 0 && validateEmail(emailInputTextValue) === false ? (
-          <small className="text-red-500">Email not set until email is valid</small>
-        ) : emailInputTextValue.length > 0 && validateEmail(emailInputTextValue) === true ? (
-          <small className="text-green-500">Email Set</small>
-        ) : (
-          <small>Enter Email</small>
-        )}
+        <small>Enter Email</small>
         <div className="flex space-x-2 mt-1"></div>
-        <Input placeholder="example@test.com" type="email" value={emailInputTextValue} onChange={handleChange} />
+        <Input
+          className={isInEmailErrorState ? "border-red-500 text-red-500 focus-visible:ring-red-500" : ""}
+          placeholder="example@test.com"
+          type="email"
+          value={emailInputTextValue}
+          onChange={handleChange}
+        />
+        {
+          // if the email is not valid, show an error message.
+          isInEmailErrorState ? (
+            <div className="mt-2">
+              <small className="text-red-500">enter a valid email address</small>
+            </div>
+          ) : null
+        }
       </PopoverContent>
     </Popover>
   );
