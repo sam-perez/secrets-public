@@ -1,4 +1,4 @@
-import { CheckIcon, CopyIcon, DownloadIcon, EyeOpenIcon } from "@radix-ui/react-icons";
+import { CheckIcon, CopyIcon, EyeOpenIcon } from "@radix-ui/react-icons";
 import { useState } from "react";
 
 import { Button } from "~/components/ui/button";
@@ -45,9 +45,6 @@ export const DisplaySecrets = ({ template, responses }: DisplaySecretsProps) => 
                         <CopyIcon className="h-4 w-4" />
                       )}
                     </Button>
-                    <Button variant={"outline"} size={"icon"}>
-                      <DownloadIcon className="h-4 w-4" />
-                    </Button>
                   </div>
                 </div>
               </div>
@@ -68,9 +65,6 @@ export const DisplaySecrets = ({ template, responses }: DisplaySecretsProps) => 
                         <CopyIcon className="h-4 w-4" />
                       )}
                     </Button>
-                    <Button variant={"outline"} size={"icon"}>
-                      <DownloadIcon className="h-4 w-4" />
-                    </Button>
                   </div>
                 </div>
               </div>
@@ -90,9 +84,6 @@ export const DisplaySecrets = ({ template, responses }: DisplaySecretsProps) => 
                   <div className="flex-none space-x-1">
                     <Button variant={"outline"} size={"icon"}>
                       <EyeOpenIcon className="h-4 w-4" />
-                    </Button>
-                    <Button variant={"outline"} size={"icon"}>
-                      <DownloadIcon className="h-4 w-4" />
                     </Button>
                   </div>
                 </div>
