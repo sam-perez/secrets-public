@@ -22,9 +22,6 @@ type MultiLineTextField = {
 
   /** The multi-line string value of the field. */
   value: string | null;
-
-  /** The number of rows for the text area. */
-  rows?: number;
 };
 
 /**
@@ -91,20 +88,25 @@ export type SendBuilderTemplate = {
   /** The title of the template. */
   title: string;
 
-  /** The description of the template. */
-  description: string;
-
   /** The fields for the template */
   fields: Array<Omit<SendBuilderField, "value">>;
-
-  /** Optional flag. If true, the template will not be shown in the template list or sitemap. */
-  private?: boolean;
 };
 
 /**
  * Our library of sending templates.
+ *
+ * We use the SendBuilderTemplate type, plus a description and optional private flag that are used
+ * in the UI to display the templates.
  */
-export const SEND_BUILDER_TEMPLATES: { [SLUG in string]: SendBuilderTemplate } = {
+export const SEND_BUILDER_TEMPLATES: {
+  [SLUG in string]: SendBuilderTemplate & {
+    /** The description of the template. */
+    description: string;
+
+    /** Optional flag. If true, the template will not be shown in the template list or sitemap. */
+    private?: boolean;
+  };
+} = {
   new: {
     title: "Blank Send",
     description: "Start from scratch and share any data with end-to-end encryption.",

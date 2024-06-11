@@ -66,9 +66,6 @@ export const action: ActionFunction = async ({ request }) => {
     password: body.password,
     template: {
       title: body.title,
-      // TODO: do we want to display a description at all in the revealer?
-      // Do we want the sender to be able to add in a description that gets displayed?
-      description: "",
       fields: body.fields,
     },
   };

@@ -7,11 +7,11 @@ import { SecretBuilderRoot } from "~/components/sends/builder/SecretBuilderRoot"
 import { Alert } from "~/components/ui/alert";
 import { Badge } from "~/components/ui/badge";
 
-import { SEND_BUILDER_TEMPLATES, SendBuilderTemplate } from "../components/sends/builder/types";
+import { SEND_BUILDER_TEMPLATES } from "../components/sends/builder/types";
 
 type LoaderData =
   | {
-      template: SendBuilderTemplate;
+      template: (typeof SEND_BUILDER_TEMPLATES)[keyof typeof SEND_BUILDER_TEMPLATES];
     }
   | { error: string };
 
