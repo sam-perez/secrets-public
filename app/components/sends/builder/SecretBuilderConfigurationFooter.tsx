@@ -81,7 +81,7 @@ export default function SecretBuilderConfigurationFooter() {
 
   const linkText =
     sendBuilderConfiguration.fields.length === 0
-      ? "Please add fields"
+      ? "Please add a field"
       : numberOfFields !== numberOfFieldsWithValues
       ? `${numberOfFieldsWithValues} of ${numberOfFields} complete`
       : "Get Encrypted Link";
@@ -404,8 +404,8 @@ export function ConfirmationEmailConfigurationPopover({
         {
           // if the email is not valid, show an error message.
           isInEmailErrorState ? (
-            <div className="mt-2">
-              <small className="text-red-500">enter a valid email address</small>
+            <div className="mt-1">
+              <span className="text-xs text-red-500">Enter a valid email address</span>
             </div>
           ) : null
         }

@@ -1,6 +1,6 @@
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
-import { Cross1Icon, DragHandleDots2Icon } from "@radix-ui/react-icons";
+import { Cross1Icon, DragHandleDots2Icon, TrashIcon } from "@radix-ui/react-icons";
 import { useEffect, useRef } from "react";
 
 import { Button } from "../../ui/button";
@@ -156,8 +156,8 @@ export const SecretFieldRenderer = ({
               />
             )}
 
-            <Button variant="outline" size="icon" onClick={() => deleteItem(id)}>
-              <Cross1Icon className="h-3 w-3 flex-none" />
+            <Button variant="ghost" size="icon" onClick={() => deleteItem(id)}>
+              <TrashIcon className="h-4 w-4 flex-none" />
             </Button>
           </div>
         </div>
