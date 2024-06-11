@@ -781,8 +781,10 @@ function SendViewDownloaderAndDecryptor({
     // can't do anything failed to load password via fragment
     return (
       <div className="container">
-        <h3>SEND VIEWER</h3>
-        <p className="muted mb-4">Failed to load password from URL fragment. This will not work.</p>
+        <h3>🫤 Something went wrong</h3>
+        <p className="muted mb-4">
+          Failed to load password from URL fragment. Unfortunately, this link is not viewable.
+        </p>
       </div>
     );
   }
@@ -790,15 +792,16 @@ function SendViewDownloaderAndDecryptor({
   if (secretResponses === null) {
     return (
       <div className="container">
-        <h3>SEND VIEWED</h3>
-        <p className="muted mb-4">The send has been successfully unlocked to view!</p>
-        <p>Send Id: {sendId}</p>
+        <h3>Unlocking data...</h3>
+        <p className="muted mb-4">The link has been successfully unlocked.</p>
+        {/* <p>Send Id: {sendId}</p>
         <p>Send View Id: {sendViewId}</p>
-        <p>Send View Password: {sendViewPassword}</p>
+        <p>Send View Password: {sendViewPassword}</p> */}
 
         {/** Can add in more fancy states here */}
-        <p>Downloading and decrypting...</p>
-        <Spinner />
+        <p className="flex items-center space-x-2">
+          <Spinner /> Downloading and decrypting...
+        </p>
       </div>
     );
   } else {
