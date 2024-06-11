@@ -2,7 +2,6 @@ import {
   EnvelopeClosedIcon,
   EnvelopeOpenIcon,
   LinkBreak2Icon,
-  LinkNone2Icon,
   LockClosedIcon,
   LockOpen1Icon,
 } from "@radix-ui/react-icons";
@@ -127,9 +126,15 @@ export function LinkExpirationConfigurationPopover({
     } | null;
   }) => void;
 }) {
-  const [views, setViews] = useState<number | null>(10); //default to 10 views
-  const [expirationNumber, setExpirationNumber] = useState<number | null>(4); //default to 5
-  const [expirationUnit, setExpirationUnit] = useState<ExpirationDateTimeUnits | null>("days"); //days
+  const { config: sendBuilderConfiguration } = useSendBuilderConfiguration();
+
+  const [views, setViews] = useState<number | null>(sendBuilderConfiguration.maxViews);
+  const [expirationNumber, setExpirationNumber] = useState<number | null>(
+    sendBuilderConfiguration.expirationDate?.totalTimeUnits || null
+  );
+  const [expirationUnit, setExpirationUnit] = useState<ExpirationDateTimeUnits | null>(
+    sendBuilderConfiguration.expirationDate?.timeUnit || null
+  );
 
   const reportExpirationDate = ({
     totalTimeUnits,

@@ -119,9 +119,12 @@ export default function Index() {
               sendBuilderConfiguration={{
                 title: defaultTemplate.title,
                 password: null,
-                expirationDate: null,
+                expirationDate: {
+                  totalTimeUnits: 1,
+                  timeUnit: "weeks",
+                },
                 confirmationEmail: null,
-                maxViews: null,
+                maxViews: 4,
                 fields: defaultTemplate.fields.map((field) => ({ ...field, value: null })),
               }}
             />

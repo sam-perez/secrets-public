@@ -72,9 +72,12 @@ export default function TemplateDetails() {
             sendBuilderConfiguration={{
               title: template.title,
               password: null,
-              expirationDate: null,
+              expirationDate: {
+                totalTimeUnits: 1,
+                timeUnit: "weeks",
+              },
               confirmationEmail: null,
-              maxViews: null,
+              maxViews: 4,
               fields: template.fields.map((field) => ({ ...field, value: null })),
             }}
           />
