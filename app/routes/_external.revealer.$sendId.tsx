@@ -449,7 +449,10 @@ function SendViewUnlocker({
                   <p>Would you like to view this link&apos;s encrypted data? This action will use a view.</p>
                   <p>Views remaining: {internalUnlockerStatus.viewsRemaining}</p>
                   <div className="flex justify-between">
-                    <Button onClick={initiateSend}>Yes, view data</Button>
+                    <Button onClick={initiateSend}>
+                      <LockOpen1Icon className="w-4 h-4 mr-2" />
+                      Yes, view data
+                    </Button>
                     <Link to={"https://2secured.link"}>
                       <Button variant={"outline"}>Cancel</Button>
                     </Link>
@@ -812,7 +815,7 @@ function SendViewDownloaderAndDecryptor({
 
         <aside className="space-y-4">
           <div>
-            <Alert variant={"info"} className="mb-4">
+            <Alert variant={"success"} className="mb-4">
               <LockOpen1Icon className="h-4 w-4 text-green-500" />
               <AlertTitle>Unlocked</AlertTitle>
               <AlertDescription>The link has been successfully unlocked and decrypted</AlertDescription>

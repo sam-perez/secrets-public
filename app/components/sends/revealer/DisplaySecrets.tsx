@@ -1,15 +1,43 @@
-import { CheckIcon, CopyIcon, EyeOpenIcon } from "@radix-ui/react-icons";
+import { CheckIcon, CopyIcon, DownloadIcon } from "@radix-ui/react-icons";
 import { useState } from "react";
 
+import { Badge } from "~/components/ui/badge";
 import { Button } from "~/components/ui/button";
 import { Label } from "~/components/ui/label";
-import { SecretResponses } from "~/lib/secrets";
+import { SecretResponses, SecretValue } from "~/lib/secrets";
 
 import { SendBuilderTemplate } from "../builder/types";
 
 type DisplaySecretsProps = {
   template: SendBuilderTemplate;
   responses: SecretResponses;
+};
+
+type FilesProps = {
+  files: SecretValue["files"];
+};
+
+const FilesList = ({ files }: FilesProps) => {
+  return (
+    <div>
+      {files.map((file, index) => {
+        // Convert Uint8Array to Blob
+        const blob = new Blob([file.data], { type: "application/octet-stream" });
+
+        // Create object URL
+        const url = URL.createObjectURL(blob);
+
+        return (
+          <a href={url} download={file.name} key={index}>
+            <Badge variant="outline" className="bg-white hover:bg-slate-100 mr-2">
+              <DownloadIcon className="h-3 w-3 mr-1" />
+              {file.name}
+            </Badge>
+          </a>
+        );
+      })}
+    </div>
+  );
 };
 
 export const DisplaySecrets = ({ template, responses }: DisplaySecretsProps) => {
@@ -72,20 +100,11 @@ export const DisplaySecrets = ({ template, responses }: DisplaySecretsProps) => 
           )}
 
           {field.type == "file" && (
-            //TODO file download
             <>
               <div className="flex-1">
                 <Label>{field.title}</Label>
                 <div className="flex items-center space-x-2">
-                  <p className="break-all bg-white p-2 rounded w-full">
-                    <code>File Name: {responses[index].files[0].name}</code>
-                  </p>
-                  {/* Display the file here based on responses[index].files[0].data */}
-                  <div className="flex-none space-x-1">
-                    <Button variant={"outline"} size={"icon"}>
-                      <EyeOpenIcon className="h-4 w-4" />
-                    </Button>
-                  </div>
+                  <FilesList files={responses[index].files} />
                 </div>
               </div>
             </>
