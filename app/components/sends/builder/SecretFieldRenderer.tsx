@@ -1,6 +1,6 @@
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
-import { Cross1Icon, DragHandleDots2Icon, TrashIcon } from "@radix-ui/react-icons";
+import { DragHandleDots2Icon, TrashIcon } from "@radix-ui/react-icons";
 import { useEffect, useRef } from "react";
 
 import { Badge } from "~/components/ui/badge";
