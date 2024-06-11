@@ -34,10 +34,10 @@ export default function AboutSidenav({ showAbout }: AboutSidenavProps) {
       {showAbout && (
         <div className="border-t pt-6 mt-6 text-slate-600">
           <p>
-            <Link className="font-medium hover:text-slate-500" to={"/"}>
-              2Secured
-            </Link>{" "}
-            is a free, secure way to send or request sensitive info securely using end-to-end encryption.
+            <Link className=" hover:text-slate-500" to={"/"}>
+              <span className="font-medium">2Secured</span> is a free, secure way to send or request sensitive info
+              using end-to-end encryption.
+            </Link>
           </p>
         </div>
       )}
