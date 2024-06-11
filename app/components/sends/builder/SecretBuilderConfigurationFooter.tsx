@@ -71,12 +71,20 @@ export default function SecretBuilderConfigurationFooter() {
     [sendBuilderConfiguration, updateConfig]
   );
 
-  const readyToGenerateLink =
-    sendBuilderConfiguration.fields.length > 0 &&
-    sendBuilderConfiguration.fields.every((field) => {
-      // all fields are either a string or a file array, so funny enough they all have a length property.
-      return field.value !== null && field.value.length > 0;
-    });
+  const numberOfFields = sendBuilderConfiguration.fields.length;
+  const numberOfFieldsWithValues = sendBuilderConfiguration.fields.filter(
+    // all fields are either a string or a file array, so funny enough they all have a length property.
+    (field) => field.value !== null && field.value.length > 0
+  ).length;
+
+  const readyToGenerateLink = numberOfFields > 0 && numberOfFields === numberOfFieldsWithValues;
+
+  const linkText =
+    sendBuilderConfiguration.fields.length === 0
+      ? "Please add fields"
+      : numberOfFields !== numberOfFieldsWithValues
+      ? `${numberOfFieldsWithValues} of ${numberOfFields} complete`
+      : "Get Encrypted Link";
 
   const sharedClasses = "max-w-1/3 sm:max-w-[140px] overflow-hidden";
   return (
@@ -98,7 +106,7 @@ export default function SecretBuilderConfigurationFooter() {
           {/* Button to generate link. */}
           <div>
             <Button className="w-full" disabled={!readyToGenerateLink} onClick={() => setShowLinkGeneration(true)}>
-              {"Get Encrypted Link"}
+              {linkText}
             </Button>
           </div>
 
