@@ -1,4 +1,11 @@
-import { CheckIcon, CopyIcon, EnvelopeClosedIcon, LinkBreak2Icon, LockClosedIcon } from "@radix-ui/react-icons";
+import {
+  CheckIcon,
+  CopyIcon,
+  EnvelopeClosedIcon,
+  LinkBreak2Icon,
+  LockClosedIcon,
+  OpenInNewWindowIcon,
+} from "@radix-ui/react-icons";
 import { useEffect, useState } from "react";
 
 import { Button } from "~/components/ui/button";
@@ -15,6 +22,7 @@ import { EncryptionWorkerProvider, useEncryptionWorker } from "../../context-pro
 import { Dialog, DialogClose, DialogContent, DialogFooter } from "../../ui/dialog";
 import { Spinner } from "../../ui/Spinner";
 import { SendBuilderConfiguration } from "./types";
+import { Link } from "@remix-run/react";
 
 /**
  * The component that sends the secret. Accepts a completed secret builder configuration, massages the data into the
@@ -274,8 +282,13 @@ function SecretSenderInner({ sendBuilderConfiguration }: { sendBuilderConfigurat
                 <div className="flex items-start space-x-2 mt-2">
                   <Input className="bg-slate-50 font-medium" type="text" value={getShareLink()} readOnly={true} />
                   <Button variant={"outline"} onClick={handleCopy}>
-                    {isCopied ? <CheckIcon className="text-green-500 h-4 w-4" /> : <CopyIcon className="h-4 w-4" />}
+                    {isCopied ? <CheckIcon className="text-green-500" /> : <CopyIcon />}
                   </Button>
+                  <Link to={getShareLink()}>
+                    <Button type="button" variant="outline">
+                      <OpenInNewWindowIcon />
+                    </Button>
+                  </Link>
                 </div>
 
                 {(sendBuilderConfiguration.maxViews || sendBuilderConfiguration.expirationDate) && (
@@ -322,11 +335,9 @@ function SecretSenderInner({ sendBuilderConfiguration }: { sendBuilderConfigurat
                 )}
               </div>
               <DialogFooter className="!justify-start">
-                <DialogClose asChild>
-                  <Button type="button" variant="outline" onClick={handleCopy}>
-                    Copy Link & Close
-                  </Button>
-                </DialogClose>
+                <Button type="button" variant="outline" onClick={handleCopy}>
+                  Copy Link
+                </Button>
               </DialogFooter>
             </>
           )}
