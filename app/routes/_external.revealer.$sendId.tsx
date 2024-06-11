@@ -809,9 +809,15 @@ function SendViewDownloaderAndDecryptor({
     );
   } else {
     return (
-      <div className="mx-auto lg:grid lg:max-w-7xl grid-cols-3 gap-8">
+      <div className="mx-auto lg:grid lg:max-w-2xl grid-cols-2 gap-8">
         <div className="lg:col-span-2">
-          <h3 className="mb-2">Viewing: {sendBuilderTemplate.title}</h3>
+          <Alert className="mb-4">
+            <LockOpen1Icon className="h-4 w-4 text-green-500" />
+            <AlertTitle>Unlocked</AlertTitle>
+            <AlertDescription>The link has been successfully unlocked and decrypted</AlertDescription>
+          </Alert>
+
+          <h3 className="mb-2">{sendBuilderTemplate.title}</h3>
 
           {/* <pre>{JSON.stringify(secretResponses, null, 2)}</pre> */}
           <div className="mt-4">
@@ -819,17 +825,12 @@ function SendViewDownloaderAndDecryptor({
           </div>
         </div>
 
-        <aside className="space-y-4">
+        <div className="space-y-4 lg:col-span-2">
           <div>
-            <Alert variant={"success"} className="mb-4">
-              <LockOpen1Icon className="h-4 w-4 text-green-500" />
-              <AlertTitle>Unlocked</AlertTitle>
-              <AlertDescription>The link has been successfully unlocked and decrypted</AlertDescription>
-            </Alert>
             {/* TODO use a toast ^ */}
             <AboutSidenav showAbout={true} />
           </div>
-        </aside>
+        </div>
       </div>
     );
   }

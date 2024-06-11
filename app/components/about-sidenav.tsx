@@ -24,7 +24,7 @@ export default function AboutSidenav({ showAbout }: AboutSidenavProps) {
   return (
     <div className="pt-6 border-t">
       {marketing.map((item, index) => (
-        <div key={index} className="text-sm text-slate-600">
+        <div key={index} className="text-sm text-slate-600 max-w-lg">
           <div className="flex mb-4 items-center space-x-4">
             <item.icon className="h-4 w-4 flex-none" />
             <span>{item.text}</span>
