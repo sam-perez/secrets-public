@@ -79,22 +79,22 @@ const markdown = `
 const integrations = [
   {
     title: "AWS",
-    description: "Push decrypted data into AWS secrets manager.",
+    description: "Push data into AWS secrets manager.",
     logo: aws_icon,
   },
   {
     title: "Webhooks",
-    description: "Send events including link views, expiration, or decrypted data to HTTP endpoints.",
+    description: "Send events including link views, expiration, or data to HTTP endpoints.",
     logo: webhooks_icon,
   },
   {
     title: "Slack",
-    description: "Send Slack messages for events such as link views, link expiration, or decrypted data to Slack.",
+    description: "Send Slack messages for events such as link views, link expiration, or data to Slack.",
     logo: slack_icon,
   },
   {
     title: "Google Sheets",
-    description: "Send decrypted data received to a sheet.",
+    description: "Send data received to a sheet.",
     logo: sheets_icon,
   },
 ];
