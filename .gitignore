@@ -8,3 +8,5 @@ node_modules
 # ignore js files and maps in ./app/workers directory
 /app/workers/**/*.js
 /app/workers/**/*.js.map
+
+.DS_Store

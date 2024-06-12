@@ -3,6 +3,7 @@ import { Tooltip, TooltipProvider } from "@radix-ui/react-tooltip";
 import { Link, NavLink } from "@remix-run/react";
 
 import { Button } from "./button";
+import LogoIcon from "./logo";
 import { NavigationMenu, NavigationMenuItem, NavigationMenuList, navigationMenuTriggerStyle } from "./navigation-menu";
 import { TooltipContent, TooltipTrigger } from "./tooltip";
 
@@ -35,8 +36,8 @@ export default function MarketingNav({ hide_links }: MarketingNavProps) {
         <div className="flex items-center">
           <Link to={"/"}>
             <div className=" flex items-center">
-              {/* <LogoIcon size="20px" color="#a8a29e" /> */}
-              <span className="text-base font-bold tracking-tight">2Secured</span>
+              <LogoIcon size="28px" color="#a8a29e" />
+              <span className="ml-1 text-base font-bold tracking-tight">2Secured</span>
             </div>
           </Link>
 
