@@ -797,14 +797,11 @@ function SendViewDownloaderAndDecryptor({
       <div className="container">
         <h3>Unlocking data...</h3>
         <p className="muted mb-4">The link has been successfully unlocked.</p>
-        {/* <p>Send Id: {sendId}</p>
-        <p>Send View Id: {sendViewId}</p>
-        <p>Send View Password: {sendViewPassword}</p> */}
 
         {/** Can add in more fancy states here */}
-        <p className="flex items-center space-x-2">
+        <div className="flex items-center space-x-2">
           <Spinner /> Downloading and decrypting...
-        </p>
+        </div>
       </div>
     );
   } else {
