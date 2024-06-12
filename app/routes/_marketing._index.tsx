@@ -11,15 +11,14 @@ import { SecretBuilderRoot } from "~/components/sends/builder/SecretBuilderRoot"
 import { Button } from "~/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "~/components/ui/tabs";
 import { TemplateCard } from "~/components/ui/TemplateCard";
-
-import { SEND_BUILDER_TEMPLATES } from "../components/sends/builder/types";
-
-import aws_icon from "~/images/icon_AWS.png";
-import sheets_icon from "~/images/icon_GOOGLE_SHEETS.png";
-import webhooks_icon from "~/images/icon_WEBHOOKS.png";
-import slack_icon from "~/images/icon_SLACK.png";
 import expire_img from "~/images/expire@2x.png";
 import form_img from "~/images/form@2x.png";
+import aws_icon from "~/images/icon_AWS.png";
+import sheets_icon from "~/images/icon_GOOGLE_SHEETS.png";
+import slack_icon from "~/images/icon_SLACK.png";
+import webhooks_icon from "~/images/icon_WEBHOOKS.png";
+
+import { SEND_BUILDER_TEMPLATES } from "../components/sends/builder/types";
 
 export const meta: MetaFunction = () => {
   return [
@@ -27,6 +26,7 @@ export const meta: MetaFunction = () => {
     {
       name: "description",
       content:
+        // eslint-disable-next-line max-len
         "2Secured offers a simple yet powerful way to send and receive information securely using end-to-end encryption. Encrypt text or files, and share via links that can expire, require MFA, or a password to view.",
     },
   ];
@@ -36,16 +36,19 @@ const howItWorks = [
   {
     title: "Start with a 2Secured form",
     description:
+      // eslint-disable-next-line max-len
       "Build a 2Secured form in seconds to send or request text and files securely. Set links to expire, restrict email, or set a password. ",
   },
   {
     title: "Get an encrypted link",
     description:
+      // eslint-disable-next-line max-len
       "2Secured encrypts the data using the SHA-256 algorithm and generates a secret link with the only decryption token.",
   },
   {
     title: "Share, decrypt and view",
     description:
+      // eslint-disable-next-line max-len
       "Share your link. Only you and the recipient have the decryption token, no other system or human can view it (not even us).",
   },
 ];
@@ -287,6 +290,7 @@ export default function Index() {
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 sm:gap-24 items-top mt-12">
             {integrations.map((integration, index) => (
               <div key={index} className="space-y-2">
+                {/* eslint-disable-next-line jsx-a11y/alt-text */}
                 <img src={integration.logo} className="h-6 w-6" />
                 <h6 className="font-medium">{integration.title}</h6>
                 <p>{integration.description}</p>

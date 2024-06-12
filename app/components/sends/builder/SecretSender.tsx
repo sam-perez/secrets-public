@@ -6,6 +6,7 @@ import {
   LockClosedIcon,
   OpenInNewWindowIcon,
 } from "@radix-ui/react-icons";
+import { Link } from "@remix-run/react";
 import { useEffect, useState } from "react";
 
 import { Button } from "~/components/ui/button";
@@ -19,10 +20,9 @@ import { UPLOAD_SEND_ENCRYPTED_PART_HEADERS } from "~/routes/marketing.api.sends
 
 // eslint-disable-next-line max-len
 import { EncryptionWorkerProvider, useEncryptionWorker } from "../../context-providers/EncryptionWorkerContextProvider";
-import { Dialog, DialogClose, DialogContent, DialogFooter } from "../../ui/dialog";
+import { Dialog, DialogContent, DialogFooter } from "../../ui/dialog";
 import { Spinner } from "../../ui/Spinner";
 import { SendBuilderConfiguration } from "./types";
-import { Link } from "@remix-run/react";
 
 /**
  * The component that sends the secret. Accepts a completed secret builder configuration, massages the data into the
