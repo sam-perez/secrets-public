@@ -164,7 +164,7 @@ export const SecretFieldRenderer = ({
               />
             )}
 
-            <Button variant="ghost" size="icon" onClick={() => deleteItem(id)}>
+            <Button variant="ghost" size="icon" onClick={() => deleteItem(id)} tabIndex={-1}>
               <TrashIcon className="h-4 w-4 flex-none" />
             </Button>
           </div>
