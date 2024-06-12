@@ -376,6 +376,11 @@ export function ConfirmationEmailConfigurationPopover({
             <span className="flex items-center font-medium text-sm">
               <EnvelopeOpenIcon className="h-4 w-4 mr-1" /> Email Set
             </span>
+          ) : emailInputTextValue.length > 0 ? (
+            <>
+              <EnvelopeClosedIcon className="h-4 w-4 mr-1 text-red-700" />
+              <span className="text-red-500 text-xs">Invalid Email</span>
+            </>
           ) : (
             <>
               <EnvelopeClosedIcon className="h-4 w-4 mr-1" />
