@@ -445,15 +445,15 @@ function SendViewUnlocker({
                 </>
               ) : (
                 <>
-                  <h4>View Encrypted Info</h4>
+                  <h4>View Encrypted Link</h4>
                   <p>Would you like to view this link&apos;s encrypted data? This action will use a view.</p>
                   <p>Views remaining: {internalUnlockerStatus.viewsRemaining}</p>
                   <div className="pb-4">
                     <Button className="w-full mb-3" onClick={initiateSend}>
                       <LockOpen1Icon className="w-4 h-4 mr-2" />
-                      Yes, view data
+                      Unlock & View
                     </Button>
-                    <Link to={"https://2secured.link"}>
+                    <Link to={"/"}>
                       <Button variant={"outline"} className="w-full">
                         Cancel
                       </Button>
