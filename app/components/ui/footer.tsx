@@ -12,13 +12,13 @@ export default function Footer() {
             </Link>
             . All Rights Reserved.
           </span>
-          <ul className="flex flex-wrap items-center mt-3 text-sm font-medium text-gray-500 sm:mt-0">
+          {/* <ul className="flex flex-wrap items-center mt-3 text-sm font-medium text-gray-500 sm:mt-0">
             <li>
               <Link to="#" className="hover:underline me-4 md:me-6">
                 About
               </Link>
             </li>
-          </ul>
+          </ul> */}
         </div>
       </footer>
     </>

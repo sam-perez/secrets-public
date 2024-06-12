@@ -11,7 +11,9 @@ export const meta: MetaFunction = () => {
     { title: "Encrypted Templates | 2Secured" },
     {
       name: "description",
-      content: "Start from one of these reusable forms to quickly send or receive encrypted information.",
+      content:
+        // eslint-disable-next-line max-len
+        "Start from one of these reusable templates to quickly send or receive encrypted information. Encrypt text or files, and share via links that can expire, require MFA, or a password to view.",
     },
   ];
 };

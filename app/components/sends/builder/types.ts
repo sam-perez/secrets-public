@@ -108,7 +108,7 @@ export const SEND_BUILDER_TEMPLATES: {
   };
 } = {
   new: {
-    title: "Blank Send",
+    title: "Encrypted Send",
     description: "Start from scratch and share any data with end-to-end encryption.",
     fields: [
       {

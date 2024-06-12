@@ -5,7 +5,9 @@ export const meta: MetaFunction = () => {
     { title: "Security | 2Secured" },
     {
       name: "description",
-      content: "2Secured is a simple yet powerful way to send and receive info securely using end-to-end encryption.",
+      content:
+        // eslint-disable-next-line max-len
+        "2Secured offers a simple yet powerful way to send and receive information securely using end-to-end encryption. Encrypt text or files, and share via links that can expire, require MFA, or a password to view.",
     },
   ];
 };

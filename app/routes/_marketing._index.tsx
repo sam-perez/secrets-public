@@ -14,12 +14,20 @@ import { TemplateCard } from "~/components/ui/TemplateCard";
 
 import { SEND_BUILDER_TEMPLATES } from "../components/sends/builder/types";
 
+import aws_icon from "~/images/icon_AWS.png";
+import sheets_icon from "~/images/icon_GOOGLE_SHEETS.png";
+import webhooks_icon from "~/images/icon_WEBHOOKS.png";
+import slack_icon from "~/images/icon_SLACK.png";
+import expire_img from "~/images/expire@2x.png";
+import form_img from "~/images/form@2x.png";
+
 export const meta: MetaFunction = () => {
   return [
-    { title: "2Secured" },
+    { title: "2Secured: Send & receive anything with end-to-end encryption" },
     {
       name: "description",
-      content: "2Secured is a simple yet powerful way to send and receive info securely using end-to-end encryption.",
+      content:
+        "2Secured offers a simple yet powerful way to send and receive information securely using end-to-end encryption. Encrypt text or files, and share via links that can expire, require MFA, or a password to view.",
     },
   ];
 };
@@ -27,16 +35,18 @@ export const meta: MetaFunction = () => {
 const howItWorks = [
   {
     title: "Start with a 2Secured form",
-    description: "Build a 2Secured form in seconds to send or request text and files securely. ",
+    description:
+      "Build a 2Secured form in seconds to send or request text and files securely. Set links to expire, restrict email, or set a password. ",
   },
   {
     title: "Get an encrypted link",
-    description: "2Secured encrypts the data using the SHA-256 algorithm and generates a link.",
+    description:
+      "2Secured encrypts the data using the SHA-256 algorithm and generates a secret link with the only decryption token.",
   },
   {
     title: "Share, decrypt and view",
     description:
-      "Only you and the recipient have the decryption token, no other system or human can view it (not even us).",
+      "Share your link. Only you and the recipient have the decryption token, no other system or human can view it (not even us).",
   },
 ];
 
@@ -62,6 +72,29 @@ const markdown = `
   }
   \`\`\`
 `;
+
+const integrations = [
+  {
+    title: "AWS",
+    description: "Push decrypted data into AWS secrets manager.",
+    logo: aws_icon,
+  },
+  {
+    title: "Webhooks",
+    description: "Send events including link views, expiration, or decrypted data to HTTP endpoints.",
+    logo: webhooks_icon,
+  },
+  {
+    title: "Slack",
+    description: "Send Slack messages for events such as link views, link expiration, or decrypted data to Slack.",
+    logo: slack_icon,
+  },
+  {
+    title: "Google Sheets",
+    description: "Send decrypted data received to a sheet.",
+    logo: sheets_icon,
+  },
+];
 
 export default function Index() {
   useEffect(() => {
@@ -99,8 +132,9 @@ export default function Index() {
           <div className="p-4">
             <h1 className="mb-4">Send and receive sensitive data with end-to-end encryption</h1>
             <p className="lead">
-              Stop risking passwords, API keys, banking info and other scary information by sharing over email. 2Secure
-              is a simple yet powerful way to send and receive data securely.
+              Stop risking sensitive information like passwords, API keys, and banking details by sharing them over
+              email. Create an end-to-end encrypted link with expiration controls, recipient restrictions, and password
+              protection instead.
             </p>
             <div className="space-x-2 pt-4">
               <Link to="/sends/templates/new">
@@ -204,7 +238,9 @@ export default function Index() {
             </Link>
           </div>
           <div>
-            <div className="border h-[500px]">sdfasdfasf</div>
+            <div>
+              <img src={form_img} alt="encrypted form editor" />
+            </div>
           </div>
         </div>
       </section>
@@ -221,7 +257,9 @@ export default function Index() {
               <Button>Try for yourself</Button>
             </Link>
           </div>
-          <div className="border h-[500px]">sdfasdfasf</div>
+          <div>
+            <img src={expire_img} alt="encrypted form editor" />
+          </div>
         </div>
       </section>
 
@@ -238,10 +276,24 @@ export default function Index() {
       </section>
 
       <section id="integrations" className="my-12 bg-slate-50">
-        <h3>Add 2Secured to your workflow for sensitive data</h3>
-        <p className="text-lg">
-          Pull data from, or push data to, other applications you may use. Want something not listed? Tell us
-        </p>
+        <div className="sm:p-20 px-4">
+          <div className="sm:pt-0 pt-14 max-w-lg">
+            <h2>Add 2Secured to your workflow for sensitive data.</h2>
+            <p className="text-lg mt-0 mb-4">
+              Pull or push data to other applications you may use. <br />
+              Need something not listed below? <Link to={"mailto:integrations@2secured.link"}>Tell us</Link>
+            </p>
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 sm:gap-24 items-top mt-12">
+            {integrations.map((integration, index) => (
+              <div key={index} className="space-y-2">
+                <img src={integration.logo} className="h-6 w-6" />
+                <h6 className="font-medium">{integration.title}</h6>
+                <p>{integration.description}</p>
+              </div>
+            ))}
+          </div>
+        </div>
       </section>
     </>
   );
