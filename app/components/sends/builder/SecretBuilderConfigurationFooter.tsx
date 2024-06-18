@@ -13,7 +13,7 @@ import { Popover, PopoverContent, PopoverTrigger } from "../../ui/popover";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../../ui/select";
 import { SecretSender } from "./SecretSender";
 import { useSendBuilderConfiguration } from "./SendBuilderConfigurationContextProvider";
-import { EXPIRATION_DATE_TIME_UNIT_OPTIONS, ExpirationDateTimeUnits, MAXIMUM_SEND_SIZE_IN_BYTES } from "./types";
+import { EXPIRATION_DATE_TIME_UNIT_OPTIONS, ExpirationDateTimeUnits, MAXIMUM_SEND_SIZE_IN_MEGA_BYTES } from "./types";
 
 /**
  * The secret builder configuration footer.
@@ -92,7 +92,7 @@ export default function SecretBuilderConfigurationFooter() {
   const readyToGenerateLink =
     numberOfFields > 0 &&
     numberOfFields === numberOfFieldsWithValues &&
-    totalBytesOfFields < MAXIMUM_SEND_SIZE_IN_BYTES;
+    totalBytesOfFields < MAXIMUM_SEND_SIZE_IN_MEGA_BYTES * 1024 * 1024;
 
   let linkText =
     sendBuilderConfiguration.fields.length === 0
@@ -101,8 +101,8 @@ export default function SecretBuilderConfigurationFooter() {
       ? `${numberOfFieldsWithValues} of ${numberOfFields} complete`
       : "Get Encrypted Link";
 
-  if (totalBytesOfFields >= MAXIMUM_SEND_SIZE_IN_BYTES) {
-    linkText = "Limit of 20MB exceeded";
+  if (totalBytesOfFields >= MAXIMUM_SEND_SIZE_IN_MEGA_BYTES * 1024 * 1024) {
+    linkText = `Limit of ${MAXIMUM_SEND_SIZE_IN_MEGA_BYTES}MB exceeded`;
   }
 
   const sharedClasses = "max-w-1/3 sm:max-w-[140px] overflow-hidden";
