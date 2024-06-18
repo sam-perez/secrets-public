@@ -55,23 +55,35 @@ const howItWorks = [
 
 const markdown = `
   \`\`\`bash
-  > 2secured-cli send-secret
-  --api-key XYZ
-  --expiration "7 days"
-  --confirmation-email "email@2secured.com"
-  --template "template_name"
-  --data "DATA_TO_ENCRYPT"
-  --file "./file/to/encrypt"
-  --message "some message for the user"
-  --tag "tags"
-
+  curl -X POST "https://2secured.link/api/initiate-send" \\
+      -H "Authorization: Bearer YOUR_API_KEY" \\
+      -H "Content-Type: application/json" \\
+      -d '{
+            "title": "Your title here",
+            "confirmationEmail": "example@email.com",
+            "expirationDate": {
+              "totalTimeUnits": 1,
+              "timeUnit": "week"
+            },
+            "maxViews": 4,
+            "password": "supersecret",
+            "fields": [
+              {
+                "title": "Prompt",
+                "type": "single-line-text"
+              },
+              {
+                "title": "Attachment",
+                "type": "file"
+              },
+            ]
+          }'
 
   #response
 
   {
-    "status": "success",
-    "requestId": "req123",
-    "link": "https://2secured.link/req123#decryptionkey"
+    "sendId": "send-123",
+    "link": "https://2secured.link/send-123#decryption-key"
   }
   \`\`\`
 `;
@@ -274,7 +286,7 @@ export default function Index() {
               Use the web app or integrate 2Secure into your development or application workflow.
             </p>
           </div>
-          <div dangerouslySetInnerHTML={{ __html: marked(markdown) }}></div>
+          <div style={{ fontSize: "0.8rem" }} dangerouslySetInnerHTML={{ __html: marked(markdown) }}></div>
         </div>
       </section>
 
