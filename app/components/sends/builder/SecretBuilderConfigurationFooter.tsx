@@ -1,6 +1,8 @@
 import {
+  CheckIcon,
   EnvelopeClosedIcon,
   EnvelopeOpenIcon,
+  LinkBreak1Icon,
   LinkBreak2Icon,
   LockClosedIcon,
   LockOpen1Icon,
@@ -124,9 +126,51 @@ export default function SecretBuilderConfigurationFooter() {
           </div>
           {/* Button to generate link. */}
           <div>
-            <Button className="w-full" disabled={!readyToGenerateLink} onClick={() => setShowLinkGeneration(true)}>
-              {linkText}
-            </Button>
+            <Popover>
+              <PopoverTrigger>
+                <Button className="w-full" disabled={!readyToGenerateLink} onClick={() => setShowLinkGeneration(true)}>
+                  {linkText}
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent>
+                <span className="font-medium">{sendBuilderConfiguration.title}</span>
+                <p className="text-xs text-slate-600">{sendBuilderConfiguration.fields.length} encrypted fields</p>
+                <p className="">A secure link will be generated with these options:</p>
+                <ul className="text-xs space-y-2">
+                  {(sendBuilderConfiguration.expirationDate || sendBuilderConfiguration.maxViews) && (
+                    <li className="flex items-center">
+                      <LinkBreak2Icon className="flex-none h-3 w-3 mr-2" />
+                      <span>
+                        This link will expire in{" "}
+                        <b>
+                          {sendBuilderConfiguration.expirationDate?.totalTimeUnits}{" "}
+                          {sendBuilderConfiguration.expirationDate?.timeUnit}
+                        </b>{" "}
+                        {sendBuilderConfiguration.maxViews && sendBuilderConfiguration.expirationDate ? "or " : ""}
+                        <b>{sendBuilderConfiguration.maxViews} views</b>
+                      </span>
+                    </li>
+                  )}
+                  {sendBuilderConfiguration.confirmationEmail && (
+                    <li className="flex items-center">
+                      <EnvelopeClosedIcon className="flex-none h-3 w-3 mr-2" />
+                      <span>
+                        The recipient will need to enter a code emailed to{" "}
+                        <b>{sendBuilderConfiguration.confirmationEmail}</b> to view
+                      </span>
+                    </li>
+                  )}
+                  {sendBuilderConfiguration.password && (
+                    <li className="flex items-center">
+                      <LockClosedIcon className="flex-none h-3 w-3 mr-2" />
+                      <span>
+                        The recipient must enter the password <b>{sendBuilderConfiguration.password}</b> to view
+                      </span>
+                    </li>
+                  )}
+                </ul>
+              </PopoverContent>
+            </Popover>
           </div>
 
           {/* Link generation dialog. */}
