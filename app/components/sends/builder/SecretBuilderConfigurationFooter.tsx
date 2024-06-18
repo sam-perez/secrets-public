@@ -573,7 +573,7 @@ export function ConfirmPopover({ btnLabel }: { btnLabel: string | "" }) {
               <EnvelopeClosedIcon className="flex-none h-3 w-3 mr-2" />
               <span>
                 The recipient will need to enter a code emailed to
-                <b>{sendBuilderConfiguration.confirmationEmail}</b> to view
+                <b> {sendBuilderConfiguration.confirmationEmail}</b> to view
               </span>
             </li>
           )}
