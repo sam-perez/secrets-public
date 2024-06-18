@@ -1,4 +1,4 @@
-import "highlight.js/styles/lightfair.css";
+import "highlight.js/styles/nnfx-dark.min.css";
 
 import { PaperPlaneIcon } from "@radix-ui/react-icons";
 import type { MetaFunction } from "@remix-run/node";
