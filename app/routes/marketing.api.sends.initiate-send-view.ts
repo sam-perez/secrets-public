@@ -16,6 +16,7 @@ import {
   writeSendViewExpirationRecord,
 } from "../lib/sends";
 import { getIso8601DateTimeString, nowIso8601DateTimeString } from "../lib/time";
+import { obscureEmailAddress } from "../lib/utils";
 
 /** The response from the initiate send view endpoint. */
 export type InitiateSendViewResponse = {
@@ -130,8 +131,7 @@ export const action: ActionFunction = async ({ request }) => {
         // we don't want to give the password yet, we want to wait for the confirmation
         viewPassword: null,
         requiresConfirmation: true,
-        // TODO: obfuscate the email address
-        obscuredEmail: sendConfig.confirmationEmail,
+        obscuredEmail: obscureEmailAddress(sendConfig.confirmationEmail),
       };
 
       const code = getRandomBase62String(6);

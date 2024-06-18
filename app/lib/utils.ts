@@ -32,3 +32,12 @@ export const parallelWithLimit = async <T>({
 
   return results;
 };
+
+/** A helper function to obscure an email address. */
+export const obscureEmailAddress = (email: string) => {
+  const [localPart, domainPart] = email.split("@");
+  const domainSuffix = domainPart.split(".")[1];
+
+  // we just take the first character of the local part and the domain part
+  return `${localPart[0]}...@${domainPart[0]}...${domainSuffix}`;
+};

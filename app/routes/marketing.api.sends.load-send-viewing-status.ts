@@ -3,7 +3,8 @@ import { LoaderFunction } from "@remix-run/node";
 // TODO: should we move this type to a more appropriate shared location?
 import { SendBuilderTemplate } from "~/components/sends/builder/types";
 
-import { getSendConfig, getSendState,SendId, SendViewId } from "../lib/sends";
+import { getSendConfig, getSendState, SendId, SendViewId } from "../lib/sends";
+import { obscureEmailAddress } from "../lib/utils";
 
 /**
  * The send is not viewable.
@@ -151,8 +152,7 @@ export const loader: LoaderFunction = async ({ request }) => {
               stage: "needs-confirmation-code-verification",
               sendId: sendConfig.sendId,
               sendViewId: matchingLastSendView.sendViewId,
-              // TODO: obfuscate the email address
-              obscuredEmail: sendConfig.confirmationEmail,
+              obscuredEmail: obscureEmailAddress(sendConfig.confirmationEmail),
             };
           } else {
             // this is unexpected, we should consider this a new view and start over.
