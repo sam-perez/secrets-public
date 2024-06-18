@@ -1,8 +1,7 @@
 import {
-  CheckIcon,
   EnvelopeClosedIcon,
   EnvelopeOpenIcon,
-  LinkBreak1Icon,
+  FileTextIcon,
   LinkBreak2Icon,
   LockClosedIcon,
   LockOpen1Icon,
@@ -100,7 +99,7 @@ export default function SecretBuilderConfigurationFooter() {
     sendBuilderConfiguration.fields.length === 0
       ? "Please add a field"
       : numberOfFields !== numberOfFieldsWithValues
-      ? `${numberOfFieldsWithValues} of ${numberOfFields} complete`
+      ? `Complete ${numberOfFieldsWithValues} of ${numberOfFields} fields`
       : "Get Encrypted Link";
 
   if (totalBytesOfFields >= MAXIMUM_SEND_SIZE_IN_MEGA_BYTES * 1024 * 1024) {
@@ -126,22 +125,25 @@ export default function SecretBuilderConfigurationFooter() {
           </div>
           {/* Button to generate link. */}
           <div>
-            <Popover>
-              <PopoverTrigger>
-                <Button className="w-full" disabled={!readyToGenerateLink} onClick={() => setShowLinkGeneration(true)}>
-                  {linkText}
-                </Button>
-              </PopoverTrigger>
-              <PopoverContent>
+            {/* <Popover>
+              <PopoverTrigger> */}
+            <Button className="w-full" disabled={!readyToGenerateLink} onClick={() => setShowLinkGeneration(true)}>
+              <ConfirmPopover btnLabel={linkText} />
+            </Button>
+            {/* </PopoverTrigger> */}
+            {/* <PopoverContent>
                 <span className="font-medium">{sendBuilderConfiguration.title}</span>
-                <p className="text-xs text-slate-600">{sendBuilderConfiguration.fields.length} encrypted fields</p>
-                <p className="">A secure link will be generated with these options:</p>
+                <p className="text-slate-500">A secure link will be generated with these options:</p>
                 <ul className="text-xs space-y-2">
+                  <li className="flex items-center">
+                    <FileTextIcon className="flex-none h-3 w-3 mr-2" />
+                    {sendBuilderConfiguration.fields.length} encrypted fields
+                  </li>
                   {(sendBuilderConfiguration.expirationDate || sendBuilderConfiguration.maxViews) && (
                     <li className="flex items-center">
                       <LinkBreak2Icon className="flex-none h-3 w-3 mr-2" />
                       <span>
-                        This link will expire in{" "}
+                        Expiration in{" "}
                         <b>
                           {sendBuilderConfiguration.expirationDate?.totalTimeUnits}{" "}
                           {sendBuilderConfiguration.expirationDate?.timeUnit}
@@ -169,8 +171,8 @@ export default function SecretBuilderConfigurationFooter() {
                     </li>
                   )}
                 </ul>
-              </PopoverContent>
-            </Popover>
+              </PopoverContent> */}
+            {/* </Popover> */}
           </div>
 
           {/* Link generation dialog. */}
@@ -521,6 +523,69 @@ export function PasswordConfigurationPopover({ setPassword }: { setPassword: (pa
         <small>Create Password</small>
         <div className="flex space-x-2 mt-1"></div>
         <Input placeholder="" type="text" value={internalPassword} onChange={handleChange} />
+      </PopoverContent>
+    </Popover>
+  );
+}
+
+// this function handles the confirmation popover when clicking the button
+export function ConfirmPopover({ btnLabel }: { btnLabel: string | "" }) {
+  const { config: sendBuilderConfiguration } = useSendBuilderConfiguration();
+  const [open, setOpen] = useState(false);
+
+  const handleMouseEnter = () => {
+    setOpen(true);
+  };
+
+  const handleMouseLeave = () => {
+    setOpen(false);
+  };
+
+  return (
+    <Popover open={open} onOpenChange={setOpen}>
+      <PopoverTrigger onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave} asChild>
+        <span>{btnLabel}</span>
+      </PopoverTrigger>
+      <PopoverContent onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}>
+        <span className="font-medium">{sendBuilderConfiguration.title}</span>
+        <p className="text-slate-500">A secure link will be generated with these options:</p>
+        <ul className="text-xs space-y-2">
+          <li className="flex items-center">
+            <FileTextIcon className="flex-none h-3 w-3 mr-2" />
+            {sendBuilderConfiguration.fields.length} encrypted fields
+          </li>
+          {(sendBuilderConfiguration.expirationDate || sendBuilderConfiguration.maxViews) && (
+            <li className="flex items-center">
+              <LinkBreak2Icon className="flex-none h-3 w-3 mr-2" />
+              <span>
+                Expiration in{" "}
+                <b>
+                  {sendBuilderConfiguration.expirationDate?.totalTimeUnits}{" "}
+                  {sendBuilderConfiguration.expirationDate?.timeUnit}
+                </b>{" "}
+                {sendBuilderConfiguration.maxViews && sendBuilderConfiguration.expirationDate ? "or " : ""}
+                <b>{sendBuilderConfiguration.maxViews} views</b>
+              </span>
+            </li>
+          )}
+          {sendBuilderConfiguration.confirmationEmail && (
+            <li className="flex items-center">
+              <EnvelopeClosedIcon className="flex-none h-3 w-3 mr-2" />
+              <span>
+                The recipient will need to enter a code emailed to
+                <b>{sendBuilderConfiguration.confirmationEmail}</b> to view
+              </span>
+            </li>
+          )}
+          {sendBuilderConfiguration.password && (
+            <li className="flex items-center">
+              <LockClosedIcon className="flex-none h-3 w-3 mr-2" />
+              <span>
+                The recipient must enter the password <b>{sendBuilderConfiguration.password}</b> to view
+              </span>
+            </li>
+          )}
+        </ul>
       </PopoverContent>
     </Popover>
   );
