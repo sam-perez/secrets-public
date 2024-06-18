@@ -52,6 +52,9 @@ export const EXPIRATION_DATE_TIME_UNIT_OPTIONS = ["minutes", "hours", "days", "w
 /** Expiration date time units. */
 export type ExpirationDateTimeUnits = (typeof EXPIRATION_DATE_TIME_UNIT_OPTIONS)[number];
 
+/** The maximum size of a send in bytes. */
+export const MAXIMUM_SEND_SIZE_IN_BYTES = 20 * 1024 * 1024;
+
 /**
  * The configuration for a send.
  */

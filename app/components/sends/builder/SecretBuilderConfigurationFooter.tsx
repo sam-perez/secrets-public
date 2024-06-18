@@ -13,7 +13,7 @@ import { Popover, PopoverContent, PopoverTrigger } from "../../ui/popover";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../../ui/select";
 import { SecretSender } from "./SecretSender";
 import { useSendBuilderConfiguration } from "./SendBuilderConfigurationContextProvider";
-import { EXPIRATION_DATE_TIME_UNIT_OPTIONS, ExpirationDateTimeUnits } from "./types";
+import { EXPIRATION_DATE_TIME_UNIT_OPTIONS, ExpirationDateTimeUnits, MAXIMUM_SEND_SIZE_IN_BYTES } from "./types";
 
 /**
  * The secret builder configuration footer.
@@ -77,14 +77,33 @@ export default function SecretBuilderConfigurationFooter() {
     (field) => field.value !== null && field.value.length > 0
   ).length;
 
-  const readyToGenerateLink = numberOfFields > 0 && numberOfFields === numberOfFieldsWithValues;
+  const totalBytesOfFields = sendBuilderConfiguration.fields.reduce((acc, field) => {
+    if (field.value === null) {
+      return acc;
+    }
 
-  const linkText =
+    if (field.type === "multi-line-text" || field.type === "single-line-text") {
+      return acc + new Blob([field.value]).size;
+    } else {
+      return acc + field.value.reduce((acc, file) => acc + file.size, 0);
+    }
+  }, 0);
+
+  const readyToGenerateLink =
+    numberOfFields > 0 &&
+    numberOfFields === numberOfFieldsWithValues &&
+    totalBytesOfFields < MAXIMUM_SEND_SIZE_IN_BYTES;
+
+  let linkText =
     sendBuilderConfiguration.fields.length === 0
       ? "Please add a field"
       : numberOfFields !== numberOfFieldsWithValues
       ? `${numberOfFieldsWithValues} of ${numberOfFields} complete`
       : "Get Encrypted Link";
+
+  if (totalBytesOfFields >= MAXIMUM_SEND_SIZE_IN_BYTES) {
+    linkText = "Limit of 20MB exceeded";
+  }
 
   const sharedClasses = "max-w-1/3 sm:max-w-[140px] overflow-hidden";
   return (
