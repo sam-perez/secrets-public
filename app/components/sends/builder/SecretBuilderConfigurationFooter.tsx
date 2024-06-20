@@ -125,54 +125,11 @@ export default function SecretBuilderConfigurationFooter() {
           </div>
           {/* Button to generate link. */}
           <div>
-            {/* <Popover>
-              <PopoverTrigger> */}
-            <Button className="w-full" disabled={!readyToGenerateLink} onClick={() => setShowLinkGeneration(true)}>
-              <ConfirmPopover btnLabel={linkText} />
-            </Button>
-            {/* </PopoverTrigger> */}
-            {/* <PopoverContent>
-                <span className="font-medium">{sendBuilderConfiguration.title}</span>
-                <p className="text-slate-500">A secure link will be generated with these options:</p>
-                <ul className="text-xs space-y-2">
-                  <li className="flex items-center">
-                    <FileTextIcon className="flex-none h-3 w-3 mr-2" />
-                    {sendBuilderConfiguration.fields.length} encrypted fields
-                  </li>
-                  {(sendBuilderConfiguration.expirationDate || sendBuilderConfiguration.maxViews) && (
-                    <li className="flex items-center">
-                      <LinkBreak2Icon className="flex-none h-3 w-3 mr-2" />
-                      <span>
-                        Expiration in{" "}
-                        <b>
-                          {sendBuilderConfiguration.expirationDate?.totalTimeUnits}{" "}
-                          {sendBuilderConfiguration.expirationDate?.timeUnit}
-                        </b>{" "}
-                        {sendBuilderConfiguration.maxViews && sendBuilderConfiguration.expirationDate ? "or " : ""}
-                        <b>{sendBuilderConfiguration.maxViews} views</b>
-                      </span>
-                    </li>
-                  )}
-                  {sendBuilderConfiguration.confirmationEmail && (
-                    <li className="flex items-center">
-                      <EnvelopeClosedIcon className="flex-none h-3 w-3 mr-2" />
-                      <span>
-                        The recipient will need to enter a code emailed to{" "}
-                        <b>{sendBuilderConfiguration.confirmationEmail}</b> to view
-                      </span>
-                    </li>
-                  )}
-                  {sendBuilderConfiguration.password && (
-                    <li className="flex items-center">
-                      <LockClosedIcon className="flex-none h-3 w-3 mr-2" />
-                      <span>
-                        The recipient must enter the password <b>{sendBuilderConfiguration.password}</b> to view
-                      </span>
-                    </li>
-                  )}
-                </ul>
-              </PopoverContent> */}
-            {/* </Popover> */}
+            <ConfirmPopover>
+              <Button className="w-full" disabled={!readyToGenerateLink} onClick={() => setShowLinkGeneration(true)}>
+                {linkText}
+              </Button>
+            </ConfirmPopover>
           </div>
 
           {/* Link generation dialog. */}
@@ -528,8 +485,8 @@ export function PasswordConfigurationPopover({ setPassword }: { setPassword: (pa
   );
 }
 
-// this function handles the confirmation popover when clicking the button
-export function ConfirmPopover({ btnLabel }: { btnLabel: string | "" }) {
+// this function handles the confirmation popover when hovering over the button
+export function ConfirmPopover({ children }: { children: React.ReactNode }) {
   const { config: sendBuilderConfiguration } = useSendBuilderConfiguration();
   const [open, setOpen] = useState(false);
 
@@ -542,11 +499,16 @@ export function ConfirmPopover({ btnLabel }: { btnLabel: string | "" }) {
   };
 
   return (
-    <Popover open={open} onOpenChange={setOpen}>
+    <Popover open={open}>
       <PopoverTrigger onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave} asChild>
-        <span>{btnLabel}</span>
+        {children}
       </PopoverTrigger>
-      <PopoverContent onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}>
+      <PopoverContent
+        side="top"
+        sideOffset={10}
+        onOpenAutoFocus={(event) => event.preventDefault()}
+        onCloseAutoFocus={(event) => event.preventDefault()}
+      >
         <span className="font-medium">{sendBuilderConfiguration.title}</span>
         <p className="text-slate-500">A secure link will be generated with these options:</p>
         <ul className="text-xs space-y-2">
