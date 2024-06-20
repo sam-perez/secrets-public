@@ -498,6 +498,8 @@ export function ConfirmPopover({ children }: { children: React.ReactNode }) {
     setOpen(false);
   };
 
+  const maxViews = sendBuilderConfiguration.maxViews || 1;
+
   return (
     <Popover open={open}>
       <PopoverTrigger onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave} asChild>
@@ -510,23 +512,30 @@ export function ConfirmPopover({ children }: { children: React.ReactNode }) {
         onCloseAutoFocus={(event) => event.preventDefault()}
       >
         <span className="font-medium">{sendBuilderConfiguration.title}</span>
-        <p className="text-slate-500">A secure link will be generated with these options:</p>
+        <p className="text-slate-500">A secure link will be generated with:</p>
         <ul className="text-xs space-y-2">
           <li className="flex items-center">
             <FileTextIcon className="flex-none h-3 w-3 mr-2" />
-            {sendBuilderConfiguration.fields.length} encrypted fields
+            {sendBuilderConfiguration.fields.length} encrypted field
+            {sendBuilderConfiguration.fields.length === 1 ? "" : "s"}
           </li>
-          {(sendBuilderConfiguration.expirationDate || sendBuilderConfiguration.maxViews) && (
+          {(sendBuilderConfiguration.expirationDate || maxViews) && (
             <li className="flex items-center">
               <LinkBreak2Icon className="flex-none h-3 w-3 mr-2" />
               <span>
-                Expiration in{" "}
+                Expires after{" "}
+                {sendBuilderConfiguration.expirationDate !== null && (
+                  <b>
+                    {sendBuilderConfiguration.expirationDate.totalTimeUnits}{" "}
+                    {sendBuilderConfiguration.expirationDate.totalTimeUnits === 1
+                      ? sendBuilderConfiguration.expirationDate.timeUnit.slice(0, -1)
+                      : sendBuilderConfiguration.expirationDate.timeUnit}
+                  </b>
+                )}{" "}
+                {sendBuilderConfiguration.expirationDate !== null ? "or " : ""}
                 <b>
-                  {sendBuilderConfiguration.expirationDate?.totalTimeUnits}{" "}
-                  {sendBuilderConfiguration.expirationDate?.timeUnit}
-                </b>{" "}
-                {sendBuilderConfiguration.maxViews && sendBuilderConfiguration.expirationDate ? "or " : ""}
-                <b>{sendBuilderConfiguration.maxViews} views</b>
+                  {maxViews} view{maxViews === 1 ? "" : "s"}
+                </b>
               </span>
             </li>
           )}
