@@ -8,6 +8,7 @@ import { marked } from "marked";
 import { useEffect } from "react";
 
 import { SecretBuilderRoot } from "~/components/sends/builder/SecretBuilderRoot";
+import { Badge } from "~/components/ui/badge";
 import { Button } from "~/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "~/components/ui/tabs";
 import { TemplateCard } from "~/components/ui/TemplateCard";
@@ -285,6 +286,9 @@ export default function Index() {
             <p className="text-lg mb-4">
               Use the web app or integrate 2Secure into your development or application workflow.
             </p>
+            <Link to={"https://tally.so/r/w7D9oz"}>
+              <Button variant={"outline"}>Join waitlist</Button>
+            </Link>
           </div>
           <div style={{ fontSize: "0.8rem" }} dangerouslySetInnerHTML={{ __html: marked(markdown) }}></div>
         </div>
@@ -294,10 +298,17 @@ export default function Index() {
         <div className="sm:p-20 px-4">
           <div className="sm:pt-0 pt-14 max-w-lg">
             <h2>Add 2Secured to your workflow for sensitive data.</h2>
+
             <p className="text-lg mt-0 mb-4">
               Pull or push data to other applications you may use. <br />
-              Need something not listed below? <Link to={"mailto:integrations@2secured.link"}>Tell us</Link>
+              Need something not listed below?{" "}
+              <Link to={"mailto:integrations@2secured.link"} className="underline">
+                Contact us
+              </Link>
             </p>
+            <Link to={"https://tally.so/r/w7D9oz"}>
+              <Button variant={"outline"}>Join waitlist</Button>
+            </Link>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 sm:gap-24 items-top mt-12">
             {integrations.map((integration, index) => (
