@@ -61,6 +61,8 @@ function SecretSenderInner({ sendBuilderConfiguration }: { sendBuilderConfigurat
 
   const [isCopied, setIsCopied] = useState(false);
 
+  const [showCloseConfirmation, setShowCloseConfirmation] = useState(false);
+
   useEffect(() => {
     const sendSecret = async () => {
       try {
@@ -247,6 +249,31 @@ function SecretSenderInner({ sendBuilderConfiguration }: { sendBuilderConfigurat
     setTimeout(() => setIsCopied(false), 2000); // Reset copied state after 2 seconds
   };
 
+  if (showCloseConfirmation) {
+    return (
+      <>
+        <Dialog open={true}>
+          <DialogContent noClose={true} className="sm:max-w-xl">
+            <p>
+              <b>
+                <big>Are you sure you want to close this dialog?</big>
+              </b>
+            </p>
+
+            <p>The link will be gone forever once you do.</p>
+
+            <Button type="button" variant="outline" onClick={() => window.location.reload()}>
+              {"Yes, I've saved the link"}
+            </Button>
+            <Button type="button" variant="default" onClick={() => setShowCloseConfirmation(false)}>
+              Go back
+            </Button>
+          </DialogContent>
+        </Dialog>
+      </>
+    );
+  }
+
   return (
     <>
       <Dialog open={true}>
@@ -334,9 +361,13 @@ function SecretSenderInner({ sendBuilderConfiguration }: { sendBuilderConfigurat
                   </div>
                 )}
               </div>
-              <DialogFooter className="!justify-start">
+              <DialogFooter className="flex justify-between w-full">
                 <Button type="button" variant="outline" onClick={handleCopy}>
                   Copy Link
+                </Button>
+                <div className="flex-grow"></div>
+                <Button type="button" variant="destructive" onClick={() => setShowCloseConfirmation(true)}>
+                  Close
                 </Button>
               </DialogFooter>
             </>
