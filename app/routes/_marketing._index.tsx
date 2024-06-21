@@ -8,7 +8,6 @@ import { marked } from "marked";
 import { useEffect } from "react";
 
 import { SecretBuilderRoot } from "~/components/sends/builder/SecretBuilderRoot";
-import { Badge } from "~/components/ui/badge";
 import { Button } from "~/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "~/components/ui/tabs";
 import { TemplateCard } from "~/components/ui/TemplateCard";
@@ -263,7 +262,7 @@ export default function Index() {
 
       <section id="securitySettings" className="my-12 bg-slate-50">
         <div className="sm:p-20 grid sm:grid-cols-2 grid-cols-1 sm:gap-24 items-center px-4">
-          <div className="sm:pt-0 pt-14">
+          <div className="sm:pt-0 pt-14 pb-4">
             <h2>Control access and set permissions to your 2Secured link.</h2>
             <p className="text-lg mt-0 mb-4">
               Restrict the email addresses that can view your links, set how many times a link can be viewed, require a
@@ -281,7 +280,7 @@ export default function Index() {
 
       <section id="curlExample" className="my-12">
         <div className="sm:p-20 grid grid-cols-1 sm:grid-cols-2 sm:gap-24 items-center px-4">
-          <div className="sm:pt-0 pt-14">
+          <div className="sm:pt-0 pt-14 pb-4">
             <h2>Built with developers in mind.</h2>
             <p className="text-lg mb-4">
               Use the web app or integrate 2Secure into your development or application workflow.
@@ -312,7 +311,7 @@ export default function Index() {
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 sm:gap-24 items-top mt-12">
             {integrations.map((integration, index) => (
-              <div key={index} className="space-y-2">
+              <div key={index} className="space-y-2 mb-4">
                 {/* eslint-disable-next-line jsx-a11y/alt-text */}
                 <img src={integration.logo} className="h-6 w-6" />
                 <h6 className="font-medium">{integration.title}</h6>
