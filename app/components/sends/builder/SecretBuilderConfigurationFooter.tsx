@@ -524,7 +524,7 @@ export function ConfirmPopover({ children, emailIsValid }: { children: React.Rea
         onOpenAutoFocus={(event) => event.preventDefault()}
         onCloseAutoFocus={(event) => event.preventDefault()}
       >
-        <span className="font-medium">{sendBuilderConfiguration.title}</span>
+        <span className="font-medium">Confirm {sendBuilderConfiguration.title}</span>
         <p className="text-slate-500">A secure link will be generated with:</p>
         <ul className="text-xs space-y-2">
           <li className="flex items-center">

@@ -254,18 +254,12 @@ function SecretSenderInner({ sendBuilderConfiguration }: { sendBuilderConfigurat
       <>
         <Dialog open={true}>
           <DialogContent noClose={true} className="sm:max-w-xl">
-            <p>
-              <b>
-                <big>Are you sure you want to close this dialog?</big>
-              </b>
-            </p>
-
-            <p>The link will be gone forever once you do.</p>
-
-            <Button type="button" variant="outline" onClick={() => window.location.reload()}>
+            <h4>Confirm</h4>
+            <p className="">The link will be gone forever once you close this.</p>
+            <Button type="button" variant="default" onClick={() => window.location.reload()}>
               {"Yes, I've saved the link"}
             </Button>
-            <Button type="button" variant="default" onClick={() => setShowCloseConfirmation(false)}>
+            <Button type="button" variant="outline" onClick={() => setShowCloseConfirmation(false)}>
               Go back
             </Button>
           </DialogContent>
@@ -366,7 +360,7 @@ function SecretSenderInner({ sendBuilderConfiguration }: { sendBuilderConfigurat
                   Copy Link
                 </Button>
                 <div className="flex-grow"></div>
-                <Button type="button" variant="destructive" onClick={() => setShowCloseConfirmation(true)}>
+                <Button type="button" onClick={() => setShowCloseConfirmation(true)}>
                   Close
                 </Button>
               </DialogFooter>
