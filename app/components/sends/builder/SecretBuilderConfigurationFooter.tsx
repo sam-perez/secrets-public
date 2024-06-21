@@ -34,6 +34,9 @@ export default function SecretBuilderConfigurationFooter() {
 
   const [showLinkGeneration, setShowLinkGeneration] = useState<boolean>(false);
 
+  // track the email input text value so that we can show a warning if the email is invalid in the popover.
+  const [emailInputTextValue, setEmailInputTextValue] = useState("");
+
   const setExpirationConfiguration = useCallback(
     (expirationConfiguration: {
       maxViews?: number | null;
@@ -117,7 +120,14 @@ export default function SecretBuilderConfigurationFooter() {
               {<LinkExpirationConfigurationPopover setExpirationConfiguration={setExpirationConfiguration} />}
             </div>
             <div className={[sharedClasses, "text-ellipsis"].join(" ")}>
-              {<ConfirmationEmailConfigurationPopover setConfirmationEmail={setConfirmationEmail} />}
+              {
+                <ConfirmationEmailConfigurationPopover
+                  setConfirmationEmail={setConfirmationEmail}
+                  onEmailInputValueChange={(updatedEmailInputTextValue) =>
+                    setEmailInputTextValue(updatedEmailInputTextValue)
+                  }
+                />
+              }
             </div>
             <div className={[sharedClasses, "text-ellipsis"].join(" ")}>
               {<PasswordConfigurationPopover setPassword={setPassword} />}
@@ -125,7 +135,7 @@ export default function SecretBuilderConfigurationFooter() {
           </div>
           {/* Button to generate link. */}
           <div>
-            <ConfirmPopover>
+            <ConfirmPopover emailIsValid={validateEmail(emailInputTextValue)}>
               <Button className="w-full" disabled={!readyToGenerateLink} onClick={() => setShowLinkGeneration(true)}>
                 {linkText}
               </Button>
@@ -366,13 +376,16 @@ function validateEmail(email: string) {
  */
 export function ConfirmationEmailConfigurationPopover({
   setConfirmationEmail,
+  onEmailInputValueChange,
 }: {
   setConfirmationEmail: (email: string | null) => void;
+  onEmailInputValueChange: (updatedEmailInputTextValue: string) => void;
 }) {
   const [emailInputTextValue, setEmailInputTextValue] = useState("");
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setEmailInputTextValue(event.target.value);
+    onEmailInputValueChange(event.target.value);
 
     if (event.target.value === "") {
       setConfirmationEmail(null);
@@ -486,7 +499,7 @@ export function PasswordConfigurationPopover({ setPassword }: { setPassword: (pa
 }
 
 // this function handles the confirmation popover when hovering over the button
-export function ConfirmPopover({ children }: { children: React.ReactNode }) {
+export function ConfirmPopover({ children, emailIsValid }: { children: React.ReactNode; emailIsValid: boolean }) {
   const { config: sendBuilderConfiguration } = useSendBuilderConfiguration();
   const [open, setOpen] = useState(false);
 
@@ -539,7 +552,7 @@ export function ConfirmPopover({ children }: { children: React.ReactNode }) {
               </span>
             </li>
           )}
-          {sendBuilderConfiguration.confirmationEmail && (
+          {sendBuilderConfiguration.confirmationEmail !== null ? (
             <li className="flex items-center">
               <EnvelopeClosedIcon className="flex-none h-3 w-3 mr-2" />
               <span>
@@ -547,6 +560,15 @@ export function ConfirmPopover({ children }: { children: React.ReactNode }) {
                 <b> {sendBuilderConfiguration.confirmationEmail}</b> to view
               </span>
             </li>
+          ) : (
+            !emailIsValid && (
+              <li className="flex items-center">
+                <EnvelopeClosedIcon className="flex-none h-3 w-3 mr-2" />
+                <span>
+                  <b>WARNING:</b> Email is invalid. No email confirmation will be required.
+                </span>
+              </li>
+            )
           )}
           {sendBuilderConfiguration.password && (
             <li className="flex items-center">
