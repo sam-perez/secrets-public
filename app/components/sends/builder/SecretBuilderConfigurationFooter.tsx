@@ -135,7 +135,9 @@ export default function SecretBuilderConfigurationFooter() {
           </div>
           {/* Button to generate link. */}
           <div>
-            <ConfirmPopover emailIsValid={validateEmail(emailInputTextValue)}>
+            <ConfirmPopover
+              emailIsInvalid={emailInputTextValue.length > 0 && validateEmail(emailInputTextValue) === false}
+            >
               <Button className="w-full" disabled={!readyToGenerateLink} onClick={() => setShowLinkGeneration(true)}>
                 {linkText}
               </Button>
@@ -499,7 +501,7 @@ export function PasswordConfigurationPopover({ setPassword }: { setPassword: (pa
 }
 
 // this function handles the confirmation popover when hovering over the button
-export function ConfirmPopover({ children, emailIsValid }: { children: React.ReactNode; emailIsValid: boolean }) {
+export function ConfirmPopover({ children, emailIsInvalid }: { children: React.ReactNode; emailIsInvalid: boolean }) {
   const { config: sendBuilderConfiguration } = useSendBuilderConfiguration();
   const [open, setOpen] = useState(false);
 
@@ -561,7 +563,7 @@ export function ConfirmPopover({ children, emailIsValid }: { children: React.Rea
               </span>
             </li>
           ) : (
-            !emailIsValid && (
+            emailIsInvalid === true && (
               <li className="flex items-center">
                 <EnvelopeClosedIcon className="flex-none h-3 w-3 mr-2" />
                 <span>
