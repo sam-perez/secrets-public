@@ -15,6 +15,18 @@ import { SendBuilderField } from "./types";
 /** Internally used type for the builder fields, id is required to play nicely with dnd-kit */
 export type SendBuilderFieldWithId = SendBuilderField & { id: number };
 
+const humanReadableFileSize = (size: number) => {
+  if (size < 1024) {
+    return `${size} B`;
+  }
+
+  if (size < 1024 * 1024) {
+    return `${(size / 1024).toFixed(2)} KB`;
+  }
+
+  return `${(size / (1024 * 1024)).toFixed(2)} MB`;
+};
+
 /**
  * Renders a secret field in the builder.
  *
@@ -124,11 +136,28 @@ export const SecretFieldRenderer = ({
                 />
                 <div>
                   {value !== null && value.length > 0 ? (
-                    value.map((f) => (
-                      <Badge key={f.name} variant={"secondary"} className="mr-2">
-                        {f.name}
-                      </Badge>
-                    ))
+                    <div
+                      style={{
+                        display: "flex",
+                        justifyContent: "space-between",
+                        alignItems: "flex-start",
+                        flexDirection: "column",
+                      }}
+                    >
+                      <div style={{ flex: "1 1 auto", display: "flex", flexWrap: "wrap", alignContent: "flex-start" }}>
+                        {value.map((f) => (
+                          <Badge key={f.name} variant={"outline"} className="mr-2 cursor-pointer mt-2">
+                            {f.name} ({humanReadableFileSize(f.size)})
+                          </Badge>
+                        ))}
+                      </div>
+
+                      <div className="mt-2">
+                        <Badge variant={"secondary"} className="cursor-pointer">
+                          <span>Change</span>
+                        </Badge>
+                      </div>
+                    </div>
                   ) : (
                     <Button variant={"secondary"}>Choose files</Button>
                   )}
