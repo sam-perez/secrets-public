@@ -61,10 +61,7 @@ const markdown = `
       -d '{
             "title": "Your title here",
             "confirmationEmail": "example@email.com",
-            "expirationDate": {
-              "totalTimeUnits": 1,
-              "timeUnit": "week"
-            },
+            "expiresIn": "1 week",
             "maxViews": 4,
             "password": "supersecret",
             "fields": [
