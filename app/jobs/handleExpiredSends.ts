@@ -47,7 +47,13 @@ export const handleExpiredSends = async () => {
         const sendState = await getSendState(sendId as SendId);
 
         if (sendState.dataDeletedAt !== null) {
-          console.log(`Send ${sendId} has already been deleted, skipping.`);
+          console.log(`Send ${sendId} has already been deleted, just deleting this expiration record.`);
+
+          await deleteObjectInS3({
+            bucket: "MARKETING_BUCKET",
+            key: sendExpirationRecord.Key,
+          });
+
           continue;
         }
 

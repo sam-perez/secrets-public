@@ -41,3 +41,21 @@ export const obscureEmailAddress = (email: string) => {
   // we just take the first character of the local part and the domain part
   return `${localPart[0]}...@${domainPart[0]}...${domainSuffix}`;
 };
+
+/** A helper function that sends a message to discord */
+export const sendDiscordMessage = async (message: string) => {
+  const webhookUrl = process.env.DISCORD_ACTIVITY_CHANNEL_WEBHOOK;
+
+  if (webhookUrl === undefined) {
+    console.error("No discord webhook url found, skipping sending message.");
+    return;
+  }
+
+  await fetch(webhookUrl, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ content: message }),
+  });
+};

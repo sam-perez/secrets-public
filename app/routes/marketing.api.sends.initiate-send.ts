@@ -13,6 +13,7 @@ import {
   writeSendExpirationRecord,
 } from "../lib/sends";
 import { getIso8601DateTimeString, nowIso8601DateTimeString } from "../lib/time";
+import { sendDiscordMessage } from "../lib/utils";
 
 /** The response from the initiate send endpoint. */
 export type InitiateSendResponse = {
@@ -42,6 +43,9 @@ export type InitiateSendBody = Omit<SendBuilderConfiguration, "fields"> & {
  */
 export const action: ActionFunction = async ({ request }) => {
   const sendId = generateSendId();
+
+  // just ping discord without awaiting, should complete quickly
+  sendDiscordMessage(`Send is being initiated: \`${sendId}\``);
 
   const body = (await request.json()) as InitiateSendBody;
 

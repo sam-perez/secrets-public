@@ -16,7 +16,7 @@ import {
   writeSendViewExpirationRecord,
 } from "../lib/sends";
 import { getIso8601DateTimeString, nowIso8601DateTimeString } from "../lib/time";
-import { obscureEmailAddress } from "../lib/utils";
+import { obscureEmailAddress, sendDiscordMessage } from "../lib/utils";
 
 /** The response from the initiate send view endpoint. */
 export type InitiateSendViewResponse = {
@@ -68,6 +68,9 @@ export const action: ActionFunction = async ({ request }) => {
     if (!sendId) {
       return new Response("Missing required headers.", { status: 400 });
     }
+
+    // just ping discord without awaiting, should complete quickly
+    sendDiscordMessage(`Send is being viewed: \`${sendId}\``);
 
     const [sendState, sendConfig] = await Promise.all([
       getSendState(sendId as SendId),
