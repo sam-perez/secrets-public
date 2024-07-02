@@ -305,7 +305,7 @@ function SecretSenderInner({ sendBuilderConfiguration }: { sendBuilderConfigurat
                   <Button variant={"outline"} onClick={handleCopy}>
                     {isCopied ? <CheckIcon className="text-green-500" /> : <CopyIcon />}
                   </Button>
-                  <Link to={getShareLink()}>
+                  <Link to={getShareLink()} target="_blank" rel="noreferrer">
                     <Button type="button" variant="outline">
                       <OpenInNewWindowIcon />
                     </Button>
