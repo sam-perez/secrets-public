@@ -22,10 +22,10 @@ const nav_links_right = [
     name: "Security",
     href: "/security",
   },
-  {
-    name: "Github",
-    href: "https://github.com/2Secured",
-  },
+  // {
+  //   name: "Github",
+  //   href: "https://github.com/2Secured",
+  // },
 ];
 
 export default function MarketingNav({ hide_links }: MarketingNavProps) {
