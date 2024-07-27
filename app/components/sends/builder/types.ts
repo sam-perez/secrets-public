@@ -1,39 +1,7 @@
+import { FileField, MultiLineTextField, SingleLineTextField } from "../../shared/types";
 /**
  * This file contains the frontend types for the send builder component.
  */
-
-/**
- * A single-line text field.
- */
-type SingleLineTextField = {
-  /** A single-line text field. */
-  type: "single-line-text";
-
-  /** The single-line string value of the field. */
-  value: string | null;
-};
-
-/**
- * A multi-line text field.
- */
-type MultiLineTextField = {
-  /** A multi-line text field. */
-  type: "multi-line-text";
-
-  /** The multi-line string value of the field. */
-  value: string | null;
-};
-
-/**
- * A file field.
- */
-type FileField = {
-  /** A file field. */
-  type: "file";
-
-  /** The file value of the field. */
-  value: Array<File> | null;
-};
 
 /**
  * A field in the send builder.
