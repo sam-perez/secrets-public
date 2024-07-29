@@ -1,4 +1,4 @@
-import { FileField, MultiLineTextField, SingleLineTextField } from "../../shared/types";
+import { Field } from "../../shared/types";
 
 /**
  * This file contains the frontend types for the receive builder component.
@@ -13,7 +13,7 @@ export type ReceiveBuilderField = {
 
   /** A placeholder for display purposes. */
   placeholder?: string;
-} & (SingleLineTextField | MultiLineTextField | FileField);
+} & Field;
 
 /**
  * The configuration for a receive.

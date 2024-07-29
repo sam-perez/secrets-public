@@ -30,3 +30,6 @@ export type FileField = {
   /** The file value of the field. */
   value: Array<File> | null;
 };
+
+/** A field in a send or a receive. */
+export type Field = SingleLineTextField | MultiLineTextField | FileField;

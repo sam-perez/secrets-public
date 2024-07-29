@@ -7,8 +7,12 @@ import { Iso8601DateTimeString } from "../time";
 /** Receive id type. */
 export type ReceiveId = BrandedId<"r">;
 
-/** Generate a receive id. We make the id longer than usual since these are truly public links. */
-export const generateReceiveId = (): ReceiveId => generateUniqueId("r", 20);
+/**
+ * Generate a receive id.
+ *
+ * We make the id longer than usual since these are truly public links and we want them to be unguessable.
+ */
+export const generateReceiveId = (): ReceiveId => generateUniqueId("r", 30);
 
 /** A configuration for a receive. */
 export type ReceiveConfig = {
@@ -40,7 +44,7 @@ interface RecursiveMetadata {
 export type ReceiveResponseId = BrandedId<"rr">;
 
 /** Generate a receive response id. */
-export const generateReceiveInstanceId = (): ReceiveResponseId => generateUniqueId("rr", 10);
+export const generateReceiveResponseId = (): ReceiveResponseId => generateUniqueId("rr", 10);
 
 /** The state of a receive response. Has to be tracked separately from the config. Stored in S3 for now. */
 export type ReceiveResponseState = {
@@ -48,10 +52,13 @@ export type ReceiveResponseState = {
   receiveId: ReceiveId;
 
   /** The id of the receive response. */
-  receiveInstanceId: ReceiveResponseId;
+  receiveResponseId: ReceiveResponseId;
 
   /** ISO-8601 date string when the receive response was created. */
   createdAt: Iso8601DateTimeString;
+
+  /** The password needed to upload the encrypted parts. */
+  encryptedPartPassword: string;
 
   /**
    * ISO-8601 date string when the receive response is ready.
@@ -152,10 +159,10 @@ export const getReceiveState = async (
 /**
  * Save the receive response state to s3.
  */
-export const saveReceiveState = async (receiveResponseState: ReceiveResponseState): Promise<void> => {
+export const saveReceiveResponseState = async (receiveResponseState: ReceiveResponseState): Promise<void> => {
   const receiveResponseStateKey = getReceiveResponseStateKey(
     receiveResponseState.receiveId,
-    receiveResponseState.receiveInstanceId
+    receiveResponseState.receiveResponseId
   );
 
   await uploadToS3({

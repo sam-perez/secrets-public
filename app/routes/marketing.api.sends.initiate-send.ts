@@ -60,7 +60,6 @@ export const action: ActionFunction = async ({ request }) => {
   };
   const expiresAt = new Date(now.getTime() + totalTimeUnits * timeUnitMultiplier[timeUnit]);
 
-  // let's make a fake request for now
   const sendConfig: SendConfig = {
     sendId,
     confirmationEmail: body.confirmationEmail,
