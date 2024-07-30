@@ -52,7 +52,7 @@ export const action: ActionFunction = async ({ request }) => {
   const now = new Date();
   const daysUntilExpiration = 30;
   const msPerDay = 24 * 60 * 60 * 1000;
-  const expirationDate = new Date(now.getTime() + daysUntilExpiration * msPerDay);
+  const expiresAt = getIso8601DateTimeString(new Date(now.getTime() + daysUntilExpiration * msPerDay));
 
   const initialReceiveResponseState: ReceiveResponseState = {
     receiveId,
@@ -62,8 +62,9 @@ export const action: ActionFunction = async ({ request }) => {
     creationRequestMetadata: { headers: Object.fromEntries(request.headers.entries()) },
     dataDeletedAt: null,
     dataDeletedReason: null,
-    encryptedPartPassword: getRandomBase62String(32),
+    encryptedPartsPassword: getRandomBase62String(32),
     readyAt: null,
+    expiresAt,
     // this is set when the receive is marked as ready
     totalEncryptedParts: null,
   };
@@ -76,13 +77,13 @@ export const action: ActionFunction = async ({ request }) => {
   try {
     await Promise.all([
       saveReceiveResponseState(initialReceiveResponseState),
-      writeReceiveResponseExpirationRecord(receiveId, receiveResponseId, getIso8601DateTimeString(expirationDate)),
+      writeReceiveResponseExpirationRecord(receiveId, receiveResponseId, expiresAt),
     ]);
 
     const initiateReceiveResponseBody: InitiateReceiveResponseBody = {
       receiveId,
       receiveResponseId,
-      encryptedPartsPassword: initialReceiveResponseState.encryptedPartPassword,
+      encryptedPartsPassword: initialReceiveResponseState.encryptedPartsPassword,
     };
 
     return new Response(JSON.stringify(initiateReceiveResponseBody), {

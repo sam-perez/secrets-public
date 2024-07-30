@@ -43,8 +43,13 @@ interface RecursiveMetadata {
 /** Receive response id. */
 export type ReceiveResponseId = BrandedId<"rr">;
 
-/** Generate a receive response id. */
-export const generateReceiveResponseId = (): ReceiveResponseId => generateUniqueId("rr", 10);
+/**
+ * Generate a receive response id.
+ *
+ * These ids are longer than their send counterparts since you will be allowed to download the parts
+ * and close the receive response if you have the ids.
+ */
+export const generateReceiveResponseId = (): ReceiveResponseId => generateUniqueId("rr", 20);
 
 /** The state of a receive response. Has to be tracked separately from the config. Stored in S3 for now. */
 export type ReceiveResponseState = {
@@ -58,7 +63,7 @@ export type ReceiveResponseState = {
   createdAt: Iso8601DateTimeString;
 
   /** The password needed to upload the encrypted parts. */
-  encryptedPartPassword: string;
+  encryptedPartsPassword: string;
 
   /**
    * ISO-8601 date string when the receive response is ready.
@@ -73,7 +78,10 @@ export type ReceiveResponseState = {
   dataDeletedAt: Iso8601DateTimeString | null;
 
   /** The reason the receive response data was deleted. */
-  dataDeletedReason: "expired" | "downloaded-and-completed-by-owner" | null;
+  dataDeletedReason: "expired" | null;
+
+  /** The ISO-8601 date string when the receive response expires. */
+  expiresAt: Iso8601DateTimeString;
 
   /** Metadata about the request that created the receive response. */
   creationRequestMetadata: RecursiveMetadata;
@@ -102,11 +110,11 @@ export const getEncryptedPartKey = (
 /**
  * Get the key for receive response expiration info in s3.
  */
-export const getReceiveExpirationKey = (
+export const getReceiveResponseExpirationKey = (
   receiveId: ReceiveId,
   receiveResponseId: ReceiveResponseId,
   expiresAt: Iso8601DateTimeString
-): string => `receives/expirations/receives/${expiresAt}/${receiveId}/${receiveResponseId}`;
+): string => `receives/expirations/responses/${expiresAt}/${receiveId}/${receiveResponseId}`;
 
 /**
  * Writes a receive response expiration record to s3.
@@ -116,7 +124,7 @@ export const writeReceiveResponseExpirationRecord = async (
   receiveResponseId: ReceiveResponseId,
   expiresAt: Iso8601DateTimeString
 ) => {
-  const receiveResponseExpirationKey = getReceiveExpirationKey(receiveId, receiveResponseId, expiresAt);
+  const receiveResponseExpirationKey = getReceiveResponseExpirationKey(receiveId, receiveResponseId, expiresAt);
 
   await uploadToS3({
     bucket: "MARKETING_BUCKET",
@@ -130,7 +138,7 @@ export const writeReceiveResponseExpirationRecord = async (
  * Get the next page of entries from the receive response expiration records in s3.
  */
 export const listNextPageOfReceiveResponseExpirationRecords = async () => {
-  const expiredReceiveResponsesPrefix = `receives/expirations/receives/`;
+  const expiredReceiveResponsesPrefix = `receives/expirations/responses/`;
   const { Contents: expiredReceives } = await listObjectsInS3({
     bucket: "MARKETING_BUCKET",
     prefix: expiredReceiveResponsesPrefix,
@@ -142,7 +150,7 @@ export const listNextPageOfReceiveResponseExpirationRecords = async () => {
 /**
  * Get the receive response state from s3.
  */
-export const getReceiveState = async (
+export const getReceiveResponseState = async (
   receiveId: ReceiveId,
   receiveResponseId: ReceiveResponseId
 ): Promise<ReceiveResponseState> => {

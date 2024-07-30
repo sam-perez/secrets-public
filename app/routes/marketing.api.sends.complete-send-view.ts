@@ -14,8 +14,6 @@ export const COMPLETE_SEND_VIEW_HEADERS = {
 
 /**
  * Action for completing a send view.
- *
- * Will do some checks to ensure that a send view can be initiated, then create a new.
  */
 export const action: ActionFunction = async ({ request }) => {
   try {
