@@ -213,10 +213,10 @@ export default function Index() {
                 {filteredWorkTemplates.map(([slug, template]) => (
                   <div key={slug}>
                     <TemplateCard
-                      show_description={false}
-                      template_slug={slug}
+                      showDescription={false}
+                      templateSlug={slug}
                       name={template.title}
-                      number_fields={template.fields.length}
+                      numberFields={template.fields.length}
                     />
                   </div>
                 ))}
@@ -225,10 +225,10 @@ export default function Index() {
                 {filteredPersonalTemplates.map(([slug, template]) => (
                   <div key={slug}>
                     <TemplateCard
-                      show_description={false}
-                      template_slug={slug}
+                      showDescription={false}
+                      templateSlug={slug}
                       name={template.title}
-                      number_fields={template.fields.length}
+                      numberFields={template.fields.length}
                     />
                   </div>
                 ))}

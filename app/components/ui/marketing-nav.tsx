@@ -13,8 +13,12 @@ interface MarketingNavProps {
 
 const nav_links_left = [
   {
-    name: "Browse Templates",
+    name: "Browse Send Templates",
     href: "/sends/templates",
+  },
+  {
+    name: "Browse Receive Templates",
+    href: "/receives/templates",
   },
 ];
 const nav_links_right = [
