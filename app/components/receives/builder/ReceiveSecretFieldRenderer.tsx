@@ -86,7 +86,9 @@ export const ReceiveSecretFieldRenderer = ({
             />
           </Label>
           <div className="flex items-center space-x-2 justify-between" data-no-dnd="true">
-            {type === "single-line-text" && <Input type="text" placeholder={placeholder} readOnly={true} />}
+            {type === "single-line-text" && (
+              <Input type="text" placeholder={placeholder} readOnly={true} disabled={true} />
+            )}
             {type === "file" && (
               // We will need to render our own file input here, as the default input doesn't play nicely with dnd-kit.
               // The file that has been uploaded will be cleared on a rearrange if we use the default input.
@@ -108,14 +110,24 @@ export const ReceiveSecretFieldRenderer = ({
                     }
                   }}
                   style={{ display: "none" }} // Hide the actual input element
+                  disabled={true}
                 />
                 <div>
-                  <Button variant={"secondary"}>Choose files</Button>
+                  <Button variant={"secondary"} disabled={true}>
+                    Choose files
+                  </Button>
                 </div>
               </div>
             )}
             {type === "multi-line-text" && (
-              <Textarea style={{ resize: "none" }} placeholder={placeholder} value={""} rows={4} readOnly={true} />
+              <Textarea
+                style={{ resize: "none" }}
+                placeholder={placeholder}
+                value={""}
+                rows={4}
+                readOnly={true}
+                disabled={true}
+              />
             )}
 
             <Button variant="ghost" size="icon" onClick={() => deleteItem(id)} tabIndex={-1}>
