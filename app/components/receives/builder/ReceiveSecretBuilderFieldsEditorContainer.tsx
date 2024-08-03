@@ -11,8 +11,6 @@ import { arrayMove } from "@dnd-kit/sortable";
 import { useState } from "react";
 
 import { Button } from "~/components/ui/button";
-import { EditableText } from "~/components/ui/EditableText";
-
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -21,37 +19,50 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "../../ui/dropdown-menu";
-import { SendBuilderFieldWithId } from "./SecretFieldRenderer";
-import { SecretFieldsContainer } from "./SecretFieldsContainer";
-import { useSendBuilderConfiguration } from "./SendBuilderConfigurationContextProvider";
-import { SendBuilderField } from "./types";
+} from "~/components/ui/dropdown-menu";
+import { EditableText } from "~/components/ui/EditableText";
+
+import { ReceiveBuilderFieldWithId } from "./ReceiveSecretFieldRenderer";
+import { ReceiveSecretFieldsContainer } from "./ReceiveSecretFieldsContainer";
+import { ReceiveBuilderConfiguration, ReceiveBuilderField } from "./types";
 
 /**
  * The container for the secret builder fields. It handles the rendering a component to add new fields, and
  * renders the existing fields in a draggable list.
  */
-export default function SecretBuilderFieldsEditorContainer() {
-  const { config: sendBuilderConfiguration, updateConfig } = useSendBuilderConfiguration();
+export const ReceivesSecretBuilderFieldsEditorContainer = ({
+  templateConfig,
+}: {
+  templateConfig: ReceiveBuilderConfiguration;
+}) => {
+  const [receiveBuilderConfiguration, setReceiveBuilderConfiguration] = useState<ReceiveBuilderConfiguration>({
+    ...templateConfig,
+  });
+
+  console.log("TEMPLATE UPDATE", JSON.stringify(receiveBuilderConfiguration, null, 2));
+
   // For now, let's just have it snap. We achieve this by just re-rendering the component.
   const [rearrangeCount, setRearrangeCount] = useState<number>(0);
 
-  const items = sendBuilderConfiguration.fields.map((field, index) => ({ ...field, id: index + 1 }));
+  const items = receiveBuilderConfiguration.fields.map((field, index) => ({ ...field, id: index + 1 }));
 
-  const updateItems = (newItems: SendBuilderFieldWithId[]) => {
-    updateConfig({
+  const updateItems = (newItems: ReceiveBuilderFieldWithId[]) => {
+    const newConfig = {
+      ...receiveBuilderConfiguration,
       fields: newItems.map((item) => {
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
         const { id, ...rest } = item;
 
         return rest;
       }),
-    });
+    };
+
+    setReceiveBuilderConfiguration(newConfig);
   };
 
-  const addItem = (type: SendBuilderField["type"]) => {
+  const addItem = (type: ReceiveBuilderField["type"]) => {
     const newItemId = items.length + 1;
-    let newItem: SendBuilderFieldWithId;
+    let newItem: ReceiveBuilderFieldWithId;
 
     if (type === "single-line-text") {
       newItem = {
@@ -112,13 +123,13 @@ export default function SecretBuilderFieldsEditorContainer() {
     })
   );
 
-  const updateItem = (id: number, updatedField: Partial<Pick<SendBuilderField, "title" | "value">>) => {
+  const updateItem = (id: number, updatedField: Partial<Pick<ReceiveBuilderField, "title" | "value">>) => {
     const updatedItems = items.map((item) => {
       if (item.id === id) {
         return {
           ...item,
           ...updatedField,
-        } as SendBuilderFieldWithId;
+        } as ReceiveBuilderFieldWithId;
       }
 
       return item;
@@ -139,9 +150,9 @@ export default function SecretBuilderFieldsEditorContainer() {
         <div className="px-4 pt-4">
           <h4 className="hover:bg-slate-50">
             <EditableText
-              value={sendBuilderConfiguration.title}
+              value={receiveBuilderConfiguration.title}
               onChange={(newTitle) => {
-                updateConfig({ title: newTitle });
+                setReceiveBuilderConfiguration({ ...receiveBuilderConfiguration, title: newTitle });
               }}
             />
           </h4>
@@ -168,14 +179,14 @@ export default function SecretBuilderFieldsEditorContainer() {
         </div>
         {/* end menu */}
         <DndContext sensors={sensors} onDragEnd={handleDragEnd} collisionDetection={closestCorners}>
-          <SecretFieldsContainer
+          <ReceiveSecretFieldsContainer
             key={rearrangeCount}
             updateItem={updateItem}
             deleteItem={deleteItem}
-            sendBuilderFields={items}
+            receiveBuilderFields={items}
           />
         </DndContext>
       </div>
     </>
   );
-}
+};
