@@ -1,6 +1,6 @@
-import SecretBuilderConfigurationFooter from "./SecretBuilderConfigurationFooter";
-import SecretBuilderFieldsEditorContainer from "./SecretBuilderFieldsEditorContainer";
 import { SendBuilderConfigurationContextProvider } from "./SendBuilderConfigurationContextProvider";
+import SecretBuilderConfigurationFooter from "./SendSecretBuilderConfigurationFooter";
+import SecretBuilderFieldsEditorContainer from "./SendSecretBuilderFieldsEditorContainer";
 import { SendBuilderConfiguration } from "./types";
 
 /**

@@ -12,8 +12,8 @@ import { Button } from "../../ui/button";
 import { Input } from "../../ui/input";
 import { Popover, PopoverContent, PopoverTrigger } from "../../ui/popover";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../../ui/select";
-import { SecretSender } from "./SecretSender";
 import { useSendBuilderConfiguration } from "./SendBuilderConfigurationContextProvider";
+import { SecretSender } from "./SendSecretSender";
 import { EXPIRATION_DATE_TIME_UNIT_OPTIONS, ExpirationDateTimeUnits, MAXIMUM_SEND_SIZE_IN_MEGA_BYTES } from "./types";
 
 /**

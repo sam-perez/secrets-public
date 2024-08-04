@@ -22,9 +22,9 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "../../ui/dropdown-menu";
-import { SendBuilderFieldWithId } from "./SecretFieldRenderer";
-import { SecretFieldsContainer } from "./SecretFieldsContainer";
 import { useSendBuilderConfiguration } from "./SendBuilderConfigurationContextProvider";
+import { SendBuilderFieldWithId } from "./SendSecretFieldRenderer";
+import { SecretFieldsContainer } from "./SendSecretFieldsContainer";
 import { SendBuilderField } from "./types";
 
 /**

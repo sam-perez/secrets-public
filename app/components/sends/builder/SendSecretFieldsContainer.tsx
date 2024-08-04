@@ -1,6 +1,6 @@
 import { SortableContext, verticalListSortingStrategy } from "@dnd-kit/sortable";
 
-import { SecretFieldRenderer, SendBuilderFieldWithId } from "./SecretFieldRenderer";
+import { SecretFieldRenderer, SendBuilderFieldWithId } from "./SendSecretFieldRenderer";
 
 /**
  * Props for the SecretFieldsContainerProps component.
