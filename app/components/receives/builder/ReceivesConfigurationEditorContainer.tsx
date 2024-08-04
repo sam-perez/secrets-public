@@ -22,15 +22,19 @@ import {
 } from "~/components/ui/dropdown-menu";
 import { EditableText } from "~/components/ui/EditableText";
 
+import { SecretBuilderConfigurationFooter } from "./ReceiveSecretBuilderConfigurationFooter";
 import { ReceiveBuilderFieldWithId } from "./ReceiveSecretFieldRenderer";
 import { ReceiveSecretFieldsContainer } from "./ReceiveSecretFieldsContainer";
 import { ReceiveBuilderConfiguration, ReceiveBuilderField } from "./types";
 
 /**
- * The container for the secret builder fields. It handles the rendering a component to add new fields, and
- * renders the existing fields in a draggable list.
+ * The container for the receive configuration editor.
+ *
+ * It handles the editing of the fields as well as the title of the receive.
+ *
+ * The notification configuration is handled by a child component.
  */
-export const ReceivesSecretBuilderFieldsEditorContainer = ({
+export const ReceivesConfigurationEditorContainer = ({
   templateConfig,
 }: {
   templateConfig: ReceiveBuilderConfiguration;
@@ -38,8 +42,6 @@ export const ReceivesSecretBuilderFieldsEditorContainer = ({
   const [receiveBuilderConfiguration, setReceiveBuilderConfiguration] = useState<ReceiveBuilderConfiguration>({
     ...templateConfig,
   });
-
-  console.log("TEMPLATE UPDATE", JSON.stringify(receiveBuilderConfiguration, null, 2));
 
   // For now, let's just have it snap. We achieve this by just re-rendering the component.
   const [rearrangeCount, setRearrangeCount] = useState<number>(0);
@@ -187,6 +189,12 @@ export const ReceivesSecretBuilderFieldsEditorContainer = ({
           />
         </DndContext>
       </div>
+      <SecretBuilderConfigurationFooter
+        receiveBuilderConfiguration={receiveBuilderConfiguration}
+        updateNotificationConfig={(notificationConfig) => {
+          setReceiveBuilderConfiguration({ ...receiveBuilderConfiguration, notificationConfig });
+        }}
+      />
     </>
   );
 };

@@ -4,7 +4,7 @@ import { Link, useLoaderData } from "@remix-run/react";
 
 import AboutSidenav from "~/components/about-sidenav";
 // eslint-disable-next-line max-len
-import { ReceivesSecretBuilderFieldsEditorContainer } from "~/components/receives/builder/ReceiveSecretBuilderFieldsEditorContainer";
+import { ReceivesConfigurationEditorContainer } from "~/components/receives/builder/ReceivesConfigurationEditorContainer";
 import { Alert } from "~/components/ui/alert";
 import { Badge } from "~/components/ui/badge";
 
@@ -69,13 +69,14 @@ export default function TemplateDetails() {
       <div className="mx-auto lg:grid lg:max-w-7xl grid-cols-3 gap-8">
         <div className="lg:col-span-2">
           <div className="border rounded-xl mb-4 shadow-lg">
-            <ReceivesSecretBuilderFieldsEditorContainer
+            <ReceivesConfigurationEditorContainer
               templateConfig={{
                 title: template.title,
                 fields: template.fields.map((field) => ({
                   ...field,
                   value: null,
                 })),
+                notificationConfig: null,
               }}
             />
           </div>

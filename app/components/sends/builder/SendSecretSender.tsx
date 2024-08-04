@@ -28,10 +28,11 @@ import { SendBuilderConfiguration } from "./types";
  * The component that sends the secret. Accepts a completed secret builder configuration, massages the data into the
  * shape expected by the API, and sends it.
  */
-export function SecretSender({ sendBuilderConfiguration }: { sendBuilderConfiguration: SendBuilderConfiguration }) {
+// eslint-disable-next-line max-len
+export function SendSecretSender({ sendBuilderConfiguration }: { sendBuilderConfiguration: SendBuilderConfiguration }) {
   return (
     <EncryptionWorkerProvider>
-      <SecretSenderInner sendBuilderConfiguration={sendBuilderConfiguration} />
+      <SendSecretSenderInner sendBuilderConfiguration={sendBuilderConfiguration} />
     </EncryptionWorkerProvider>
   );
 }
@@ -39,7 +40,7 @@ export function SecretSender({ sendBuilderConfiguration }: { sendBuilderConfigur
 /**
  * The inner component that sends the secret. Responsible for sending the secret to the API.
  */
-function SecretSenderInner({ sendBuilderConfiguration }: { sendBuilderConfiguration: SendBuilderConfiguration }) {
+function SendSecretSenderInner({ sendBuilderConfiguration }: { sendBuilderConfiguration: SendBuilderConfiguration }) {
   const encryptionWorker = useEncryptionWorker();
 
   const [secretLinkData, setSecretLinkData] = useState<{

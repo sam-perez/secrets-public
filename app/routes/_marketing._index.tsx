@@ -217,6 +217,7 @@ export default function Index() {
                       templateSlug={slug}
                       name={template.title}
                       numberFields={template.fields.length}
+                      cardType="sends"
                     />
                   </div>
                 ))}
@@ -229,6 +230,7 @@ export default function Index() {
                       templateSlug={slug}
                       name={template.title}
                       numberFields={template.fields.length}
+                      cardType="sends"
                     />
                   </div>
                 ))}

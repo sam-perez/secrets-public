@@ -22,6 +22,23 @@ export type ReceiveBuilderConfiguration = {
   /** The title of the receive. */
   title: string;
 
+  /**
+   * The notification configuration for the receive.
+   *
+   * Note that we allow this to be null here on the frontend, but that is just for convenience while we are
+   * constructing the receive. The backend will not allow this to be null, and we should make sure that it is
+   * set before sending it to the backend.
+   *
+   * This should be fine as long as you use the CreateReceiveBody type from the create receive endpoint.
+   */
+  notificationConfig: {
+    /** A webhook notification. */
+    type: "webhook";
+
+    /** The url to send the notification to. */
+    url: string;
+  } | null;
+
   /** The fields in the receive. */
   fields: Array<ReceiveBuilderField>;
 };
