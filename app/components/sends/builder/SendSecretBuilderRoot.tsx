@@ -1,6 +1,6 @@
 import { SendBuilderConfigurationContextProvider } from "./SendBuilderConfigurationContextProvider";
-import SecretBuilderConfigurationFooter from "./SendSecretBuilderConfigurationFooter";
-import SecretBuilderFieldsEditorContainer from "./SendSecretBuilderFieldsEditorContainer";
+import SendSecretBuilderConfigurationFooter from "./SendSecretBuilderConfigurationFooter";
+import SendSecretBuilderFieldsEditorContainer from "./SendSecretBuilderFieldsEditorContainer";
 import { SendBuilderConfiguration } from "./types";
 
 /**
@@ -8,7 +8,7 @@ import { SendBuilderConfiguration } from "./types";
  *
  * Manages the state of the builder configuration and renders the fields container and the configuration footer.
  */
-export function SecretBuilderRoot({
+export function SendSecretBuilderRoot({
   sendBuilderConfiguration,
 }: {
   sendBuilderConfiguration: SendBuilderConfiguration;
@@ -16,8 +16,8 @@ export function SecretBuilderRoot({
   return (
     <SendBuilderConfigurationContextProvider initialConfig={sendBuilderConfiguration}>
       <div className="border rounded-xl mb-4 shadow-lg">
-        <SecretBuilderFieldsEditorContainer />
-        <SecretBuilderConfigurationFooter />
+        <SendSecretBuilderFieldsEditorContainer />
+        <SendSecretBuilderConfigurationFooter />
       </div>
     </SendBuilderConfigurationContextProvider>
   );

@@ -33,7 +33,7 @@ const humanReadableFileSize = (size: number) => {
  * Takes in the configuration required to render and receive the secret field, and
  * reports back the secret field's value to the parent component.
  */
-export const SecretFieldRenderer = ({
+export const SendSecretFieldRenderer = ({
   sendBuilderField,
   updateItem,
   deleteItem,

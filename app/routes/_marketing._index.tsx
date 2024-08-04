@@ -7,7 +7,7 @@ import hljs from "highlight.js";
 import { marked } from "marked";
 import { useEffect } from "react";
 
-import { SecretBuilderRoot } from "~/components/sends/builder/SecretBuilderRoot";
+import { SendSecretBuilderRoot } from "~/components/sends/builder/SendSecretBuilderRoot";
 import { Button } from "~/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "~/components/ui/tabs";
 import { TemplateCard } from "~/components/ui/TemplateCard";
@@ -161,7 +161,7 @@ export default function Index() {
             </div>
           </div>
           <div>
-            <SecretBuilderRoot
+            <SendSecretBuilderRoot
               sendBuilderConfiguration={{
                 title: defaultTemplate.title,
                 password: null,

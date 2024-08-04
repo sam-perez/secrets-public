@@ -29,7 +29,7 @@ import { EXPIRATION_DATE_TIME_UNIT_OPTIONS, ExpirationDateTimeUnits, MAXIMUM_SEN
  * Each of these options are rendered in their own components, which will independently report back any changes
  * to their settings to this component. This component will then proxy those changes to the parent component.
  */
-export default function SecretBuilderConfigurationFooter() {
+export default function SendSecretBuilderConfigurationFooter() {
   const { config: sendBuilderConfiguration, updateConfig } = useSendBuilderConfiguration();
 
   const [showLinkGeneration, setShowLinkGeneration] = useState<boolean>(false);

@@ -3,7 +3,7 @@ import { json, LoaderFunction, MetaFunction } from "@remix-run/node";
 import { Link, useLoaderData } from "@remix-run/react";
 
 import AboutSidenav from "~/components/about-sidenav";
-import { SecretBuilderRoot } from "~/components/sends/builder/SecretBuilderRoot";
+import { SendSecretBuilderRoot } from "~/components/sends/builder/SendSecretBuilderRoot";
 import { Alert } from "~/components/ui/alert";
 import { Badge } from "~/components/ui/badge";
 
@@ -68,7 +68,7 @@ export default function TemplateDetails() {
       <div className="mx-auto lg:grid lg:max-w-7xl grid-cols-3 gap-8">
         <div className="lg:col-span-2">
           {/* share content  */}
-          <SecretBuilderRoot
+          <SendSecretBuilderRoot
             sendBuilderConfiguration={{
               title: template.title,
               password: null,
