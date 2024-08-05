@@ -86,7 +86,7 @@ export const ReceiveResponseContainer = ({
         <div className="lg:col-span-2">
           <Alert className="mb-4">
             <LockClosedIcon className="h-4 w-4 text-green-500" />
-            <AlertTitle>End-to-end Encrypted</AlertTitle>
+            <AlertTitle>End-to-end encrypted</AlertTitle>
             <AlertDescription>The data you enter will be encrypted and sent to the requestor.</AlertDescription>
           </Alert>
           <div className="rounded border">
@@ -117,7 +117,7 @@ export const ReceiveResponseContainer = ({
               </div>
             </div>
           </div>
-          <div className="space-y-4 lg:col-span-2">
+          <div className="space-y-4 lg:col-span-2 mt-8">
             <div>
               {/* TODO use a toast ^ */}
               <AboutSidenav showAbout={true} />
