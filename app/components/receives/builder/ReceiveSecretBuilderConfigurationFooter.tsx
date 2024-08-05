@@ -240,7 +240,7 @@ export function ConfirmPopover({
           {notificationConfigIsReady ? (
             <li className="flex items-center">
               <LightningBoltIcon className="flex-none h-3 w-3 mr-2" />
-              <span>
+              <span className="break-all">
                 You will be notified of responses at <b> {receiveBuilderConfiguration.notificationConfig?.url}</b>.
               </span>
             </li>

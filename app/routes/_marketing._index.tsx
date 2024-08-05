@@ -1,6 +1,6 @@
 import "highlight.js/styles/nnfx-dark.min.css";
 
-import { PaperPlaneIcon } from "@radix-ui/react-icons";
+import { ArrowDownIcon, ArrowUpIcon, PaperPlaneIcon } from "@radix-ui/react-icons";
 import type { MetaFunction } from "@remix-run/node";
 import { Link } from "@remix-run/react";
 import hljs from "highlight.js";
@@ -151,12 +151,16 @@ export default function Index() {
             <div className="space-x-2 pt-4">
               <Link to="/sends/templates/new">
                 <Button className="">
-                  <PaperPlaneIcon className="mr-2 h-3 w-3" />
-                  Start with Blank
+                  <ArrowUpIcon className="mr-2 h-3 w-3" />
+                  Send
                 </Button>
               </Link>
-              <Link to="/sends/templates">
-                <Button variant={"outline"}>Browse Templates</Button>
+              <Link to="/receives/templates">
+                <Button variant={"outline"}>
+                  {" "}
+                  <ArrowDownIcon className="mr-2 h-3 w-3" />
+                  Receive{" "}
+                </Button>
               </Link>
             </div>
           </div>

@@ -8,7 +8,7 @@ import { TemplateCard } from "~/components/ui/TemplateCard";
 
 export const meta: MetaFunction = () => {
   return [
-    { title: "Encrypted Templates | 2Secured" },
+    { title: "Encrypted Form Builder Templates | 2Secured" },
     {
       name: "description",
       content:
@@ -32,8 +32,10 @@ export default function Templates() {
   return (
     <>
       <section className="mx-auto max-w-5xl text-center p-20 space-y-2">
-        <h1>Explore templates</h1>
-        <p className="lead pb-4">Start from one of these reusable forms to quickly receive encrypted information.</p>
+        <h1>Explore encrypted form templates</h1>
+        <p className="lead pb-4">
+          Start from one of these reusable forms to request encrypted information from someone else.
+        </p>
         <Input placeholder="Search templates" onChange={handleSearchChange} className="max-w-lg mx-auto" />
       </section>
       {/* todo sort by tag */}

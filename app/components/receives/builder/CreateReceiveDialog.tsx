@@ -143,12 +143,14 @@ export function CreateReceiveDialog({
               <div>
                 <h4 className="flex items-center">
                   <LockClosedIcon className="w-4 h-4 mr-1" />
-                  You are ready to start collecting responses!
+                  Share this link to your end-to-end encrypted form!
                 </h4>
-                <p className="text-xs muted py-0">Anyone with this link will be able to respond to your receive</p>
+                <p className="text-xs muted py-0">
+                  Anyone with this link will be able to send data to you via end-to-end encryption.
+                </p>
               </div>
               <div>
-                <Label>Receive Link</Label>
+                <Label>Encrypted Form Link</Label>
                 <div className="flex items-start space-x-2 mt-2">
                   <Input className="bg-slate-50 font-medium" type="text" value={getRevealerLink()} readOnly={true} />
                   <Button variant={"outline"} onClick={handleCopy}>
@@ -161,14 +163,14 @@ export function CreateReceiveDialog({
                   </Link>
                 </div>
 
-                <div className="flex items-center mt-2">
+                <div className="flex items-center mt-2 ">
                   <EnvelopeClosedIcon className="w-4 h-4 text-slate-500 mr-3" />
-                  <div>
+                  <div className="break-words">
                     <small>Notifications</small>
-                    <p className="text-xs">You will be notified when someone responds to your receive.</p>
+                    <p className="text-xs">You will be notified when someone fills out your secured form.</p>
                     {/** TODO: handle other notification types */}
-                    <p className="text-xs">A request will be sent to the webhook you configured at</p>
-                    <p className="text-xs">{receiveBuilderConfiguration.notificationConfig.url}</p>
+                    <p className="text-xs">A request will be sent to the webhook you configured at:</p>
+                    <p className="text-xs break-all">{receiveBuilderConfiguration.notificationConfig.url}</p>
                   </div>
                 </div>
               </div>

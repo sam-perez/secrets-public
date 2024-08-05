@@ -70,13 +70,13 @@ export const RECEIVE_BUILDER_TEMPLATES: {
   };
 } = {
   new: {
-    title: "Encrypted Receive",
-    description: "Start from scratch and share any data with end-to-end encryption.",
+    title: "Encrypted Blank Form",
+    description: "A blank template to request and receive any data from someone else with end-to-end encryption.",
     fields: [
       {
         title: "Untitled",
         type: "single-line-text",
-        placeholder: "Enter Text",
+        placeholder: "Receipent enters text here",
       },
     ],
   },

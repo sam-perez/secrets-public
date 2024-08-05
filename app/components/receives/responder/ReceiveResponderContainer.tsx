@@ -7,6 +7,9 @@ import { ReceiveBuilderTemplate, ReceiveField } from "../builder/types";
 import { ReceiveFieldWithId, ReceiveResponderSecretFieldRenderer } from "./ReceiveResponderSecretFieldRenderer";
 import { ReceiveResponseSealerAndSender } from "./ReceiveResponseSealerAndSender";
 import { ReceiveResponse } from "./types";
+import { Alert, AlertDescription, AlertTitle } from "~/components/ui/alert";
+import { LockClosedIcon, LockOpen1Icon } from "@radix-ui/react-icons";
+import AboutSidenav from "~/components/about-sidenav";
 
 const MAXIMUM_RECEIVE_SIZE_IN_MEGA_BYTES = 20;
 
@@ -79,29 +82,46 @@ export const ReceiveResponseContainer = ({
 
   return (
     <>
-      <div className="max-w-4xl mx-auto">
-        <div className="px-4 pt-4">
-          <h4 className="hover:bg-slate-50">{startingTemplate.title}</h4>
-        </div>
-
-        <div className="p-2">
-          {items.map((item) => (
-            <ReceiveResponderSecretFieldRenderer key={item.id} receiveField={item} updateItem={updateItem} />
-          ))}
-        </div>
-
-        <div className="border-t bg-slate-50 rounded-b-xl">
-          <div className="px-4 py-2 sm:flex flex-wrap justify-between items-center text-sm overflow-hidden">
-            {/* Button to generate link. */}
-            <div>
-              <Button className="w-full" disabled={!readyToSubmitSecrets} onClick={() => setShouldUploadSecrets(true)}>
-                {linkText}
-              </Button>
+      <div className="mx-auto lg:grid lg:max-w-2xl grid-cols-2 gap-8">
+        <div className="lg:col-span-2">
+          <Alert className="mb-4">
+            <LockClosedIcon className="h-4 w-4 text-green-500" />
+            <AlertTitle>End-to-end Encrypted</AlertTitle>
+            <AlertDescription>The data you enter will be encrypted and sent to the requestor.</AlertDescription>
+          </Alert>
+          <div className="rounded border">
+            <div className="px-4 pt-4">
+              <h3 className="">{startingTemplate.title}</h3>
             </div>
+            <div className="p-2 ">
+              {items.map((item) => (
+                <ReceiveResponderSecretFieldRenderer key={item.id} receiveField={item} updateItem={updateItem} />
+              ))}
+            </div>
+            <div className="border-t bg-slate-50 rounded-b-xl">
+              <div className="px-4 py-2 sm:flex flex-wrap justify-between items-center text-sm overflow-hidden">
+                {/* Button to generate link. */}
+                <div>
+                  <Button
+                    className="w-full"
+                    disabled={!readyToSubmitSecrets}
+                    onClick={() => setShouldUploadSecrets(true)}
+                  >
+                    {linkText}
+                  </Button>
+                </div>
 
-            {shouldUploadSecrets === false ? null : (
-              <ReceiveResponseSealerAndSender receiveId={receiveId} receiveResponse={receiveResponse} />
-            )}
+                {shouldUploadSecrets === false ? null : (
+                  <ReceiveResponseSealerAndSender receiveId={receiveId} receiveResponse={receiveResponse} />
+                )}
+              </div>
+            </div>
+          </div>
+          <div className="space-y-4 lg:col-span-2">
+            <div>
+              {/* TODO use a toast ^ */}
+              <AboutSidenav showAbout={true} />
+            </div>
           </div>
         </div>
       </div>
