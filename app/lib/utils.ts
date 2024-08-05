@@ -95,3 +95,37 @@ export const computeTotalSizeOfSecretFields = (secretFields: SecretField[]) => {
 
   return totalBytesOfFields;
 };
+
+/**
+ * Chunks out packed secrets.
+ *
+ * This is a json blob that includes the packed secrets public info and the ciphertext.
+ */
+export const chunkOutPackedSecrets = (packedSecrets: string) => {
+  // split up the json string into 4mb chunks, assuming 2 bytes per character
+  const bytesPerCharacter = 2;
+  const chunkSize = (4 * 1024 * 1024) / bytesPerCharacter;
+  const chunkArrays: Array<Array<string>> = [[]];
+  for (let i = 0; i < packedSecrets.length; i += 1) {
+    let currentChunk = chunkArrays[chunkArrays.length - 1];
+
+    if (currentChunk.length >= chunkSize) {
+      chunkArrays.push([]);
+      currentChunk = chunkArrays[chunkArrays.length - 1];
+    }
+
+    currentChunk.push(packedSecrets[i]);
+  }
+
+  const chunks = chunkArrays.map((chunk) => chunk.join(""));
+
+  return chunks;
+};
+
+/**
+ * Typescript helper function to ensure that we have handled all possible cases in a switch statements,
+ * if statements, or other control flow that is based on a discriminated union or something similar.
+ */
+export function exhaustiveGuard(_value: never): never {
+  throw new Error(`ERROR! Reached forbidden guard function with unexpected value: ${JSON.stringify(_value)}`);
+}

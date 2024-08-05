@@ -7,6 +7,7 @@ import { getReceiveConfig, ReceiveConfig, ReceiveId } from "~/lib/receives";
 
 type LoaderData =
   | {
+      receiveId: ReceiveId;
       receiveTemplate: ReceiveConfig["template"];
     }
   | { error: string };
@@ -20,7 +21,10 @@ export const loader: LoaderFunction = async ({ params }) => {
   } else {
     const receiveConfig = await getReceiveConfig(receiveId as ReceiveId);
 
-    loaderData = { receiveTemplate: receiveConfig.template };
+    loaderData = {
+      receiveId: receiveConfig.receiveId,
+      receiveTemplate: receiveConfig.template,
+    };
   }
 
   return json<LoaderData>(loaderData);
@@ -33,5 +37,5 @@ export default function ReceivePage() {
     return <p>Invalid template.</p>;
   }
 
-  return <ReceiveResponseContainer startingTemplate={data.receiveTemplate} />;
+  return <ReceiveResponseContainer startingTemplate={data.receiveTemplate} receiveId={data.receiveId} />;
 }

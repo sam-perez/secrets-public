@@ -14,7 +14,7 @@ import { Input } from "~/components/ui/input";
 import { Label } from "~/components/ui/label";
 import { stringToUtf16ArrayBuffer } from "~/lib/crypto-utils";
 import { PublicPackedSecrets, SecretResponses } from "~/lib/secrets";
-import { parallelWithLimit } from "~/lib/utils";
+import { chunkOutPackedSecrets, parallelWithLimit } from "~/lib/utils";
 import { InitiateSendBody, InitiateSendResponse } from "~/routes/marketing.api.sends.initiate-send";
 import { UPLOAD_SEND_ENCRYPTED_PART_HEADERS } from "~/routes/marketing.api.sends.upload-send-encrypted-part";
 
@@ -25,14 +25,20 @@ import { Spinner } from "../../ui/Spinner";
 import { SendBuilderConfiguration } from "./types";
 
 /**
- * The component that sends the secret. Accepts a completed secret builder configuration, massages the data into the
- * shape expected by the API, and sends it.
+ * The component that seals and sends the secret.
+ *
+ * Accepts a completed secret builder configuration, massages the data into the shape expected by the API,
+ * and sends it.
  */
 // eslint-disable-next-line max-len
-export function SendSecretSender({ sendBuilderConfiguration }: { sendBuilderConfiguration: SendBuilderConfiguration }) {
+export function SendSecretSealerAndSender({
+  sendBuilderConfiguration,
+}: {
+  sendBuilderConfiguration: SendBuilderConfiguration;
+}) {
   return (
     <EncryptionWorkerProvider>
-      <SendSecretSenderInner sendBuilderConfiguration={sendBuilderConfiguration} />
+      <SendSecretSealerAndSenderInner sendBuilderConfiguration={sendBuilderConfiguration} />
     </EncryptionWorkerProvider>
   );
 }
@@ -40,7 +46,11 @@ export function SendSecretSender({ sendBuilderConfiguration }: { sendBuilderConf
 /**
  * The inner component that sends the secret. Responsible for sending the secret to the API.
  */
-function SendSecretSenderInner({ sendBuilderConfiguration }: { sendBuilderConfiguration: SendBuilderConfiguration }) {
+function SendSecretSealerAndSenderInner({
+  sendBuilderConfiguration,
+}: {
+  sendBuilderConfiguration: SendBuilderConfiguration;
+}) {
   const encryptionWorker = useEncryptionWorker();
 
   const [secretLinkData, setSecretLinkData] = useState<{
@@ -150,21 +160,7 @@ function SendSecretSenderInner({ sendBuilderConfiguration }: { sendBuilderConfig
         const publicPackedSecretsJson = JSON.stringify(publicPackedSecrets);
 
         // split up the json string into 4mb chunks, assuming 2 bytes per character
-        const bytesPerCharacter = 2;
-        const chunkSize = (4 * 1024 * 1024) / bytesPerCharacter;
-        const chunkArrays: Array<Array<string>> = [[]];
-        for (let i = 0; i < publicPackedSecretsJson.length; i += 1) {
-          let currentChunk = chunkArrays[chunkArrays.length - 1];
-
-          if (currentChunk.length >= chunkSize) {
-            chunkArrays.push([]);
-            currentChunk = chunkArrays[chunkArrays.length - 1];
-          }
-
-          currentChunk.push(publicPackedSecretsJson[i]);
-        }
-
-        const chunks = chunkArrays.map((chunk) => chunk.join(""));
+        const chunks = chunkOutPackedSecrets(publicPackedSecretsJson);
 
         const totalParts = chunks.length;
 

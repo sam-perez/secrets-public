@@ -15,7 +15,7 @@ import { Input } from "../../ui/input";
 import { Popover, PopoverContent, PopoverTrigger } from "../../ui/popover";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../../ui/select";
 import { useSendBuilderConfiguration } from "./SendBuilderConfigurationContextProvider";
-import { SendSecretSender } from "./SendSecretSender";
+import { SendSecretSealerAndSender } from "./SendSecretSealerAndSender";
 import { EXPIRATION_DATE_TIME_UNIT_OPTIONS, ExpirationDateTimeUnits, MAXIMUM_SEND_SIZE_IN_MEGA_BYTES } from "./types";
 
 /**
@@ -138,7 +138,7 @@ export default function SendSecretBuilderConfigurationFooter() {
 
           {/* Link generation dialog. */}
           {showLinkGeneration === false ? null : (
-            <SendSecretSender sendBuilderConfiguration={sendBuilderConfiguration} />
+            <SendSecretSealerAndSender sendBuilderConfiguration={sendBuilderConfiguration} />
           )}
         </div>
       </div>

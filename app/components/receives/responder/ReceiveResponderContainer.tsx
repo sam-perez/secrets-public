@@ -5,11 +5,8 @@ import { computeTotalSizeOfSecretFields } from "~/lib/utils";
 
 import { ReceiveBuilderTemplate, ReceiveField } from "../builder/types";
 import { ReceiveFieldWithId, ReceiveResponderSecretFieldRenderer } from "./ReceiveResponderSecretFieldRenderer";
-
-/** The type for the response of the receive configuration */
-type ReceiveResponse = {
-  fields: ReceiveField[];
-};
+import { ReceiveResponseSealerAndSender } from "./ReceiveResponseSealerAndSender";
+import { ReceiveResponse } from "./types";
 
 const MAXIMUM_RECEIVE_SIZE_IN_MEGA_BYTES = 20;
 
@@ -18,7 +15,13 @@ const MAXIMUM_RECEIVE_SIZE_IN_MEGA_BYTES = 20;
  *
  * It collects the secret fields and sends them to the backend.
  */
-export const ReceiveResponseContainer = ({ startingTemplate }: { startingTemplate: ReceiveBuilderTemplate }) => {
+export const ReceiveResponseContainer = ({
+  receiveId,
+  startingTemplate,
+}: {
+  receiveId: string;
+  startingTemplate: ReceiveBuilderTemplate;
+}) => {
   const [receiveResponse, setReceiveResponse] = useState<ReceiveResponse>({
     fields: startingTemplate.fields.map((field) => ({ ...field, value: null })),
   });
@@ -96,7 +99,9 @@ export const ReceiveResponseContainer = ({ startingTemplate }: { startingTemplat
               </Button>
             </div>
 
-            {shouldUploadSecrets === false ? null : <div>TODO: Implement the upload secrets modal</div>}
+            {shouldUploadSecrets === false ? null : (
+              <ReceiveResponseSealerAndSender receiveId={receiveId} receiveResponse={receiveResponse} />
+            )}
           </div>
         </div>
       </div>

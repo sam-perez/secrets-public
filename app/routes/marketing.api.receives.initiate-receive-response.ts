@@ -14,7 +14,7 @@ import { getIso8601DateTimeString, nowIso8601DateTimeString } from "../lib/time"
 import { sendDiscordMessage } from "../lib/utils";
 
 /** The response from the initiate receive endpoint. */
-export type InitiateReceiveResponseBody = {
+export type InitiateReceiveResponseResponseBody = {
   receiveId: ReceiveId;
   receiveResponseId: ReceiveResponseId;
   encryptedPartsPassword: string;
@@ -80,7 +80,7 @@ export const action: ActionFunction = async ({ request }) => {
       writeReceiveResponseExpirationRecord(receiveId, receiveResponseId, expiresAt),
     ]);
 
-    const initiateReceiveResponseBody: InitiateReceiveResponseBody = {
+    const initiateReceiveResponseBody: InitiateReceiveResponseResponseBody = {
       receiveId,
       receiveResponseId,
       encryptedPartsPassword: initialReceiveResponseState.encryptedPartsPassword,
