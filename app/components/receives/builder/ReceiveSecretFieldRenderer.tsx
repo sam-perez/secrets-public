@@ -8,10 +8,10 @@ import { EditableText } from "../../ui/EditableText";
 import { Input } from "../../ui/input";
 import { Label } from "../../ui/label";
 import { Textarea } from "../../ui/textarea";
-import { ReceiveBuilderField } from "./types";
+import { ReceiveField } from "./types";
 
 /** Internally used type for the builder fields, id is required to play nicely with dnd-kit */
-export type ReceiveBuilderFieldWithId = ReceiveBuilderField & { id: number };
+export type ReceiveBuilderFieldWithId = ReceiveField & { id: number };
 
 /**
  * Renders a secret field in the builder.
@@ -25,7 +25,7 @@ export const ReceiveSecretFieldRenderer = ({
   deleteItem,
 }: {
   receiveBuilderField: ReceiveBuilderFieldWithId;
-  updateItem: (itemIndex: number, newItem: Partial<Pick<ReceiveBuilderField, "title" | "value">>) => void;
+  updateItem: (itemIndex: number, newItem: Partial<Pick<ReceiveField, "title" | "value">>) => void;
   deleteItem: (id: number) => void;
 }) => {
   const { title, type, placeholder, id } = receiveBuilderField;

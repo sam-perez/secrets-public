@@ -8,6 +8,8 @@ import {
 } from "@radix-ui/react-icons";
 import { useCallback, useState } from "react";
 
+import { computeTotalSizeOfSecretFields } from "~/lib/utils";
+
 import { Button } from "../../ui/button";
 import { Input } from "../../ui/input";
 import { Popover, PopoverContent, PopoverTrigger } from "../../ui/popover";
@@ -81,17 +83,7 @@ export default function SendSecretBuilderConfigurationFooter() {
     (field) => field.value !== null && field.value.length > 0
   ).length;
 
-  const totalBytesOfFields = sendBuilderConfiguration.fields.reduce((acc, field) => {
-    if (field.value === null) {
-      return acc;
-    }
-
-    if (field.type === "multi-line-text" || field.type === "single-line-text") {
-      return acc + new Blob([field.value]).size;
-    } else {
-      return acc + field.value.reduce((acc, file) => acc + file.size, 0);
-    }
-  }, 0);
+  const totalBytesOfFields = computeTotalSizeOfSecretFields(sendBuilderConfiguration.fields);
 
   const readyToGenerateLink =
     numberOfFields > 0 &&

@@ -1,12 +1,8 @@
-import { ChevronRightIcon } from "@radix-ui/react-icons";
-import { json, LoaderFunction, MetaFunction } from "@remix-run/node";
-import { Link, useLoaderData } from "@remix-run/react";
+import { json, LoaderFunction } from "@remix-run/node";
+import { useLoaderData } from "@remix-run/react";
 
-import AboutSidenav from "~/components/about-sidenav";
+import { ReceiveResponseContainer } from "~/components/receives/responder/ReceiveResponderContainer";
 // eslint-disable-next-line max-len
-import { ReceivesConfigurationEditorContainer } from "~/components/receives/builder/ReceivesConfigurationEditorContainer";
-import { Alert } from "~/components/ui/alert";
-import { Badge } from "~/components/ui/badge";
 import { getReceiveConfig, ReceiveConfig, ReceiveId } from "~/lib/receives";
 
 type LoaderData =
@@ -37,7 +33,5 @@ export default function ReceivePage() {
     return <p>Invalid template.</p>;
   }
 
-  console.log(JSON.stringify({ data }, null, 2));
-
-  return <div>TODO</div>;
+  return <ReceiveResponseContainer startingTemplate={data.receiveTemplate} />;
 }

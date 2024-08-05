@@ -1,6 +1,6 @@
 import { ActionFunction } from "@remix-run/node";
 
-import { ReceiveBuilderConfiguration, ReceiveBuilderField } from "~/components/receives/builder/types";
+import { ReceiveBuilderConfiguration, ReceiveField } from "~/components/receives/builder/types";
 
 import { generateReceiveId, ReceiveConfig, ReceiveId, saveReceiveConfig } from "../lib/receives";
 import { nowIso8601DateTimeString } from "../lib/time";
@@ -19,7 +19,7 @@ export type CreateReceiveResponse = { receiveId: ReceiveId };
  */
 export type CreateReceiveBody = {
   title: ReceiveBuilderConfiguration["title"];
-  fields: Array<Omit<ReceiveBuilderField, "value">>;
+  fields: Array<Omit<ReceiveField, "value">>;
   notificationConfig: NonNullable<ReceiveBuilderConfiguration["notificationConfig"]>;
 };
 

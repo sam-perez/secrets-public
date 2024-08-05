@@ -1,6 +1,8 @@
 import { type ClassValue, clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
 
+import { SecretField } from "~/components/shared/types";
+
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
@@ -58,4 +60,38 @@ export const sendDiscordMessage = async (message: string) => {
     },
     body: JSON.stringify({ content: message }),
   });
+};
+
+/**
+ * A helper function that returns a human-readable size for a file size in bytes.
+ */
+export const humanReadableFileSize = (size: number) => {
+  if (size < 1024) {
+    return `${size} B`;
+  }
+
+  if (size < 1024 * 1024) {
+    return `${(size / 1024).toFixed(2)} KB`;
+  }
+
+  return `${(size / (1024 * 1024)).toFixed(2)} MB`;
+};
+
+/**
+ * A helper function that computes the total size of all the secret fields.
+ */
+export const computeTotalSizeOfSecretFields = (secretFields: SecretField[]) => {
+  const totalBytesOfFields = secretFields.reduce((acc, field) => {
+    if (field.value === null) {
+      return acc;
+    }
+
+    if (field.type === "multi-line-text" || field.type === "single-line-text") {
+      return acc + new Blob([field.value]).size;
+    } else {
+      return acc + field.value.reduce((acc, file) => acc + file.size, 0);
+    }
+  }, 0);
+
+  return totalBytesOfFields;
 };

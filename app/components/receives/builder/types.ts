@@ -1,4 +1,4 @@
-import { Field } from "../../shared/types";
+import { SecretField } from "../../shared/types";
 
 /**
  * This file contains the frontend types for the receive builder component.
@@ -7,13 +7,13 @@ import { Field } from "../../shared/types";
 /**
  * A field in the receive builder.
  */
-export type ReceiveBuilderField = {
+export type ReceiveField = {
   /** The title of the field. */
   title: string;
 
   /** A placeholder for display purposes. */
   placeholder?: string;
-} & Field;
+} & SecretField;
 
 /**
  * The configuration for a receive.
@@ -40,7 +40,7 @@ export type ReceiveBuilderConfiguration = {
   } | null;
 
   /** The fields in the receive. */
-  fields: Array<ReceiveBuilderField>;
+  fields: Array<ReceiveField>;
 };
 
 /**
@@ -51,7 +51,7 @@ export type ReceiveBuilderTemplate = {
   title: string;
 
   /** The fields for the template */
-  fields: Array<Omit<ReceiveBuilderField, "value">>;
+  fields: Array<Omit<ReceiveField, "value">>;
 };
 
 /**

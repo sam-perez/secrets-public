@@ -1,7 +1,7 @@
 /**
  * A single-line text field.
  */
-export type SingleLineTextField = {
+export type SingleLineTextSecretField = {
   /** A single-line text field. */
   type: "single-line-text";
 
@@ -12,7 +12,7 @@ export type SingleLineTextField = {
 /**
  * A multi-line text field.
  */
-export type MultiLineTextField = {
+export type MultiLineTextSecretField = {
   /** A multi-line text field. */
   type: "multi-line-text";
 
@@ -23,7 +23,7 @@ export type MultiLineTextField = {
 /**
  * A file field.
  */
-export type FileField = {
+export type FileSecretField = {
   /** A file field. */
   type: "file";
 
@@ -32,4 +32,4 @@ export type FileField = {
 };
 
 /** A field in a send or a receive. */
-export type Field = SingleLineTextField | MultiLineTextField | FileField;
+export type SecretField = SingleLineTextSecretField | MultiLineTextSecretField | FileSecretField;

@@ -25,7 +25,7 @@ import { EditableText } from "~/components/ui/EditableText";
 import { SecretBuilderConfigurationFooter } from "./ReceiveSecretBuilderConfigurationFooter";
 import { ReceiveBuilderFieldWithId } from "./ReceiveSecretFieldRenderer";
 import { ReceiveSecretFieldsContainer } from "./ReceiveSecretFieldsContainer";
-import { ReceiveBuilderConfiguration, ReceiveBuilderField } from "./types";
+import { ReceiveBuilderConfiguration, ReceiveField } from "./types";
 
 /**
  * The container for the receive configuration editor.
@@ -62,7 +62,7 @@ export const ReceivesConfigurationEditorContainer = ({
     setReceiveBuilderConfiguration(newConfig);
   };
 
-  const addItem = (type: ReceiveBuilderField["type"]) => {
+  const addItem = (type: ReceiveField["type"]) => {
     const newItemId = items.length + 1;
     let newItem: ReceiveBuilderFieldWithId;
 
@@ -125,7 +125,7 @@ export const ReceivesConfigurationEditorContainer = ({
     })
   );
 
-  const updateItem = (id: number, updatedField: Partial<Pick<ReceiveBuilderField, "title" | "value">>) => {
+  const updateItem = (id: number, updatedField: Partial<Pick<ReceiveField, "title" | "value">>) => {
     const updatedItems = items.map((item) => {
       if (item.id === id) {
         return {

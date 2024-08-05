@@ -1,4 +1,4 @@
-import { Field } from "../../shared/types";
+import { SecretField } from "../../shared/types";
 /**
  * This file contains the frontend types for the send builder component.
  */
@@ -12,7 +12,7 @@ export type SendBuilderField = {
 
   /** A placeholder for display purposes. */
   placeholder?: string;
-} & Field;
+} & SecretField;
 
 /** Expiration date time unit options. */
 export const EXPIRATION_DATE_TIME_UNIT_OPTIONS = ["minutes", "hours", "days", "weeks"] as const;
