@@ -30,9 +30,9 @@ export const loader: LoaderFunction = async ({ params }) => {
     } else {
       loaderData = { template: matchedTemplate };
     }
-
-    return json<LoaderData>(loaderData);
   }
+
+  return json<LoaderData>(loaderData);
 };
 
 export const meta: MetaFunction<typeof loader> = ({ data }) => {
