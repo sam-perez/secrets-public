@@ -1,11 +1,10 @@
-import { EnvelopeClosedIcon, EnvelopeOpenIcon, FileTextIcon } from "@radix-ui/react-icons";
+import { Cross2Icon, FileTextIcon, LightningBoltIcon } from "@radix-ui/react-icons";
 import { useState } from "react";
-
-import { Dialog, DialogContent } from "~/components/ui/dialog";
 
 import { Button } from "../../ui/button";
 import { Input } from "../../ui/input";
 import { Popover, PopoverContent, PopoverTrigger } from "../../ui/popover";
+import { CreateReceiveDialog } from "./CreateReceiveDialog";
 import { ReceiveBuilderConfiguration } from "./types";
 
 function validateHttpsWebhookUrl(url: string) {
@@ -26,14 +25,19 @@ function validateHttpsWebhookUrl(url: string) {
 // Check if the notification configuration is ready
 const isNotificationConfigReady = (notificationConfig: ReceiveBuilderConfiguration["notificationConfig"]) => {
   if (notificationConfig === null) {
-    return false;
+    return { ready: false as const, notificationConfig: null };
   }
 
+  let isReady = false;
   if (notificationConfig.type === "webhook") {
-    return notificationConfig.url.length > 0 && validateHttpsWebhookUrl(notificationConfig.url).isValid;
+    isReady = notificationConfig.url.length > 0 && validateHttpsWebhookUrl(notificationConfig.url).isValid;
   }
 
-  return false;
+  if (!isReady) {
+    return { ready: false as const, notificationConfig: null };
+  } else {
+    return { ready: true as const, notificationConfig };
+  }
 };
 
 /**
@@ -53,7 +57,7 @@ export function SecretBuilderConfigurationFooter({
 }) {
   const { notificationConfig } = receiveBuilderConfiguration;
 
-  const readyToGenerateLink = notificationConfig !== null && isNotificationConfigReady(notificationConfig);
+  const isNotificationConfigReadyResult = isNotificationConfigReady(notificationConfig);
 
   const linkText =
     receiveBuilderConfiguration.fields.length === 0
@@ -83,7 +87,11 @@ export function SecretBuilderConfigurationFooter({
           {/* Button to generate link. */}
           <div>
             <ConfirmPopover receiveBuilderConfiguration={receiveBuilderConfiguration}>
-              <Button className="w-full" disabled={!readyToGenerateLink} onClick={() => setShowLinkGeneration(true)}>
+              <Button
+                className="w-full"
+                disabled={!isNotificationConfigReadyResult.ready}
+                onClick={() => setShowLinkGeneration(true)}
+              >
                 {linkText}
               </Button>
             </ConfirmPopover>
@@ -91,10 +99,13 @@ export function SecretBuilderConfigurationFooter({
         </div>
 
         {/* Link generation dialog. */}
-        {showLinkGeneration === false ? null : (
-          <Dialog open={true}>
-            <DialogContent noClose={true}>TODO: Implement the link generation dialog.</DialogContent>
-          </Dialog>
+        {isNotificationConfigReadyResult.ready === false || showLinkGeneration === false ? null : (
+          <CreateReceiveDialog
+            receiveBuilderConfiguration={{
+              ...receiveBuilderConfiguration,
+              notificationConfig: isNotificationConfigReadyResult.notificationConfig,
+            }}
+          />
         )}
       </div>
     </>
@@ -142,17 +153,17 @@ function NotificationConfigurationPopover({
         <Button variant="ghost" className="px-2">
           {webhookUrl.length === 0 ? (
             <>
-              <EnvelopeClosedIcon className="h-4 w-4 mr-1" />
+              <LightningBoltIcon className="h-4 w-4 mr-1" />
               <span className="text-slate-500 text-xs">Configure Notifications</span>
             </>
           ) : isInWebhookErrorState ? (
             <>
-              <EnvelopeClosedIcon className="h-4 w-4 mr-1 text-red-700" />
+              <Cross2Icon className="h-4 w-4 mr-1 text-red-700" />
               <span className="text-red-500 text-xs">Invalid Webhook</span>
             </>
           ) : (
             <span className="flex items-center font-medium text-sm">
-              <EnvelopeOpenIcon className="h-4 w-4 mr-1" /> Webhook Set
+              <LightningBoltIcon className="h-4 w-4 mr-1" /> Webhook Set
             </span>
           )}
         </Button>
@@ -228,14 +239,14 @@ export function ConfirmPopover({
           </li>
           {notificationConfigIsReady ? (
             <li className="flex items-center">
-              <EnvelopeClosedIcon className="flex-none h-3 w-3 mr-2" />
+              <LightningBoltIcon className="flex-none h-3 w-3 mr-2" />
               <span>
                 You will be notified of responses at <b> {receiveBuilderConfiguration.notificationConfig?.url}</b>.
               </span>
             </li>
           ) : (
             <li className="flex items-center">
-              <EnvelopeClosedIcon className="flex-none h-3 w-3 mr-2" />
+              <Cross2Icon className="flex-none h-3 w-3 mr-2" />
               <span>You must configure a notification webhook.</span>
             </li>
           )}

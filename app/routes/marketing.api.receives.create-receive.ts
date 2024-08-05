@@ -18,10 +18,9 @@ export type CreateReceiveResponse = { receiveId: ReceiveId };
  * No values are stored in the configuration, just the titles and types.
  */
 export type CreateReceiveBody = {
-  notificationConfig: ReceiveConfig["notificationConfig"];
-  template: Omit<ReceiveBuilderConfiguration, "fields"> & {
-    fields: Array<Omit<ReceiveBuilderField, "value">>;
-  };
+  title: ReceiveBuilderConfiguration["title"];
+  fields: Array<Omit<ReceiveBuilderField, "value">>;
+  notificationConfig: NonNullable<ReceiveBuilderConfiguration["notificationConfig"]>;
 };
 
 /**
@@ -42,7 +41,10 @@ export const action: ActionFunction = async ({ request }) => {
     receiveId,
     createdAt: nowIso8601DateTimeString(),
     notificationConfig: body.notificationConfig,
-    template: body.template,
+    template: {
+      title: body.title,
+      fields: body.fields,
+    },
   };
 
   try {
