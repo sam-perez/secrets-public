@@ -213,7 +213,7 @@ export const saveReceiveConfig = async (receiveConfig: ReceiveConfig): Promise<v
 // eslint-disable-next-line max-len
 export const listReceiveResponseEncryptedParts = async (receiveId: ReceiveId, receiveResponseId: ReceiveResponseId) => {
   // check to see if all of the parts have been uploaded
-  const encryptedPartsPrefix = `receives/instance-data/${receiveId}/responses/${receiveResponseId}encrypted-parts/`;
+  const encryptedPartsPrefix = `receives/instance-data/${receiveId}/responses/${receiveResponseId}/encrypted-parts/`;
   const { Contents: encryptedParts } = await listObjectsInS3({
     bucket: "MARKETING_BUCKET",
     prefix: encryptedPartsPrefix,

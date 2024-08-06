@@ -69,21 +69,23 @@ export const ReceivesConfigurationEditorContainer = ({
     if (type === "single-line-text") {
       newItem = {
         id: newItemId,
-        title: "New Field",
+        title: "Single line text",
         type: "single-line-text",
+        placeholder: "Recipient enters text here",
         value: null,
       };
     } else if (type === "multi-line-text") {
       newItem = {
         id: newItemId,
-        title: "New Field",
+        title: "Multi line text",
         type: "multi-line-text",
+        placeholder: "Recipient enters text here",
         value: null,
       };
     } else {
       newItem = {
         id: newItemId,
-        title: "New Field",
+        title: "File Upload",
         type: "file",
         value: null,
       };

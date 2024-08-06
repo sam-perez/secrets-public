@@ -1,4 +1,4 @@
-import { ArrowDownIcon, ArrowUpIcon, PaperPlaneIcon } from "@radix-ui/react-icons";
+import { ArrowDownIcon, ArrowUpIcon } from "@radix-ui/react-icons";
 import { Tooltip, TooltipProvider } from "@radix-ui/react-tooltip";
 import { Link, NavLink } from "@remix-run/react";
 

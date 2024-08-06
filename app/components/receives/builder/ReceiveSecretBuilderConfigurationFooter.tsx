@@ -89,7 +89,7 @@ export function SecretBuilderConfigurationFooter({
             <ConfirmPopover receiveBuilderConfiguration={receiveBuilderConfiguration}>
               <Button
                 className="w-full"
-                disabled={!isNotificationConfigReadyResult.ready}
+                disabled={!(isNotificationConfigReadyResult.ready && receiveBuilderConfiguration.fields.length > 0)}
                 onClick={() => setShowLinkGeneration(true)}
               >
                 {linkText}

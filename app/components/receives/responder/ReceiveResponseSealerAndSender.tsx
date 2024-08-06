@@ -2,6 +2,7 @@ import { LockClosedIcon } from "@radix-ui/react-icons";
 import { useEffect, useState } from "react";
 
 import { stringToUtf16ArrayBuffer } from "~/lib/crypto-utils";
+import { ReceiveConfig } from "~/lib/receives";
 import { PublicPackedSecrets, SecretResponses } from "~/lib/secrets";
 import { chunkOutPackedSecrets, exhaustiveGuard, parallelWithLimit } from "~/lib/utils";
 import {
@@ -26,13 +27,19 @@ import { ReceiveResponse } from "./types";
 export function ReceiveResponseSealerAndSender({
   receiveId,
   receiveResponse,
+  notificationConfig,
 }: {
   receiveId: string;
   receiveResponse: ReceiveResponse;
+  notificationConfig: ReceiveConfig["notificationConfig"];
 }) {
   return (
     <EncryptionWorkerProvider>
-      <ReceiveResponseSealerAndSenderInner receiveId={receiveId} receiveResponse={receiveResponse} />
+      <ReceiveResponseSealerAndSenderInner
+        receiveId={receiveId}
+        receiveResponse={receiveResponse}
+        notificationConfig={notificationConfig}
+      />
     </EncryptionWorkerProvider>
   );
 }
@@ -43,9 +50,11 @@ export function ReceiveResponseSealerAndSender({
 function ReceiveResponseSealerAndSenderInner({
   receiveId,
   receiveResponse,
+  notificationConfig,
 }: {
   receiveId: string;
   receiveResponse: ReceiveResponse;
+  notificationConfig: ReceiveConfig["notificationConfig"];
 }) {
   const encryptionWorker = useEncryptionWorker();
 
@@ -184,6 +193,12 @@ function ReceiveResponseSealerAndSenderInner({
           receiveResponseId: initiateResponse.receiveResponseId,
           secretsPassword: packedSecrets.password,
         });
+
+        // eslint-disable-next-line max-len
+        const linkToReceiveResponse = `${window.location.origin}/rr/${initiateResponse.receiveId}/${initiateResponse.receiveResponseId}#${packedSecrets.password}`;
+
+        // send a notification
+        console.log("Sending notification", { notificationConfig, linkToReceiveResponse });
 
         setProgress("done");
       } catch (error) {

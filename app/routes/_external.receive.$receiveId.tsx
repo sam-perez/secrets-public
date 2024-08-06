@@ -9,6 +9,7 @@ type LoaderData =
   | {
       receiveId: ReceiveId;
       receiveTemplate: ReceiveConfig["template"];
+      notificationConfig: ReceiveConfig["notificationConfig"];
     }
   | { error: string };
 
@@ -24,6 +25,7 @@ export const loader: LoaderFunction = async ({ params }) => {
     loaderData = {
       receiveId: receiveConfig.receiveId,
       receiveTemplate: receiveConfig.template,
+      notificationConfig: receiveConfig.notificationConfig,
     };
   }
 
@@ -37,5 +39,11 @@ export default function ReceivePage() {
     return <p>Invalid template.</p>;
   }
 
-  return <ReceiveResponseContainer startingTemplate={data.receiveTemplate} receiveId={data.receiveId} />;
+  return (
+    <ReceiveResponseContainer
+      startingTemplate={data.receiveTemplate}
+      receiveId={data.receiveId}
+      notificationConfig={data.notificationConfig}
+    />
+  );
 }

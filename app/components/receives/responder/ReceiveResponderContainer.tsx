@@ -1,15 +1,16 @@
+import { LockClosedIcon } from "@radix-ui/react-icons";
 import { useState } from "react";
 
+import AboutSidenav from "~/components/about-sidenav";
+import { Alert, AlertDescription, AlertTitle } from "~/components/ui/alert";
 import { Button } from "~/components/ui/button";
+import { ReceiveConfig } from "~/lib/receives";
 import { computeTotalSizeOfSecretFields } from "~/lib/utils";
 
 import { ReceiveBuilderTemplate, ReceiveField } from "../builder/types";
 import { ReceiveFieldWithId, ReceiveResponderSecretFieldRenderer } from "./ReceiveResponderSecretFieldRenderer";
 import { ReceiveResponseSealerAndSender } from "./ReceiveResponseSealerAndSender";
 import { ReceiveResponse } from "./types";
-import { Alert, AlertDescription, AlertTitle } from "~/components/ui/alert";
-import { LockClosedIcon, LockOpen1Icon } from "@radix-ui/react-icons";
-import AboutSidenav from "~/components/about-sidenav";
 
 const MAXIMUM_RECEIVE_SIZE_IN_MEGA_BYTES = 20;
 
@@ -21,9 +22,11 @@ const MAXIMUM_RECEIVE_SIZE_IN_MEGA_BYTES = 20;
 export const ReceiveResponseContainer = ({
   receiveId,
   startingTemplate,
+  notificationConfig,
 }: {
   receiveId: string;
   startingTemplate: ReceiveBuilderTemplate;
+  notificationConfig: ReceiveConfig["notificationConfig"];
 }) => {
   const [receiveResponse, setReceiveResponse] = useState<ReceiveResponse>({
     fields: startingTemplate.fields.map((field) => ({ ...field, value: null })),
@@ -112,7 +115,11 @@ export const ReceiveResponseContainer = ({
                 </div>
 
                 {shouldUploadSecrets === false ? null : (
-                  <ReceiveResponseSealerAndSender receiveId={receiveId} receiveResponse={receiveResponse} />
+                  <ReceiveResponseSealerAndSender
+                    receiveId={receiveId}
+                    receiveResponse={receiveResponse}
+                    notificationConfig={notificationConfig}
+                  />
                 )}
               </div>
             </div>
