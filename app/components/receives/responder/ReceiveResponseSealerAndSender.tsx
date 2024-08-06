@@ -186,19 +186,20 @@ function ReceiveResponseSealerAndSenderInner({
           }
         });
 
-        // TODO: should we have one final request to confirm that the receive response has been marked as ready?
-
-        console.log("All parts uploaded successfully.", {
-          receiveId: initiateResponse.receiveId,
-          receiveResponseId: initiateResponse.receiveResponseId,
-          secretsPassword: packedSecrets.password,
-        });
-
         // eslint-disable-next-line max-len
-        const linkToReceiveResponse = `${window.location.origin}/rr/${initiateResponse.receiveId}/${initiateResponse.receiveResponseId}#${packedSecrets.password}`;
+        const receiveResponseLink = `${window.location.origin}/rr/${initiateResponse.receiveId}/${initiateResponse.receiveResponseId}#${packedSecrets.password}`;
 
         // send a notification
-        console.log("Sending notification", { notificationConfig, linkToReceiveResponse });
+        console.log("Sending notification", { notificationConfig, linkToReceiveResponse: receiveResponseLink });
+
+        if (notificationConfig.type === "webhook") {
+          await fetch(notificationConfig.url, {
+            method: "POST",
+            body: JSON.stringify({ receiveResponseLink }),
+          });
+        } else {
+          exhaustiveGuard(notificationConfig.type);
+        }
 
         setProgress("done");
       } catch (error) {
