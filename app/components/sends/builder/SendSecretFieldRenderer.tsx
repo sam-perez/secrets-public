@@ -4,28 +4,17 @@ import { DragHandleDots2Icon, TrashIcon } from "@radix-ui/react-icons";
 import { useEffect, useRef } from "react";
 
 import { Badge } from "~/components/ui/badge";
+import { Button } from "~/components/ui/button";
+import { EditableText } from "~/components/ui/EditableText";
+import { Input } from "~/components/ui/input";
+import { Label } from "~/components/ui/label";
+import { Textarea } from "~/components/ui/textarea";
+import { humanReadableFileSize } from "~/lib/utils";
 
-import { Button } from "../../ui/button";
-import { Input } from "../../ui/input";
-import { Label } from "../../ui/label";
-import { Textarea } from "../../ui/textarea";
-import { EditableText } from "./EditableText";
 import { SendBuilderField } from "./types";
 
 /** Internally used type for the builder fields, id is required to play nicely with dnd-kit */
 export type SendBuilderFieldWithId = SendBuilderField & { id: number };
-
-const humanReadableFileSize = (size: number) => {
-  if (size < 1024) {
-    return `${size} B`;
-  }
-
-  if (size < 1024 * 1024) {
-    return `${(size / 1024).toFixed(2)} KB`;
-  }
-
-  return `${(size / (1024 * 1024)).toFixed(2)} MB`;
-};
 
 /**
  * Renders a secret field in the builder.
@@ -33,7 +22,7 @@ const humanReadableFileSize = (size: number) => {
  * Takes in the configuration required to render and receive the secret field, and
  * reports back the secret field's value to the parent component.
  */
-export const SecretFieldRenderer = ({
+export const SendSecretFieldRenderer = ({
   sendBuilderField,
   updateItem,
   deleteItem,

@@ -3,23 +3,25 @@ import { Link } from "@remix-run/react";
 
 interface TemplateCardProps {
   name: string;
-  show_description: boolean;
+  showDescription: boolean;
   description?: string;
-  template_slug: string;
-  number_fields?: number;
+  templateSlug: string;
+  numberFields?: number;
+  cardType: "sends" | "receives";
 }
 
 export const TemplateCard = ({
   name,
-  show_description,
-  template_slug,
-  number_fields,
+  showDescription: show_description,
+  templateSlug: template_slug,
+  numberFields: number_fields,
   description,
+  cardType,
 }: TemplateCardProps) => {
   return (
-    <Link to={"/sends/templates/" + template_slug}>
+    <Link to={`/${cardType}/templates/` + template_slug}>
       <div
-        className="p-4 h-full border rounded-lg 
+        className="p-4 h-full border rounded-lg
       bg-white hover:bg-slate-50 flex items-center space-x-2 justify-between"
       >
         <div className="space-y-1">

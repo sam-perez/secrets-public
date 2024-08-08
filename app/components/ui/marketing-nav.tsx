@@ -1,4 +1,4 @@
-import { PaperPlaneIcon } from "@radix-ui/react-icons";
+import { ArrowDownIcon, ArrowUpIcon } from "@radix-ui/react-icons";
 import { Tooltip, TooltipProvider } from "@radix-ui/react-tooltip";
 import { Link, NavLink } from "@remix-run/react";
 
@@ -13,8 +13,12 @@ interface MarketingNavProps {
 
 const nav_links_left = [
   {
-    name: "Browse Templates",
+    name: "Send Templates",
     href: "/sends/templates",
+  },
+  {
+    name: "Receive Templates",
+    href: "/receives/templates",
   },
 ];
 const nav_links_right = [
@@ -64,14 +68,26 @@ export default function MarketingNav({ hide_links }: MarketingNavProps) {
           <NavigationMenu className="hidden sm:block">
             <NavigationMenuList>
               <Link to={"/sends/templates/new"}>
-                <TooltipProvider>
+                <TooltipProvider delayDuration={0}>
                   <Tooltip>
                     <TooltipTrigger asChild>
                       <Button variant={"outline"}>
-                        <PaperPlaneIcon className="h-3 w-3 mr-2" /> New Send
+                        <ArrowUpIcon className="h-3 w-3 mr-2" /> Send
                       </Button>
                     </TooltipTrigger>
-                    <TooltipContent>New Encrypted Send</TooltipContent>
+                    <TooltipContent>Send something end-to-end encrypted</TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
+              </Link>
+              <Link to={"/receives/templates/new"}>
+                <TooltipProvider delayDuration={0}>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Button variant={"outline"}>
+                        <ArrowDownIcon className="h-3 w-3 mr-2" /> Receive
+                      </Button>
+                    </TooltipTrigger>
+                    <TooltipContent>Receive something end-to-end encrypted</TooltipContent>
                   </Tooltip>
                 </TooltipProvider>
               </Link>

@@ -3,15 +3,16 @@ import { json, LoaderFunction, MetaFunction } from "@remix-run/node";
 import { Link, useLoaderData } from "@remix-run/react";
 
 import AboutSidenav from "~/components/about-sidenav";
-import { SendSecretBuilderRoot } from "~/components/sends/builder/SendSecretBuilderRoot";
+// eslint-disable-next-line max-len
+import { ReceivesConfigurationEditorContainer } from "~/components/receives/builder/ReceivesConfigurationEditorContainer";
 import { Alert } from "~/components/ui/alert";
 import { Badge } from "~/components/ui/badge";
 
-import { SEND_BUILDER_TEMPLATES } from "../components/sends/builder/types";
+import { RECEIVE_BUILDER_TEMPLATES } from "../components/receives/builder/types";
 
 type LoaderData =
   | {
-      template: (typeof SEND_BUILDER_TEMPLATES)[keyof typeof SEND_BUILDER_TEMPLATES];
+      template: (typeof RECEIVE_BUILDER_TEMPLATES)[keyof typeof RECEIVE_BUILDER_TEMPLATES];
     }
   | { error: string };
 
@@ -22,16 +23,16 @@ export const loader: LoaderFunction = async ({ params }) => {
   if (!templateName) {
     loaderData = { error: "Invalid template." };
   } else {
-    const matchedTemplate = SEND_BUILDER_TEMPLATES[templateName];
+    const matchedTemplate = RECEIVE_BUILDER_TEMPLATES[templateName];
 
     if (!matchedTemplate) {
       loaderData = { error: "Template not found." };
     } else {
       loaderData = { template: matchedTemplate };
     }
-
-    return json<LoaderData>(loaderData);
   }
+
+  return json<LoaderData>(loaderData);
 };
 
 export const meta: MetaFunction<typeof loader> = ({ data }) => {
@@ -56,7 +57,7 @@ export default function TemplateDetails() {
         {template.private ? (
           <Badge className="mb-2">Private Template</Badge>
         ) : (
-          <Link to="/sends/templates" className="mb-2 text-sm hover:text-slate-500 flex items-center">
+          <Link to="/receives/templates" className="mb-2 text-sm hover:text-slate-500 flex items-center">
             Templates <ChevronRightIcon />
           </Link>
         )}
@@ -67,20 +68,18 @@ export default function TemplateDetails() {
       <p className="muted mb-4">{template.description}</p>
       <div className="mx-auto lg:grid lg:max-w-7xl grid-cols-3 gap-8">
         <div className="lg:col-span-2">
-          {/* share content  */}
-          <SendSecretBuilderRoot
-            sendBuilderConfiguration={{
-              title: template.title,
-              password: null,
-              expirationDate: {
-                totalTimeUnits: 1,
-                timeUnit: "weeks",
-              },
-              confirmationEmail: null,
-              maxViews: 4,
-              fields: template.fields.map((field) => ({ ...field, value: null })),
-            }}
-          />
+          <div className="border rounded-xl mb-4 shadow-lg">
+            <ReceivesConfigurationEditorContainer
+              templateConfig={{
+                title: template.title,
+                fields: template.fields.map((field) => ({
+                  ...field,
+                  value: null,
+                })),
+                notificationConfig: null,
+              }}
+            />
+          </div>
         </div>
         <div>
           <aside className="sticky top-6">

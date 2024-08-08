@@ -1,13 +1,13 @@
 import "highlight.js/styles/nnfx-dark.min.css";
 
-import { PaperPlaneIcon } from "@radix-ui/react-icons";
+import { ArrowDownIcon, ArrowUpIcon, PaperPlaneIcon } from "@radix-ui/react-icons";
 import type { MetaFunction } from "@remix-run/node";
 import { Link } from "@remix-run/react";
 import hljs from "highlight.js";
 import { marked } from "marked";
 import { useEffect } from "react";
 
-import { SecretBuilderRoot } from "~/components/sends/builder/SecretBuilderRoot";
+import { SendSecretBuilderRoot } from "~/components/sends/builder/SendSecretBuilderRoot";
 import { Button } from "~/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "~/components/ui/tabs";
 import { TemplateCard } from "~/components/ui/TemplateCard";
@@ -151,17 +151,21 @@ export default function Index() {
             <div className="space-x-2 pt-4">
               <Link to="/sends/templates/new">
                 <Button className="">
-                  <PaperPlaneIcon className="mr-2 h-3 w-3" />
-                  Start with Blank
+                  <ArrowUpIcon className="mr-2 h-3 w-3" />
+                  Send
                 </Button>
               </Link>
-              <Link to="/sends/templates">
-                <Button variant={"outline"}>Browse Templates</Button>
+              <Link to="/receives/templates">
+                <Button variant={"outline"}>
+                  {" "}
+                  <ArrowDownIcon className="mr-2 h-3 w-3" />
+                  Receive{" "}
+                </Button>
               </Link>
             </div>
           </div>
           <div>
-            <SecretBuilderRoot
+            <SendSecretBuilderRoot
               sendBuilderConfiguration={{
                 title: defaultTemplate.title,
                 password: null,
@@ -213,10 +217,11 @@ export default function Index() {
                 {filteredWorkTemplates.map(([slug, template]) => (
                   <div key={slug}>
                     <TemplateCard
-                      show_description={false}
-                      template_slug={slug}
+                      showDescription={false}
+                      templateSlug={slug}
                       name={template.title}
-                      number_fields={template.fields.length}
+                      numberFields={template.fields.length}
+                      cardType="sends"
                     />
                   </div>
                 ))}
@@ -225,10 +230,11 @@ export default function Index() {
                 {filteredPersonalTemplates.map(([slug, template]) => (
                   <div key={slug}>
                     <TemplateCard
-                      show_description={false}
-                      template_slug={slug}
+                      showDescription={false}
+                      templateSlug={slug}
                       name={template.title}
-                      number_fields={template.fields.length}
+                      numberFields={template.fields.length}
+                      cardType="sends"
                     />
                   </div>
                 ))}

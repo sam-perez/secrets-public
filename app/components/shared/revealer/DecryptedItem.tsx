@@ -1,9 +1,9 @@
 import { CheckIcon, CopyIcon, DownloadIcon, EyeOpenIcon } from "@radix-ui/react-icons";
 import { useState } from "react";
 
+import { SendBuilderField } from "../../sends/builder/types";
 import { Button } from "../../ui/button";
 import { Label } from "../../ui/label";
-import { SendBuilderField } from "../builder/types";
 
 export const DecryptedItem = ({ senderBuildField }: { senderBuildField: SendBuilderField }) => {
   const [isCopied, setIsCopied] = useState(false);

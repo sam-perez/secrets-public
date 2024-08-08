@@ -8,12 +8,14 @@ import {
 } from "@radix-ui/react-icons";
 import { useCallback, useState } from "react";
 
+import { computeTotalSizeOfSecretFields } from "~/lib/utils";
+
 import { Button } from "../../ui/button";
 import { Input } from "../../ui/input";
 import { Popover, PopoverContent, PopoverTrigger } from "../../ui/popover";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../../ui/select";
-import { SecretSender } from "./SecretSender";
 import { useSendBuilderConfiguration } from "./SendBuilderConfigurationContextProvider";
+import { SendSecretSealerAndSender } from "./SendSecretSealerAndSender";
 import { EXPIRATION_DATE_TIME_UNIT_OPTIONS, ExpirationDateTimeUnits, MAXIMUM_SEND_SIZE_IN_MEGA_BYTES } from "./types";
 
 /**
@@ -29,7 +31,7 @@ import { EXPIRATION_DATE_TIME_UNIT_OPTIONS, ExpirationDateTimeUnits, MAXIMUM_SEN
  * Each of these options are rendered in their own components, which will independently report back any changes
  * to their settings to this component. This component will then proxy those changes to the parent component.
  */
-export default function SecretBuilderConfigurationFooter() {
+export default function SendSecretBuilderConfigurationFooter() {
   const { config: sendBuilderConfiguration, updateConfig } = useSendBuilderConfiguration();
 
   const [showLinkGeneration, setShowLinkGeneration] = useState<boolean>(false);
@@ -81,17 +83,7 @@ export default function SecretBuilderConfigurationFooter() {
     (field) => field.value !== null && field.value.length > 0
   ).length;
 
-  const totalBytesOfFields = sendBuilderConfiguration.fields.reduce((acc, field) => {
-    if (field.value === null) {
-      return acc;
-    }
-
-    if (field.type === "multi-line-text" || field.type === "single-line-text") {
-      return acc + new Blob([field.value]).size;
-    } else {
-      return acc + field.value.reduce((acc, file) => acc + file.size, 0);
-    }
-  }, 0);
+  const totalBytesOfFields = computeTotalSizeOfSecretFields(sendBuilderConfiguration.fields);
 
   const readyToGenerateLink =
     numberOfFields > 0 &&
@@ -145,7 +137,9 @@ export default function SecretBuilderConfigurationFooter() {
           </div>
 
           {/* Link generation dialog. */}
-          {showLinkGeneration === false ? null : <SecretSender sendBuilderConfiguration={sendBuilderConfiguration} />}
+          {showLinkGeneration === false ? null : (
+            <SendSecretSealerAndSender sendBuilderConfiguration={sendBuilderConfiguration} />
+          )}
         </div>
       </div>
     </>

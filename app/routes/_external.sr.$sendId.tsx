@@ -4,7 +4,7 @@ import { Link, useParams } from "@remix-run/react";
 import { useEffect, useState } from "react";
 
 import AboutSidenav from "~/components/about-sidenav";
-import { DisplaySecrets } from "~/components/sends/revealer/DisplaySecrets";
+import { DisplaySecrets } from "~/components/shared/revealer/DisplaySecrets";
 import { Alert, AlertDescription, AlertTitle } from "~/components/ui/alert";
 
 import {
@@ -572,42 +572,6 @@ function SendViewUnlocker({
                   Outlook <OpenInNewWindowIcon className="h-3 w-3 ml-1" />
                 </a>
               </div>
-              {/* <Button
-                variant={"link"}
-                onClick={() => {
-                  Promise.resolve()
-                    .then(async () => {
-                      setShowLoadingScreen(true);
-
-                      // initiate the secret send view
-                      const retryConfirmationForSendViewResponseFetch = await fetch(
-                        "/marketing/api/sends/retry-confirmation-for-send-view",
-                        {
-                          method: "POST",
-                          headers: {
-                            [RETRY_CONFIRMATION_FOR_SEND_VIEW_HEADERS.SEND_ID]: internalUnlockerStatus.sendId,
-                            [RETRY_CONFIRMATION_FOR_SEND_VIEW_HEADERS.SEND_VIEW_ID]: internalUnlockerStatus.sendViewId,
-                          },
-                        }
-                      );
-
-                      if (retryConfirmationForSendViewResponseFetch.status !== 204) {
-                        // this is unexpected, we may want to notify ourselves of this error somehow
-                        alertWithErrorMessage(
-                          [
-                            "An unknown error occurred while requesting a confirmation code resend.",
-                            "Please try again later.",
-                          ].join(" ")
-                        );
-                      }
-                    })
-                    .finally(() => {
-                      setShowLoadingScreen(false);
-                    });
-                }}
-              >
-                Request another confirmation code.
-              </Button> */}
               <Input
                 placeholder="Enter access code"
                 type="text"
@@ -631,9 +595,11 @@ function SendViewUnlocker({
               }
               <p className="muted text-xs">
                 Didn&apos;t receive a code? Look for an email from noreply@2secured.link, check your spam, or try{" "}
-                <Link
-                  to={"#"}
-                  className="font-medium hover:text-slate-400"
+                <Button
+                  variant={"link"}
+                  size={"sm"}
+                  className="hover:text-slate-400"
+                  style={{ padding: 0 }}
                   onClick={() => {
                     Promise.resolve()
                       .then(async () => {
@@ -668,7 +634,7 @@ function SendViewUnlocker({
                   }}
                 >
                   resending
-                </Link>
+                </Button>
               </p>
 
               <Button disabled={confirmationCode.length === 0} onClick={submitConfirmationCode}>
@@ -701,7 +667,7 @@ function SendViewUnlocker({
 }
 
 /**
- * Work in progress. This will be the component that shows the send data.
+ * The component that shows the send data after it has been downloaded and decrypted.
  */
 function SendViewDownloaderAndDecryptor({
   sendId,
@@ -816,7 +782,6 @@ function SendViewDownloaderAndDecryptor({
 
           <h3 className="mb-2">{sendBuilderTemplate.title}</h3>
 
-          {/* <pre>{JSON.stringify(secretResponses, null, 2)}</pre> */}
           <div className="mt-4">
             <DisplaySecrets template={sendBuilderTemplate} responses={secretResponses} />
           </div>

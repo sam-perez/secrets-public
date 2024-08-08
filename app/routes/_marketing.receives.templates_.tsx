@@ -2,13 +2,13 @@ import type { MetaFunction } from "@remix-run/node";
 import { Link } from "@remix-run/react";
 import { ChangeEvent, useState } from "react";
 
-import { SEND_BUILDER_TEMPLATES } from "~/components/sends/builder/types";
+import { RECEIVE_BUILDER_TEMPLATES } from "~/components/receives/builder/types";
 import { Input } from "~/components/ui/input";
 import { TemplateCard } from "~/components/ui/TemplateCard";
 
 export const meta: MetaFunction = () => {
   return [
-    { title: "Encrypted Templates | 2Secured" },
+    { title: "Encrypted Form Builder Templates | 2Secured" },
     {
       name: "description",
       content:
@@ -23,18 +23,18 @@ export default function Templates() {
   const handleSearchChange = (event: ChangeEvent<HTMLInputElement>) => {
     setSearchQuery(event.target.value);
   };
-  const filteredTemplates = Object.entries(SEND_BUILDER_TEMPLATES).filter(([, template]) =>
+  const filteredTemplates = Object.entries(RECEIVE_BUILDER_TEMPLATES).filter(([, template]) =>
     template.title.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
-  const defaultTemplate = SEND_BUILDER_TEMPLATES["new"];
+  const defaultTemplate = RECEIVE_BUILDER_TEMPLATES["new"];
 
   return (
     <>
       <section className="mx-auto max-w-5xl text-center p-20 space-y-2">
-        <h1>Explore send templates</h1>
+        <h1>Explore encrypted form templates</h1>
         <p className="lead pb-4">
-          Start from one of these reusable forms to quickly send or receive encrypted information.
+          Start from one of these reusable forms to request encrypted information from someone else.
         </p>
         <Input placeholder="Search templates" onChange={handleSearchChange} className="max-w-lg mx-auto" />
       </section>
@@ -49,7 +49,7 @@ export default function Templates() {
               templateSlug={slug}
               description={template.description}
               numberFields={template.fields.length}
-              cardType="sends"
+              cardType="receives"
             />
           </div>
         ))}
@@ -58,8 +58,8 @@ export default function Templates() {
         <div>
           <p className="text-base mx-auto max-w-xl text-center">
             Build your own starting from a{" "}
-            <Link to={"/sends/templates/new"} className="font-medium hover:text-slate-600">
-              blank send
+            <Link to={"/receives/templates/new"} className="font-medium hover:text-slate-600">
+              blank receive
             </Link>{" "}
             or email{" "}
             <a href="mailto:templates@2secured.link" className="font-medium hover:text-slate-600">
@@ -74,7 +74,7 @@ export default function Templates() {
               templateSlug={"new"}
               description={defaultTemplate.description}
               numberFields={defaultTemplate.fields.length}
-              cardType="sends"
+              cardType="receives"
             />
           </div>
         </div>

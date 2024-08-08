@@ -1,15 +1,16 @@
 import { CheckIcon, CopyIcon, DownloadIcon } from "@radix-ui/react-icons";
 import { useState } from "react";
 
+import { ReceiveBuilderTemplate } from "~/components/receives/builder/types";
 import { Badge } from "~/components/ui/badge";
 import { Button } from "~/components/ui/button";
 import { Label } from "~/components/ui/label";
 import { SecretResponses, SecretValue } from "~/lib/secrets";
 
-import { SendBuilderTemplate } from "../builder/types";
+import { SendBuilderTemplate } from "../../sends/builder/types";
 
 type DisplaySecretsProps = {
-  template: SendBuilderTemplate;
+  template: SendBuilderTemplate | ReceiveBuilderTemplate;
   responses: SecretResponses;
 };
 

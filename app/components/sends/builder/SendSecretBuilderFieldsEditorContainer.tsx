@@ -10,7 +10,9 @@ import {
 import { arrayMove } from "@dnd-kit/sortable";
 import { useState } from "react";
 
-import { Button } from "../../ui/button";
+import { Button } from "~/components/ui/button";
+import { EditableText } from "~/components/ui/EditableText";
+
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -20,17 +22,16 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "../../ui/dropdown-menu";
-import { EditableText } from "./EditableText";
-import { SendBuilderFieldWithId } from "./SecretFieldRenderer";
-import { SecretFieldsContainer } from "./SecretFieldsContainer";
 import { useSendBuilderConfiguration } from "./SendBuilderConfigurationContextProvider";
+import { SendBuilderFieldWithId } from "./SendSecretFieldRenderer";
+import { SendSecretFieldsContainer } from "./SendSecretFieldsContainer";
 import { SendBuilderField } from "./types";
 
 /**
  * The container for the secret builder fields. It handles the rendering a component to add new fields, and
  * renders the existing fields in a draggable list.
  */
-export default function SecretBuilderFieldsEditorContainer() {
+export default function SendSecretBuilderFieldsEditorContainer() {
   const { config: sendBuilderConfiguration, updateConfig } = useSendBuilderConfiguration();
   // For now, let's just have it snap. We achieve this by just re-rendering the component.
   const [rearrangeCount, setRearrangeCount] = useState<number>(0);
@@ -167,7 +168,7 @@ export default function SecretBuilderFieldsEditorContainer() {
         </div>
         {/* end menu */}
         <DndContext sensors={sensors} onDragEnd={handleDragEnd} collisionDetection={closestCorners}>
-          <SecretFieldsContainer
+          <SendSecretFieldsContainer
             key={rearrangeCount}
             updateItem={updateItem}
             deleteItem={deleteItem}

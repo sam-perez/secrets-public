@@ -1,7 +1,7 @@
 import { Pencil1Icon } from "@radix-ui/react-icons";
 import { useEffect, useState } from "react";
 
-import { Input } from "../../ui/input";
+import { Input } from "./input";
 
 /**
  * The props for the EditableText component.
