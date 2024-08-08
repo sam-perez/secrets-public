@@ -170,21 +170,30 @@ function NotificationConfigurationPopover({
       </PopoverTrigger>
       <PopoverContent>
         <div className="space-y-1 mb-2">
-          <h5 className="font-medium leading-none">Configure Webhook</h5>
+          <h5 className="font-medium leading-none">Configure Zapier Webhook</h5>
           <p className="text-sm text-muted-foreground">
-            You will receive a notification when someone responds to your receive by filling out the form.
+            You will receive a Zapier Catch Hook event when someone completes this form.
           </p>
         </div>
 
-        <small>Enter Webhook</small>
+        <small>Enter Zapier Catch Webhook URL</small>
         <div className="flex space-x-2 mt-1"></div>
         <Input
           className={isInWebhookErrorState ? "border-red-500 text-red-500 focus-visible:ring-red-500" : ""}
-          placeholder="https://example.com/webhooks/123"
+          placeholder="https://hooks.zapier.com/hooks/catch/6197/24mbhe/"
           type="url"
           value={webhookUrl}
           onChange={handleChange}
         />
+        <p className="text-xs link pt-1 text-blue-500">
+          <a
+            target="_blank"
+            rel="noreferrer"
+            href="https://help.zapier.com/hc/en-us/articles/8496288690317-Trigger-Zaps-from-webhooks"
+          >
+            How to configure catch webhooks on Zapier
+          </a>
+        </p>
         {
           // if the webhook is not valid, show an error message.
           isInWebhookErrorState ? (
