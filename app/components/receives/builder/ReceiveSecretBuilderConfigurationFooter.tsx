@@ -1,4 +1,5 @@
 import { Cross2Icon, FileTextIcon, LightningBoltIcon } from "@radix-ui/react-icons";
+import { Link } from "@remix-run/react";
 import { useState } from "react";
 
 import { Button } from "../../ui/button";
@@ -11,9 +12,16 @@ function validateHttpsWebhookUrl(url: string) {
   try {
     const newUrl = new URL(url);
     const usesHttpsProtocol = newUrl.protocol === "https:";
+    const isZapierWebhook = newUrl.hostname === "hooks.zapier.com";
+    const pathRegex = /^\/hooks\/catch\/\w+\/\w+\/?$/;
+    const hasValidPath = pathRegex.test(newUrl.pathname);
 
     if (!usesHttpsProtocol) {
       return { isValid: false, error: "Must use https." } as const;
+    } else if (!isZapierWebhook) {
+      return { isValid: false, error: "Must be a Zapier webhook." } as const;
+    } else if (!hasValidPath) {
+      return { isValid: false, error: "Invalid Zapier webhook path." } as const;
     } else {
       return { isValid: true } as const;
     }
@@ -169,10 +177,19 @@ function NotificationConfigurationPopover({
         </Button>
       </PopoverTrigger>
       <PopoverContent>
-        <div className="space-y-1 mb-2">
+        <div className="space-y-1 mb-1">
           <h5 className="font-medium leading-none">Configure Zapier Webhook</h5>
-          <p className="text-sm text-muted-foreground">
+          <p className="text-xs text-muted-foreground pb-0">
             You will receive a Zapier Catch Hook event when someone completes this form.
+          </p>
+          <p className="text-xs link text-blue-500">
+            <a
+              target="_blank"
+              rel="noreferrer"
+              href="https://help.zapier.com/hc/en-us/articles/8496288690317-Trigger-Zaps-from-webhooks"
+            >
+              How to configure catch webhooks on Zapier.
+            </a>
           </p>
         </div>
 
@@ -180,28 +197,23 @@ function NotificationConfigurationPopover({
         <div className="flex space-x-2 mt-1"></div>
         <Input
           className={isInWebhookErrorState ? "border-red-500 text-red-500 focus-visible:ring-red-500" : ""}
-          placeholder="https://hooks.zapier.com/hooks/catch/6197/24mbhe/"
+          placeholder="https://hooks.zapier.com/hooks/catch/12345678/abcdefg/"
           type="url"
           value={webhookUrl}
           onChange={handleChange}
         />
-        <p className="text-xs link pt-1 text-blue-500">
-          <a
-            target="_blank"
-            rel="noreferrer"
-            href="https://help.zapier.com/hc/en-us/articles/8496288690317-Trigger-Zaps-from-webhooks"
-          >
-            How to configure catch webhooks on Zapier
-          </a>
-        </p>
         {
           // if the webhook is not valid, show an error message.
           isInWebhookErrorState ? (
             <div className="mt-1">
-              <span className="text-xs text-red-500">{validateHttpsWebhookResult.error}</span>
+              <p className="text-xs text-red-500 pt-1">{validateHttpsWebhookResult.error}</p>
             </div>
           ) : null
         }
+        <p className="text-xs pt-2">Want more webhooks supported?</p>
+        <Link className="text-sm text-blue-500" to={"https://tally.so/r/w7D9oz"} target="_blank" rel="noreferrer">
+          Let us know!
+        </Link>
       </PopoverContent>
     </Popover>
   );
