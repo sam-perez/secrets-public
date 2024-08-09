@@ -1,4 +1,5 @@
 import { MetaFunction } from "@remix-run/node";
+import { Link } from "@remix-run/react";
 
 export const meta: MetaFunction = () => {
   return [
@@ -47,6 +48,10 @@ export default function Security() {
         used to encrypt and decrypt the response is included in the URL fragment. This means that the password is never
         sent to the backend server, and can only be accessed by you via the zapier webhook.
       </p>
+
+      <Link className="text-sm text-blue-500" to={"https://tally.so/r/w7D9oz"} target="_blank" rel="noreferrer">
+        Let us know if you would like more webhooks supported!
+      </Link>
     </div>
   );
 }
