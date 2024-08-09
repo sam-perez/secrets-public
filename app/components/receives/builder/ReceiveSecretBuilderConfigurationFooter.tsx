@@ -183,11 +183,7 @@ function NotificationConfigurationPopover({
             You will receive a Zapier Catch Hook event when someone completes this form.
           </p>
           <p className="text-xs link text-blue-500">
-            <a
-              target="_blank"
-              rel="noreferrer"
-              href="https://help.zapier.com/hc/en-us/articles/8496288690317-Trigger-Zaps-from-webhooks"
-            >
+            <a target="_blank" rel="noreferrer" href="/zapier-webhooks">
               How to configure catch webhooks on Zapier.
             </a>
           </p>
