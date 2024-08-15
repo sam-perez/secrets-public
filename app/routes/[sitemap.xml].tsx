@@ -27,6 +27,9 @@ export const loader: LoaderFunction = async () => {
       <loc>https://2secured.link/security</loc>
       <lastmod>${lastModifiedToday}</lastmod>
       </url>
+      <loc>https://2secured.link/zapier-webhooks</loc>
+      <lastmod>${lastModifiedToday}</lastmod>
+      </url>
       <url>
       <loc>https://2secured.link/sends/templates</loc>
       <lastmod>${lastModifiedToday}</lastmod>
