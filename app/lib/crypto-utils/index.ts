@@ -9,8 +9,8 @@ export function toBase62(num: number): string {
 
   const result: string[] = [];
   do {
-    result.push(characters[num % 62]);
-    num = Math.floor(num / 62);
+    result.push(characters[num % characters.length]);
+    num = Math.floor(num / characters.length);
   } while (num > 0);
 
   // reverse the result so that the least significant digit is first
@@ -77,3 +77,30 @@ export function utf16ArrayBufferToString(arrayBuffer: ArrayBuffer) {
 
   return reconstructedStringChars.join("");
 }
+
+/**
+ * Get random human-friendly string.
+ *
+ * Meant to be used for random strings that humans might need to transcribe. Avoids characters that are easily
+ * confused with each other, like 0 and O, or 1 and l.
+ */
+export const getRandomHumanFriendlyString = (length: number): string => {
+  const characters = "23456789ABCDEFGHJKLMNPRSTUVWXYZabcdefghijkmnpqrstuvwxyz";
+  const toHumanFriendly = (num: number) => {
+    const result: string[] = [];
+    do {
+      result.push(characters[num % characters.length]);
+      num = Math.floor(num / characters.length);
+    } while (num > 0);
+
+    return result.reverse().join("");
+  };
+
+  const chars: string[] = [];
+  for (let i = 0; i < length; i++) {
+    const nextInt = getRandomIntInclusive(0, characters.length - 1);
+    chars.push(toHumanFriendly(nextInt));
+  }
+
+  return chars.join("");
+};

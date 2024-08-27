@@ -2,7 +2,7 @@ import { ActionFunction } from "@remix-run/node";
 
 import { SendBuilderTemplate } from "~/components/sends/builder/types";
 
-import { getRandomBase62String } from "../lib/crypto-utils";
+import { getRandomBase62String, getRandomHumanFriendlyString } from "../lib/crypto-utils";
 import { sendEmail } from "../lib/email";
 import {
   generateSendViewId,
@@ -137,7 +137,7 @@ export const action: ActionFunction = async ({ request }) => {
         obscuredEmail: obscureEmailAddress(sendConfig.confirmationEmail),
       };
 
-      const code = getRandomBase62String(6);
+      const code = getRandomHumanFriendlyString(6);
 
       // send an email to the confirmation email address with a code that the user can enter to confirm the view
       // TODO: handle errors?
