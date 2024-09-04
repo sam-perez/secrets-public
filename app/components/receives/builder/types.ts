@@ -539,7 +539,7 @@ export const RECEIVE_BUILDER_TEMPLATES: {
   },
   "bitcoin-wallet-address": {
     title: "Bitcoin Wallet",
-    description: "Use this template to securely receive tax return documents.",
+    description: "Use this template to securely receive bitcoin wallets.",
     fields: [
       {
         title: "Who is filling this out?",
@@ -547,7 +547,7 @@ export const RECEIVE_BUILDER_TEMPLATES: {
         placeholder: "Add your name or email",
       },
       {
-        title: "Type",
+        title: "Type of Wallet",
         type: "single-line-text",
         placeholder: "Bitcoin",
       },

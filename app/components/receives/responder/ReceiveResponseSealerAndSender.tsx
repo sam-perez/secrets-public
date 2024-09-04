@@ -193,10 +193,13 @@ function ReceiveResponseSealerAndSenderInner({
         console.log("Sending notification", { notificationConfig, linkToReceiveResponse: receiveResponseLink });
 
         if (notificationConfig.type === "webhook") {
-          await fetch(notificationConfig.url, {
-            method: "GET",
-            body: JSON.stringify({ receiveResponseLink }),
-          });
+          const urlParams = new URLSearchParams();
+          urlParams.append("receiveResponseLink", receiveResponseLink);
+
+          const webhookUrl = `${notificationConfig.url}?${urlParams.toString()}`;
+          console.log("Sending webhook", webhookUrl);
+
+          await fetch(webhookUrl, { method: "GET" });
         } else {
           exhaustiveGuard(notificationConfig.type);
         }
