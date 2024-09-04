@@ -1,6 +1,6 @@
 import "highlight.js/styles/nnfx-dark.min.css";
 
-import { ArrowDownIcon, ArrowUpIcon, PaperPlaneIcon } from "@radix-ui/react-icons";
+import { ArrowDownIcon, ArrowUpIcon } from "@radix-ui/react-icons";
 import type { MetaFunction } from "@remix-run/node";
 import { Link } from "@remix-run/react";
 import hljs from "highlight.js";

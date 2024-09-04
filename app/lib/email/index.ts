@@ -1,7 +1,7 @@
-import { SendEmailCommand,SESClient } from "@aws-sdk/client-ses";
+import { SendEmailCommand, SESClient } from "@aws-sdk/client-ses";
 
 // Create an SES client
-const s3Client = new SESClient({
+const sesClient = new SESClient({
   region: "us-east-1",
   credentials: {
     accessKeyId: process.env.VERCEL_MARKETING_AWS_ACCESS_KEY as string,
@@ -40,7 +40,7 @@ export async function sendEmail({
     },
   };
 
-  return await s3Client.send(new SendEmailCommand(params));
+  return await sesClient.send(new SendEmailCommand(params));
 }
 
 /**

@@ -194,7 +194,7 @@ function ReceiveResponseSealerAndSenderInner({
 
         if (notificationConfig.type === "webhook") {
           await fetch(notificationConfig.url, {
-            method: "POST",
+            method: "GET",
             body: JSON.stringify({ receiveResponseLink }),
           });
         } else {
