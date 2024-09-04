@@ -51,12 +51,12 @@ export default function Security() {
         </li>
         <li>
           <p className="text-base mt-2">
-            The data we send to the webhook is a JSON object with the following structure:
-            <pre className="bg-gray-100 p-2 rounded-md mt-2">
-              {`{
-  "receiveResponseLink": "https://2secured.com/rr/123/456#password"
-}`}
-            </pre>
+            The webhook will be invoked using a <b>GET</b> request and will have a single query parameter called{" "}
+            <b>receiveResponseLink</b> that will contain the link to the receive response.{" "}
+            <i>
+              Note: we use a GET request because it works well with CORS + Zapier and the webhooks are invoked from the
+              browser of the respondent.
+            </i>
           </p>
         </li>
         <li>

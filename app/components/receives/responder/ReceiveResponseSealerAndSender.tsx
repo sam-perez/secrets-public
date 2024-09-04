@@ -189,15 +189,11 @@ function ReceiveResponseSealerAndSenderInner({
         // eslint-disable-next-line max-len
         const receiveResponseLink = `${window.location.origin}/rr/${initiateResponse.receiveId}/${initiateResponse.receiveResponseId}#${packedSecrets.password}`;
 
-        // send a notification
-        console.log("Sending notification", { notificationConfig, linkToReceiveResponse: receiveResponseLink });
-
         if (notificationConfig.type === "webhook") {
           const urlParams = new URLSearchParams();
           urlParams.append("receiveResponseLink", receiveResponseLink);
 
           const webhookUrl = `${notificationConfig.url}?${urlParams.toString()}`;
-          console.log("Sending webhook", webhookUrl);
 
           await fetch(webhookUrl, { method: "GET" });
         } else {
