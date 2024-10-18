@@ -9,7 +9,7 @@ yarn run dev
 
 ## Development
 
-Run the Vite dev server:
+Run the Vite dev server :
 
 ```shellscript
 npm run dev
